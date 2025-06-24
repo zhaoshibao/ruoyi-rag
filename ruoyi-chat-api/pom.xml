@@ -1,0 +1,20 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.ruoyi</groupId>
+        <artifactId>ruoyi-rag</artifactId>
+        <version>3.8.7</version>
+    </parent>
+    <artifactId>ruoyi-chat-api</artifactId>
+    <name>ruoyi-chat-api</name>
+    <url>http://maven.apache.org</url>
+
+    <dependencies>
+        <!-- 通用工具-->
+        <dependency>
+            <groupId>com.ruoyi</groupId>
+            <artifactId>ruoyi-common</artifactId>
+        </dependency>
+    </dependencies>
+</project>
