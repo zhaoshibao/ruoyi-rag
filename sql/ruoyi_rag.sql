@@ -765,7 +765,7 @@ INSERT INTO `sys_menu` VALUES (1057, '生成删除', 116, 3, '#', '', '', 1, 0, 
 INSERT INTO `sys_menu` VALUES (1058, '导入代码', 116, 4, '#', '', '', 1, 0, 'F', '0', '0', 'tool:gen:import', '#', 'admin', '2024-06-26 08:47:33', '', NULL, '');
 INSERT INTO `sys_menu` VALUES (1059, '预览代码', 116, 5, '#', '', '', 1, 0, 'F', '0', '0', 'tool:gen:preview', '#', 'admin', '2024-06-26 08:47:33', '', NULL, '');
 INSERT INTO `sys_menu` VALUES (1060, '生成代码', 116, 6, '#', '', '', 1, 0, 'F', '0', '0', 'tool:gen:code', '#', 'admin', '2024-06-26 08:47:33', '', NULL, '');
-INSERT INTO `sys_menu` VALUES (2000, '智能客服', 0, 0, 'system-chat', NULL, NULL, 1, 0, 'M', '0', '0', NULL, 'message', 'admin', '2024-06-26 08:58:15', '', NULL, '');
+INSERT INTO `sys_menu` VALUES (2000, '知识库管理', 0, 0, 'system-chat', NULL, NULL, 1, 0, 'M', '0', '0', NULL, 'message', 'admin', '2024-06-26 08:58:15', '', NULL, '');
 INSERT INTO `sys_menu` VALUES (2001, '知识库管理', 2000, 2, 'chat-manage', 'chat/knowledge', NULL, 1, 0, 'C', '0', '0', 'system:user:list', 'log', 'admin', '2024-06-26 09:04:05', 'admin', '2024-06-28 06:29:13', '');
 INSERT INTO `sys_menu` VALUES (2002, '项目管理', 2000, 1, 'chat-project', 'chat/project', NULL, 1, 0, 'C', '0', '0', 'system:user:list', 'system', 'admin', '2024-06-26 14:24:03', 'admin', '2024-06-28 06:29:47', '');
 
