@@ -35,11 +35,6 @@ CREATE TABLE `chat_knowledge`  (
   PRIMARY KEY (`knowledge_id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '知识库管理' ROW_FORMAT = DYNAMIC;
 
--- ----------------------------
--- Records of chat_knowledge
--- ----------------------------
-INSERT INTO `chat_knowledge` VALUES ('2a062064-dcbc-42a1-abc6-535d5c977fe1', 1, '119abc', '测试知识库文档.txt', '赵世宝是谁？ 他是北京石大正信有限公司的员工。\r\n', 'admin', '2025-06-23 15:14:26', '', NULL, NULL);
-INSERT INTO `chat_knowledge` VALUES ('88e59713-c75f-437f-be1a-521f91b10faf', 1, '118abc', '测试知识库文档.txt', '赵世宝是谁？ 他是北京石大正信有限公司的员工。\r\n', 'admin', '2025-06-23 15:09:55', '', NULL, NULL);
 
 -- ----------------------------
 -- Table structure for chat_project
