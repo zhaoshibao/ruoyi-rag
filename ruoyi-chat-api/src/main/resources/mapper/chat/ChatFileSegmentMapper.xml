@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.mapper.ChatFileSegmentMapper">
+    
+    <resultMap type="ChatFileSegment" id="ChatFileSegmentResult">
+        <result property="segmentId"    column="segment_id"    />
+        <result property="knowledgeId"    column="knowledge_id"    />
+        <result property="fileName"    column="file_name"    />
+        <result property="content"    column="content"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectChatFileSegmentVo">
+        select segment_id, knowledge_id, file_name, content, create_by, create_time, update_by, update_time, remark from chat_file_segment
+    </sql>
+
+    <select id="selectChatFileSegmentList" parameterType="ChatFileSegment" resultMap="ChatFileSegmentResult">
+        <include refid="selectChatFileSegmentVo"/>
+        <where>  
+        </where>
+    </select>
+    
+    <select id="selectChatFileSegmentBySegmentId" parameterType="String" resultMap="ChatFileSegmentResult">
+        <include refid="selectChatFileSegmentVo"/>
+        where segment_id = #{segmentId}
+    </select>
+
+    <insert id="insertChatFileSegment" parameterType="ChatFileSegment">
+        insert into chat_file_segment
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="segmentId != null">segment_id,</if>
+            <if test="knowledgeId != null">knowledge_id,</if>
+            <if test="fileName != null">file_name,</if>
+            <if test="content != null">content,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="remark != null">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="segmentId != null">#{segmentId},</if>
+            <if test="knowledgeId != null">#{knowledgeId},</if>
+            <if test="fileName != null">#{fileName},</if>
+            <if test="content != null">#{content},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="remark != null">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateChatFileSegment" parameterType="ChatFileSegment">
+        update chat_file_segment
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="knowledgeId != null">knowledge_id = #{knowledgeId},</if>
+            <if test="fileName != null">file_name = #{fileName},</if>
+            <if test="content != null">content = #{content},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where segment_id = #{segmentId}
+    </update>
+
+    <delete id="deleteChatFileSegmentBySegmentId" parameterType="String">
+        delete from chat_file_segment where segment_id = #{segmentId}
+    </delete>
+
+    <delete id="deleteChatFileSegmentBySegmentIds" parameterType="String">
+        delete from chat_file_segment where segment_id in 
+        <foreach item="segmentId" collection="array" open="(" separator="," close=")">
+            #{segmentId}
+        </foreach>
+    </delete>
+</mapper>
