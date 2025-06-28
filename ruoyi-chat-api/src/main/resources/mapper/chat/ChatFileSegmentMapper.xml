@@ -22,7 +22,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectChatFileSegmentList" parameterType="ChatFileSegment" resultMap="ChatFileSegmentResult">
         <include refid="selectChatFileSegmentVo"/>
-        <where>  
+        <where>
+            knowledge_id = #{knowledgeId}
         </where>
     </select>
     

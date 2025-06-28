@@ -80,7 +80,7 @@ public class ChatProjectServiceImpl implements IChatProjectService
      * @return 结果
      */
     @Override
-    public int deleteChatProjectByProjectIds(Long[] projectIds)
+    public int deleteChatProjectByProjectIds(String[] projectIds)
     {
         return chatProjectMapper.deleteChatProjectByProjectIds(projectIds);
     }

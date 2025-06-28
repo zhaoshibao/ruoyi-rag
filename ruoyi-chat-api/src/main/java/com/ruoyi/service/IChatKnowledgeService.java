@@ -19,6 +19,9 @@ public interface IChatKnowledgeService
      */
     public ChatKnowledge selectChatKnowledgeByKnowledgeId(String knowledgeId);
 
+
+
+
     /**
      * 查询知识库管理列表
      * 

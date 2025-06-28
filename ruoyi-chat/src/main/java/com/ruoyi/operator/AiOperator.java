@@ -3,6 +3,7 @@ package com.ruoyi.operator;
 import com.ruoyi.controller.ChatController;
 import com.ruoyi.domain.ChatProject;
 import com.ruoyi.vo.QueryVo;
+import org.springframework.web.multipart.MultipartFile;
 import reactor.core.publisher.Flux;
 
 import java.util.List;
@@ -94,6 +95,17 @@ public interface AiOperator {
      * @return
      */
     Boolean upload(ChatProject chatProject, String knowledgeId, String content) throws Exception;
+
+
+    /**
+     * 上传本地知识库
+     *
+     * @param chatProject
+     * @param knowledgeId
+     * @param file
+     * @return
+     */
+    Boolean upload(ChatProject chatProject, String knowledgeId, MultipartFile file) throws Exception;
 
     /**
      * 移除本地知识库

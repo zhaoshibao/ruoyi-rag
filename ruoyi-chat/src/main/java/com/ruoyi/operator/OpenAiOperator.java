@@ -4,10 +4,12 @@ import cn.hutool.core.util.IdUtil;
 import com.ruoyi.annotation.BeanType;
 import com.ruoyi.component.QdrantVectorStoreComponet;
 import com.ruoyi.controller.ChatController;
+import com.ruoyi.domain.ChatFileSegment;
 import com.ruoyi.domain.ChatProject;
 import com.ruoyi.searxng.SearXNGSearchParams;
 import com.ruoyi.searxng.SearXNGSearchResult;
 import com.ruoyi.searxng.SearXNGService;
+import com.ruoyi.service.IChatFileSegmentService;
 import com.ruoyi.service.IChatProjectService;
 import com.ruoyi.sse.SSEMsgType;
 import com.ruoyi.sse.SSEServer;
@@ -18,6 +20,14 @@ import com.ruoyi.enums.AiTypeEnum;
 import com.ruoyi.enums.LanguageEnum;
 import com.ruoyi.enums.SystemConstant;
 import lombok.extern.slf4j.Slf4j;
+import net.sourceforge.tess4j.Tesseract;
+import net.sourceforge.tess4j.TesseractException;
+import org.apache.pdfbox.Loader;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.rendering.PDFRenderer;
+import org.apache.pdfbox.text.PDFTextStripper;
+import org.apache.pdfbox.tools.imageio.ImageIOUtil;
+import org.apache.poi.util.StringUtil;
 import org.springframework.ai.chat.messages.AssistantMessage;
 import org.springframework.ai.chat.messages.Message;
 import org.springframework.ai.chat.messages.SystemMessage;
@@ -30,6 +40,13 @@ import org.springframework.ai.document.Document;
 import org.springframework.ai.ollama.api.OllamaOptions;
 import org.springframework.ai.openai.OpenAiChatModel;
 import org.springframework.ai.openai.OpenAiChatOptions;
+import org.springframework.ai.reader.ExtractedTextFormatter;
+import org.springframework.ai.reader.JsonReader;
+import org.springframework.ai.reader.TextReader;
+import org.springframework.ai.reader.pdf.PagePdfDocumentReader;
+import org.springframework.ai.reader.pdf.config.PdfDocumentReaderConfig;
+import org.springframework.ai.reader.tika.TikaDocumentReader;
+import org.springframework.ai.transformer.splitter.TokenTextSplitter;
 import org.springframework.ai.vectorstore.SearchRequest;
 import org.springframework.ai.vectorstore.filter.FilterExpressionBuilder;
 import org.springframework.ai.vectorstore.qdrant.QdrantVectorStore;
@@ -37,12 +54,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 import reactor.core.publisher.Flux;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.io.PipedReader;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @BeanType(AiTypeEnum.OPENAI)
@@ -73,6 +94,10 @@ public class OpenAiOperator implements AiOperator {
 
     // 历史消息列表的最大长度，用于限制历史记录的数量
     private static final int maxLen = 50;
+
+
+    @Autowired
+    private IChatFileSegmentService iChatFileSegmentService;
 
 
     /**
@@ -310,6 +335,207 @@ public class OpenAiOperator implements AiOperator {
         return true;
     }
 
+    @Override
+    public Boolean upload(ChatProject chatProject, String knowledgeId, MultipartFile file) throws Exception {
+        String filename = file.getOriginalFilename();
+        String fileSuffix  = filename.substring(filename.lastIndexOf(".") + 1).toLowerCase();
+        List<Document> documentList = new ArrayList<>();
+         switch (fileSuffix) {
+            case "json":
+                JsonReader jsonReader = new JsonReader(file.getResource());
+                documentList = jsonReader.get();
+                break;
+            case "txt":
+            case "md":
+                TextReader textReader = new TextReader(file.getResource());
+                List<Document> documents = textReader.get();
+                documentList = new TokenTextSplitter().apply(documents);
+                break;
+             case "pdf":
+                 //`PagePdfDocumentReader`使用Apache PdfBox库解析PDF文档
+//                PagePdfDocumentReader pdfReader = new PagePdfDocumentReader(file.getResource(),
+//                        PdfDocumentReaderConfig.builder()
+//                                .withPageTopMargin(0)
+//                                .withPageExtractedTextFormatter(ExtractedTextFormatter.builder()
+//                                        .withNumberOfTopTextLinesToDelete(0)
+//                                        .build())
+//                                .withPagesPerDocument(1)
+//                                .build());
+//
+//                 documentList =  pdfReader.read();
+                 documentList = this.readPdfPages(file,chatProject);
+
+
+                 //pdf增强解析（使用 Tesseract 实现 PDF 转图片并进行 OCR 识别文本 ）
+//                 List<Document> pdfDocList = this.readPagesWithOcr(file);
+//                 documentList.addAll(pdfDocList);
+
+
+                 break;
+             //`TikaDocumentReader`使用Apache Tika从各种文档格式中提取文本，如PDF、DOC/DOCX、PPT/PPTX和HTML。
+             // 有关支持的格式的完整列表，请参阅https://tika.apache.org/3.1.0/formats.html[Tika文档]。
+             default:
+                 TikaDocumentReader tikaDocumentReader = new TikaDocumentReader(file.getResource());
+                 documentList =  tikaDocumentReader.read();
+                    break;
+
+         }
+        String projectId = chatProject.getProjectId();
+        List<Document> docList = new ArrayList<>();
+        if (!CollectionUtils.isEmpty(documentList)) {
+
+            for (Document document : documentList) {
+                String docId = UUID.randomUUID().toString();
+                String text = document.getText();
+                //去除text 中的空白符
+                text = text.replaceAll("\\s+", "");
+                if (StringUtils.hasLength(text) ) {
+                    Document doc = new Document(docId,text, Map.of("projectId", projectId, "knowledgeId", knowledgeId));
+                    docList.add(doc);
+                }
+            }
+            documentList = docList;
+
+            //Document document = new Document(knowledgeId, content, Map.of("projectId", projectId));
+            if (!CollectionUtils.isEmpty(documentList)) {
+
+
+                List<ChatFileSegment> chatFileSegmentList = documentList.stream().map(document -> {
+                    ChatFileSegment chatFileSegment = new ChatFileSegment();
+                    chatFileSegment.setSegmentId(document.getId());
+                    chatFileSegment.setKnowledgeId(knowledgeId);
+                    chatFileSegment.setFileName(filename);
+                    chatFileSegment.setContent(document.getText());
+                    return chatFileSegment;
+                }).collect(Collectors.toList());
+                for (ChatFileSegment chatFileSegment : chatFileSegmentList) {
+                    chatFileSegment.setCreateTime(new Date());
+                    iChatFileSegmentService.insertChatFileSegment(chatFileSegment);
+                }
+
+                String baseUrl = chatProject.getBaseUrl();
+                String apiKey = chatProject.getApiKey();
+                String embeddingModel = chatProject.getEmbeddingModel();
+                QdrantVectorStore openAiQdrantVectorStore = qdrantVectorStoreComponet.getOpenAiQdrantVectorStore(baseUrl, apiKey, embeddingModel);
+                openAiQdrantVectorStore.add(documentList);
+            }
+
+        }
+        return true;
+    }
+
+    /**
+     * 读取PDF每页内容（含乱码处理）
+     * @param file
+     * @return 每页内容的列表
+     */
+    public List<Document> readPdfPages(MultipartFile file,ChatProject chatProject) throws Exception {
+        // 尝试标准文本提取
+        byte[] pdfData = file.getBytes();
+        List<Document> documentList = tryStandardExtraction(pdfData);
+
+        // 如果提取失败（通常是乱码文档）
+        //if (documentList == null || needsOcrFallback(documentList)    ) {
+        if (documentList == null) {
+            log.info("==============检测到文本提取异常，启用OCR回退方案==================");
+            //判断pdf增强解析是否启用，如果启用则执行ocr解析
+            if (chatProject.getPdfAnalysis().equals(0)) {
+                return null;
+            }
+            return readPagesWithOcr(file);
+        } else {
+            //判断pdf增强解析是否启用，如果启用则执行ocr解析
+            if (chatProject.getPdfAnalysis().equals(0)) {
+                return documentList;
+            }
+            List<Document> docListWithOcr = readPagesWithOcr(file);
+            documentList.addAll(docListWithOcr);
+        }
+
+        return documentList;
+    }
+
+    // 尝试标准文本提取
+    private List<Document> tryStandardExtraction(byte[] pdfData) {
+        List<Document> results = new ArrayList<>();
+
+        try (PDDocument document = Loader.loadPDF(pdfData)) {
+            PDFTextStripper stripper = new PDFTextStripper();
+
+            for (int i = 1; i <= document.getNumberOfPages(); i++) {
+                stripper.setStartPage(i);
+                stripper.setEndPage(i);
+                String text = stripper.getText(document);
+                if (StringUtils.hasLength(text)) {
+                    results.add(new Document(text));
+                }
+
+            }
+            return results;
+        } catch (Exception e) {
+            log.error("==============标准提取失败: " + e.getMessage() + "==================");
+            return null;
+        }
+    }
+
+
+
+
+    /**
+     * OCR回退方案
+     * @param pdfFile
+     * @return
+     * @throws IOException
+     * @throws TesseractException
+     * todo 后续优化：多线程pdf页面处理
+     */
+    public List<Document> readPagesWithOcr(MultipartFile pdfFile) throws IOException, TesseractException {
+        // 临时目录准备
+        File tempDir = new File(System.getProperty("java.io.tmpdir"), "pdf_images");
+        if (!tempDir.exists()) {
+            tempDir.mkdirs();
+        }
+
+        List<Document> ocrResults = new ArrayList<>();
+
+        try (PDDocument document = Loader.loadPDF(pdfFile.getBytes())) {
+            PDFRenderer renderer = new PDFRenderer(document);
+
+            // 设置DPI提高OCR精度
+            int dpi = 300;
+
+            Tesseract tesseract = new Tesseract();
+            // 设置语言包（需事先安装）
+           /// tesseract.setLanguage("eng");
+            tesseract.setLanguage("chi_sim");
+            // 如需要指定tessdata路径
+            // tesseract.setDatapath("/path/to/tessdata");
+
+            for (int page = 0; page < document.getNumberOfPages(); page++) {
+                // 渲染PDF页为BufferedImage
+                BufferedImage image = renderer.renderImageWithDPI(page, dpi);
+
+                // 生成临时图像文件
+                File imgFile = new File(tempDir, "page_" + page + ".png");
+                // 最佳实践：使用 ImageIO 保存图像
+                ImageIO.write(image, "png", imgFile);
+
+                // 执行OCR
+                String result = tesseract.doOCR(imgFile);
+                if (StringUtils.hasLength(result)) {
+                    ocrResults.add(new Document(result));
+                }
+
+                // 删除临时图像文件
+                imgFile.delete();
+            }
+        }
+
+        // 删除临时目录
+        tempDir.delete();
+        return ocrResults;
+    }
+
     //    @Override
 //    public Boolean remove(String docId) {
 //        return this.openaiQdrantVectorStore.delete(List.of(docId)).get();
@@ -322,6 +548,7 @@ public class OpenAiOperator implements AiOperator {
         QdrantVectorStore openAiQdrantVectorStore = qdrantVectorStoreComponet.getOpenAiQdrantVectorStore(baseUrl, apiKey, embeddingModel);
             openAiQdrantVectorStore.delete(List.of(docId));
     }
+
 }
 
 

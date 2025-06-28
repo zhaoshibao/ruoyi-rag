@@ -13,6 +13,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="baseUrl"    column="base_url"    />
         <result property="apiKey"    column="api_key"    />
         <result property="systemPrompt"    column="system_prompt"    />
+        <result property="isPdfAnalysis"    column="is_pdf_analysis"    />
         <result property="createBy"    column="create_by"    />
         <result property="createTime"    column="create_time"    />
         <result property="updateBy"    column="update_by"    />
@@ -21,7 +22,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectChatProjectVo">
-        select project_id, project_name, type, model,embedding_model, base_url,api_key,system_prompt,
+        select project_id, project_name, type, model,embedding_model, base_url,api_key,system_prompt,is_pdf_analysis,
                create_by, create_time, update_by, update_time, remark from chat_project
     </sql>
 
@@ -50,6 +51,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="baseUrl != null">base_url,</if>
             <if test="apiKey != null">api_key,</if>
             <if test="systemPrompt != null">system_prompt,</if>
+            <if test="isPdfAnalysis != null">is_pdf_analysis,</if>
             <if test="createBy != null">create_by,</if>
             <if test="createTime != null">create_time,</if>
             <if test="updateBy != null">update_by,</if>
@@ -65,6 +67,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="baseUrl != null">#{baseUrl},</if>
             <if test="apiKey != null">#{apiKey},</if>
             <if test="systemPrompt != null">#{systemPrompt},</if>
+            <if test="isPdfAnalysis != null">#{isPdfAnalysis},</if>
             <if test="createBy != null">#{createBy},</if>
             <if test="createTime != null">#{createTime},</if>
             <if test="updateBy != null">#{updateBy},</if>
@@ -83,6 +86,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="baseUrl != null">base_url = #{baseUrl},</if>
             <if test="apiKey != null">api_key = #{apiKey},</if>
             <if test="systemPrompt != null">system_prompt = #{systemPrompt},</if>
+            <if test="isPdfAnalysis != null">is_pdf_analysis = #{isPdfAnalysis},</if>
             <if test="createBy != null">create_by = #{createBy},</if>
             <if test="createTime != null">create_time = #{createTime},</if>
             <if test="updateBy != null">update_by = #{updateBy},</if>

@@ -3,7 +3,9 @@ package com.ruoyi.service.impl;
 import java.util.List;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.domain.ChatKnowledge;
+import com.ruoyi.domain.ChatProject;
 import com.ruoyi.mapper.ChatKnowledgeMapper;
+import com.ruoyi.mapper.ChatProjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ruoyi.service.IChatKnowledgeService;
@@ -15,8 +17,10 @@ import com.ruoyi.service.IChatKnowledgeService;
  * @date 2024-06-27
  */
 @Service
-public class ChatKnowledgeServiceImpl implements IChatKnowledgeService 
-{
+public class ChatKnowledgeServiceImpl implements IChatKnowledgeService {
+
+    @Autowired
+    private ChatProjectMapper chatProjectMapper;
     @Autowired
     private ChatKnowledgeMapper chatKnowledgeMapper;
 
@@ -31,6 +35,7 @@ public class ChatKnowledgeServiceImpl implements IChatKnowledgeService
     {
         return chatKnowledgeMapper.selectChatKnowledgeByKnowledgeId(knowledgeId);
     }
+
 
     /**
      * 查询知识库管理列表

@@ -2,7 +2,9 @@ package com.ruoyi.service;
 
 import cn.hutool.core.util.IdUtil;
 import com.ruoyi.annotation.BeanType;
+import com.ruoyi.component.QdrantVectorStoreComponet;
 import com.ruoyi.controller.ChatController;
+import com.ruoyi.enums.SystemConstant;
 import com.ruoyi.pojo.Message;
 import com.ruoyi.utils.MongoUtil;
 import com.ruoyi.pojo.Chat;
@@ -14,6 +16,10 @@ import com.ruoyi.utils.FileUtil;
 import com.ruoyi.domain.ChatKnowledge;
 import com.ruoyi.domain.ChatProject;
 import com.mongodb.client.result.UpdateResult;
+import org.springframework.ai.document.Document;
+import org.springframework.ai.vectorstore.SearchRequest;
+import org.springframework.ai.vectorstore.filter.FilterExpressionBuilder;
+import org.springframework.ai.vectorstore.qdrant.QdrantVectorStore;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +41,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 @Component
 public class AiService implements ApplicationContextAware {
@@ -50,6 +57,9 @@ public class AiService implements ApplicationContextAware {
 
     @Autowired
     private MongoTemplate mongoTemplate;
+
+    @Autowired
+    private QdrantVectorStoreComponet qdrantVectorStoreComponet;
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
@@ -95,19 +105,20 @@ public class AiService implements ApplicationContextAware {
         ChatProject chatProject = this.projectService.selectChatProjectByProjectId(chatKnowledge.getProjectId());
         // 获取文件名 及 内容
         String filename = file.getOriginalFilename();
-        String content = FileUtil.getContentFromText(file);
+        //String content = FileUtil.getContentFromText(file);
 
         // 把知识库记录保存到mysql
         chatKnowledge.setProjectId(chatProject.getProjectId());
         chatKnowledge.setFileName(filename);
-        chatKnowledge.setContent(content);
+        //chatKnowledge.setContent(content);
         String  knowledgeId = UUID.randomUUID().toString();
         chatKnowledge.setKnowledgeId(knowledgeId);
         this.knowledgeService.insertChatKnowledge(chatKnowledge);
 
 
         // 上传到redis向量数据库
-        this.getAiOperator(chatProject.getType()).upload(chatProject, knowledgeId, content);
+       //this.getAiOperator(chatProject.getType()).upload(chatProject, knowledgeId, content);
+        this.getAiOperator(chatProject.getType()).upload(chatProject, knowledgeId, file);
         return knowledgeId;
     }
 
@@ -179,6 +190,28 @@ public class AiService implements ApplicationContextAware {
         message.setType(1);
         message.setId(IdUtil.getSnowflake().nextId());
         this.mongoTemplate.insert(message, MongoUtil.getMessageCollection(messageVo.getChatId()));
+    }
+
+    /**
+     * 获取文件分片内容信息
+     * @param projectId
+     * @param knowledgeId
+     * @return
+     */
+    public List<String> listFileSegment(String projectId,String knowledgeId) throws Exception {
+        ChatProject chatProject = projectService.selectChatProjectByProjectId(projectId);
+        String baseUrl = chatProject.getBaseUrl();
+        String apiKey = chatProject.getApiKey();
+        String embeddingModel = chatProject.getEmbeddingModel();
+        QdrantVectorStore openAiQdrantVectorStore = qdrantVectorStoreComponet.getOpenAiQdrantVectorStore(baseUrl, apiKey, embeddingModel);
+        List<Document> documentList = openAiQdrantVectorStore.similaritySearch(
+                SearchRequest.builder()
+                        .filterExpression(
+                                new FilterExpressionBuilder().eq("knowledgeId", knowledgeId).build()
+                        )
+                        .build()
+        );
+        return documentList.stream().map(Document::getText).collect(Collectors.toList());
     }
 
 

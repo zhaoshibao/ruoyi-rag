@@ -1,6 +1,8 @@
 package com.ruoyi.controller;
 
+import com.ruoyi.domain.ChatFileSegment;
 import com.ruoyi.domain.ChatKnowledge;
+import com.ruoyi.service.IChatFileSegmentService;
 import com.ruoyi.service.IChatKnowledgeService;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
@@ -13,11 +15,17 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import net.sourceforge.tess4j.ITesseract;
+import net.sourceforge.tess4j.Tesseract;
+import net.sourceforge.tess4j.TesseractException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.util.List;
 
 /**
@@ -34,6 +42,9 @@ public class ChatKnowledgeController extends BaseController
 {
     @Autowired
     private IChatKnowledgeService chatKnowledgeService;
+
+    @Autowired
+    private IChatFileSegmentService chatFileSegmentService;
 
     @Autowired
     private AiService aiService;
@@ -97,10 +108,20 @@ public class ChatKnowledgeController extends BaseController
 
     @Operation(summary = "获取知识库管理详细信息")
     @PreAuthorize("@ss.hasPermi('chat:knowledge:query')")
-    @GetMapping(value = "/{knowledgeId}")
-    public AjaxResult getInfo(@PathVariable("knowledgeId") String knowledgeId)
-    {
-        return success(chatKnowledgeService.selectChatKnowledgeByKnowledgeId(knowledgeId));
+    @GetMapping(value = "/{projectId}/{knowledgeId}")
+    public AjaxResult getInfo(@PathVariable("projectId") String projectId,@PathVariable("knowledgeId") String knowledgeId) {
+        List<ChatFileSegment> result = null;
+        try {
+            startPage();
+            ChatFileSegment chatFileSegment = new ChatFileSegment();
+            chatFileSegment.setKnowledgeId(knowledgeId);
+            result = chatFileSegmentService.selectChatFileSegmentList(chatFileSegment);
+        } catch (Exception e) {
+            log.error("获取知识库管理详细信息接口异常：", e);
+            return error(e.getMessage());
+        }
+        return success(result);
+        //return success(chatKnowledgeService.selectChatKnowledgeByKnowledgeId(knowledgeId));
     }
 
     @Operation(summary = "新增知识库管理")
@@ -135,4 +156,33 @@ public class ChatKnowledgeController extends BaseController
         }
         return toAjax(result);
     }
+
+    public static void main(String[] args) {
+        // 创建实例
+        ITesseract instance = new Tesseract();
+
+        // 设置识别语言
+
+        instance.setLanguage("chi_sim");
+       // instance.setLanguage("jpn");
+
+        // 设置识别引擎
+
+        instance.setOcrEngineMode(1);
+        instance.setPageSegMode(6);
+
+        // 读取文件
+        try {
+        BufferedImage image = ImageIO.read(new File("E:\\Desktop\\上传文件\\rag测试\\pdf截图.png"));
+
+            // 识别
+            //String res = instance.doOCR(new File("C:\\Users\\Lenovo\\Pictures\\联想截图\\联想截图_20230220144409.png"));
+            String result = instance.doOCR(image);
+            System.out.println(result);
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+        }
+    }
+
+
 }

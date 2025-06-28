@@ -53,6 +53,12 @@ public class ChatProject extends BaseEntity
     @Excel(name = "systemPrompt")
     private String systemPrompt;
 
+
+
+    /** 是否开启pdf增强解析 */
+    @Excel(name = "isPdfAnalysis")
+    private Integer isPdfAnalysis;
+
     public String getBaseUrl() {
         return baseUrl;
     }
@@ -130,6 +136,15 @@ public class ChatProject extends BaseEntity
     }
 
 
+    public Integer getPdfAnalysis() {
+        return isPdfAnalysis;
+    }
+
+    public void setPdfAnalysis(Integer pdfAnalysis) {
+        isPdfAnalysis = pdfAnalysis;
+    }
+
+
     @Override
     public String toString() {
         return "ChatProject{" +
@@ -141,7 +156,12 @@ public class ChatProject extends BaseEntity
                 ", baseUrl='" + baseUrl + '\'' +
                 ", apiKey='" + apiKey + '\'' +
                 ", systemPrompt='" + systemPrompt + '\'' +
+                ", isPdfAnalysis=" + isPdfAnalysis +
                 '}';
     }
+
+
+
+
 
 }

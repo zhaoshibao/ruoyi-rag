@@ -81,7 +81,7 @@ public class ChatProjectController extends BaseController
     @Operation(summary = "修改项目")
     @PreAuthorize("@ss.hasPermi('chat:project:edit')")
     @Log(title = "项目配置", businessType = BusinessType.UPDATE)
-    @PutMapping
+    @PostMapping(value = "/edit")
     public AjaxResult edit(@RequestBody ChatProject chatProject)
     {
         return toAjax(chatProjectService.updateChatProject(chatProject));
@@ -91,7 +91,7 @@ public class ChatProjectController extends BaseController
     @PreAuthorize("@ss.hasPermi('chat:project:remove')")
     @Log(title = "项目配置", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{projectIds}")
-    public AjaxResult remove(@PathVariable Long[] projectIds)
+    public AjaxResult remove(@PathVariable String[] projectIds)
     {
         return toAjax(chatProjectService.deleteChatProjectByProjectIds(projectIds));
     }

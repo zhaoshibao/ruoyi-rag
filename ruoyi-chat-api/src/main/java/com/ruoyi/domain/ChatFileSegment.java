@@ -1,6 +1,9 @@
 package com.ruoyi.domain;
 
 import com.ruoyi.common.annotation.Excel;
+import com.ruoyi.common.core.domain.BaseEntity;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 /**
  * 文件分片对象 chat_file_segment
@@ -66,7 +69,7 @@ public class ChatFileSegment extends BaseEntity
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
+        return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
             .append("segmentId", getSegmentId())
             .append("knowledgeId", getKnowledgeId())
             .append("fileName", getFileName())

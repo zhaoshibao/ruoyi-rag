@@ -49,7 +49,7 @@ public interface IChatProjectService
      * @param projectIds 需要删除的项目配置主键集合
      * @return 结果
      */
-    public int deleteChatProjectByProjectIds(Long[] projectIds);
+    public int deleteChatProjectByProjectIds(String[] projectIds);
 
     /**
      * 删除项目配置信息

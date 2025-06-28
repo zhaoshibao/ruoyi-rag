@@ -32,6 +32,7 @@ import org.springframework.ai.vectorstore.qdrant.QdrantVectorStore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.util.CollectionUtils;
+import org.springframework.web.multipart.MultipartFile;
 import reactor.core.publisher.Flux;
 
 import java.util.ArrayList;
@@ -242,6 +243,11 @@ public class OllamaOperator implements AiOperator {
         QdrantVectorStore ollamaQdrantVectorStore = qdrantVectorStoreComponet.getOllamaQdrantVectorStore(baseUrl, embeddingModel);
         ollamaQdrantVectorStore.add(List.of(document));
         return true;
+    }
+
+    @Override
+    public Boolean upload(ChatProject chatProject, String knowledgeId, MultipartFile file) throws Exception {
+        return null;
     }
 
 //    @Override
