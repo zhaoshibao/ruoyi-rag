@@ -58,4 +58,13 @@ public interface IChatFileSegmentService
      * @return 结果
      */
     public int deleteChatFileSegmentBySegmentId(String segmentId);
+
+
+    /**
+     * 删除文件分片信息
+     *
+     * @param knowledgeId 知识库ID
+     * @return 结果
+     */
+    public int deleteChatFileSegmentByKnowledgeId(String knowledgeId);
 }

@@ -34,6 +34,12 @@ public class ChatKnowledge extends BaseEntity
     @Excel(name = "文件内容")
     private String content;
 
+
+
+    /** 是否向量化完成（0 否 1是） */
+    @Excel(name = "是否向量化完成（0 否 1是）")
+    private Integer isVector;
+
     public void setKnowledgeId(String knowledgeId)
     {
         this.knowledgeId = knowledgeId;
@@ -80,19 +86,24 @@ public class ChatKnowledge extends BaseEntity
         return content;
     }
 
+
+    public Integer getIsVector() {
+        return isVector;
+    }
+
+    public void setIsVector(Integer isVector) {
+        this.isVector = isVector;
+    }
+
     @Override
     public String toString() {
-        return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
-            .append("knowledgeId", getKnowledgeId())
-            .append("userId", getUserId())
-            .append("projectId", getProjectId())
-            .append("fileName", getFileName())
-            .append("content", getContent())
-            .append("createBy", getCreateBy())
-            .append("createTime", getCreateTime())
-            .append("updateBy", getUpdateBy())
-            .append("updateTime", getUpdateTime())
-            .append("remark", getRemark())
-            .toString();
+        return "ChatKnowledge{" +
+                "knowledgeId='" + knowledgeId + '\'' +
+                ", userId=" + userId +
+                ", projectId='" + projectId + '\'' +
+                ", fileName='" + fileName + '\'' +
+                ", content='" + content + '\'' +
+                ", isVector=" + isVector +
+                '}';
     }
 }

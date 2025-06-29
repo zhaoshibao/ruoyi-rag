@@ -83,4 +83,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{segmentId}
         </foreach>
     </delete>
+    <delete id="deleteChatFileSegmentByKnowledgeId">
+        delete from chat_file_segment where knowledge_id = #{knowledgeId}
+    </delete>
 </mapper>

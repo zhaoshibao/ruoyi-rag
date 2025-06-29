@@ -11,6 +11,7 @@ import com.ruoyi.searxng.SearXNGSearchResult;
 import com.ruoyi.searxng.SearXNGService;
 import com.ruoyi.service.IChatFileSegmentService;
 import com.ruoyi.service.IChatProjectService;
+import com.ruoyi.service.async.VectorStoreAsyncService;
 import com.ruoyi.sse.SSEMsgType;
 import com.ruoyi.sse.SSEServer;
 import com.ruoyi.utils.ChatModelUtil;
@@ -98,6 +99,9 @@ public class OpenAiOperator implements AiOperator {
 
     @Autowired
     private IChatFileSegmentService iChatFileSegmentService;
+
+    @Autowired
+    private VectorStoreAsyncService vectorStoreAsyncService;
 
 
     /**
@@ -417,7 +421,9 @@ public class OpenAiOperator implements AiOperator {
                 String apiKey = chatProject.getApiKey();
                 String embeddingModel = chatProject.getEmbeddingModel();
                 QdrantVectorStore openAiQdrantVectorStore = qdrantVectorStoreComponet.getOpenAiQdrantVectorStore(baseUrl, apiKey, embeddingModel);
-                openAiQdrantVectorStore.add(documentList);
+                //openAiQdrantVectorStore.add(documentList);
+                //异步执行
+                this.vectorStoreAsyncService.addVectorStore(knowledgeId,openAiQdrantVectorStore, documentList);
             }
 
         }
@@ -546,7 +552,21 @@ public class OpenAiOperator implements AiOperator {
         String apiKey = chatProject.getApiKey();
         String embeddingModel = chatProject.getEmbeddingModel();
         QdrantVectorStore openAiQdrantVectorStore = qdrantVectorStoreComponet.getOpenAiQdrantVectorStore(baseUrl, apiKey, embeddingModel);
-            openAiQdrantVectorStore.delete(List.of(docId));
+        openAiQdrantVectorStore.delete(List.of(docId));
+
+    }
+
+    @Override
+    public void removeByknowledgeId(ChatProject chatProject, String knowledgeId) throws Exception {
+        String baseUrl = chatProject.getBaseUrl();
+        String apiKey = chatProject.getApiKey();
+        String embeddingModel = chatProject.getEmbeddingModel();
+        QdrantVectorStore openAiQdrantVectorStore = qdrantVectorStoreComponet.getOpenAiQdrantVectorStore(baseUrl,apiKey,embeddingModel);
+        //异步执行
+        vectorStoreAsyncService.removeByknowledgeId(openAiQdrantVectorStore,knowledgeId);
+//        ollamaQdrantVectorStore.delete(
+//                new FilterExpressionBuilder().eq("knowledgeId", knowledgeId).build()
+//        );
     }
 
 }

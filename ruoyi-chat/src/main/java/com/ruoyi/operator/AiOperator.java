@@ -116,4 +116,13 @@ public interface AiOperator {
     void remove(ChatProject project,String docId) throws Exception;
 
 
+    /**
+     * 移除本地知识库
+     * @param knowledgeId
+     * @return
+     */
+//    Boolean remove(String docId);
+    void removeByknowledgeId(ChatProject project,String knowledgeId) throws Exception;
+
+
 }

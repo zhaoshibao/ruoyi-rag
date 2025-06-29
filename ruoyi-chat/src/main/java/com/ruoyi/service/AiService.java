@@ -56,6 +56,9 @@ public class AiService implements ApplicationContextAware {
     private IChatKnowledgeService knowledgeService;
 
     @Autowired
+    private IChatFileSegmentService fileSegmentService;
+
+    @Autowired
     private MongoTemplate mongoTemplate;
 
     @Autowired
@@ -128,8 +131,10 @@ public class AiService implements ApplicationContextAware {
         ChatProject project = this.projectService.selectChatProjectByProjectId(projectId);
         // 删除知识库记录
         this.knowledgeService.deleteChatKnowledgeByKnowledgeId(knowledgeId);
+        //删除文件分片
+        this.fileSegmentService.deleteChatFileSegmentByKnowledgeId(knowledgeId);
         // 删除redis向量数据库中对应的文档
-        this.getAiOperator(project.getType()).remove(project,knowledgeId.toString());
+        this.getAiOperator(project.getType()).removeByknowledgeId(project,knowledgeId.toString());
         return true;
     }
 

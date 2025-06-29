@@ -48,9 +48,9 @@ public class OllamaOperator implements AiOperator {
 //    @Autowired
 //    private OllamaChatModel ollamaChatModel;
 
-   // @Resource
+    // @Resource
     // private RedisVectorStore ollamaRedisVectorStore;
-   // private QdrantVectorStore ollamaQdrantVectorStore;
+    // private QdrantVectorStore ollamaQdrantVectorStore;
 
 
     @Autowired
@@ -114,12 +114,12 @@ public class OllamaOperator implements AiOperator {
         QdrantVectorStore ollamaQdrantVectorStore = qdrantVectorStoreComponet.getOllamaQdrantVectorStore(baseUrl, embeddingModel);
         List<Document> documentList = ollamaQdrantVectorStore.similaritySearch(
                 SearchRequest.builder().query(queryVo.getMsg())
-                .filterExpression(
-                        new FilterExpressionBuilder()
-                                .eq("projectId", queryVo.getProjectId()) // 查询当前项目的本地知识库
-                                .build())
-                .topK(SystemConstant.TOPK) // 取前10个
-                .similarityThreshold(SystemConstant.SIMILARITY_THRESHOLD).build()
+                        .filterExpression(
+                                new FilterExpressionBuilder()
+                                        .eq("projectId", queryVo.getProjectId()) // 查询当前项目的本地知识库
+                                        .build())
+                        .topK(SystemConstant.TOPK) // 取前10个
+                        .similarityThreshold(SystemConstant.SIMILARITY_THRESHOLD).build()
         );
 
         List<Message> msgList;
@@ -159,7 +159,7 @@ public class OllamaOperator implements AiOperator {
         // 提交到大模型获取最终结果
         //Flux<ChatResponse> responseFlux = this.ollamaChatModel.stream(new Prompt(msgList, OllamaOptions.create().withModel(model)));
 
-        OllamaChatModel ollamaChatModel = ChatModelUtil.getOllamaChatModel(baseUrl,model);
+        OllamaChatModel ollamaChatModel = ChatModelUtil.getOllamaChatModel(baseUrl, model);
         Flux<ChatResponse> responseFlux = ollamaChatModel.stream(new Prompt(msgList));
         return responseFlux.map(response -> response.getResult() != null
                 && response.getResult().getOutput() != null
@@ -207,7 +207,7 @@ public class OllamaOperator implements AiOperator {
 
         // 提交到大模型获取最终结果
 
-        OllamaChatModel ollamaChatModel = ChatModelUtil.getOllamaChatModel(baseUrl,model);
+        OllamaChatModel ollamaChatModel = ChatModelUtil.getOllamaChatModel(baseUrl, model);
         Flux<ChatResponse> streamResponse = ollamaChatModel.stream(new Prompt(msgList));
         List<String> list = streamResponse.toStream().map(chatResponse -> {
             String content = chatResponse.getResult().getOutput().getText();
@@ -219,6 +219,7 @@ public class OllamaOperator implements AiOperator {
         }).collect(Collectors.toList());
 
     }
+
     @Override
     public String imageUrl(QueryVo queryVo) {
         return null;
@@ -263,5 +264,13 @@ public class OllamaOperator implements AiOperator {
         ollamaQdrantVectorStore.delete(List.of(docId));
     }
 
-
+    @Override
+    public void removeByknowledgeId(ChatProject chatProject, String knowledgeId) throws Exception {
+        String baseUrl = chatProject.getBaseUrl();
+        String embeddingModel = chatProject.getEmbeddingModel();
+        QdrantVectorStore ollamaQdrantVectorStore = qdrantVectorStoreComponet.getOllamaQdrantVectorStore(baseUrl, embeddingModel);
+        ollamaQdrantVectorStore.delete(
+                new FilterExpressionBuilder().eq("knowledgeId", knowledgeId).build()
+        );
+    }
 }

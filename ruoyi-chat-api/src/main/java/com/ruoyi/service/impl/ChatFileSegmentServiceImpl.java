@@ -93,4 +93,15 @@ public class ChatFileSegmentServiceImpl implements IChatFileSegmentService
     {
         return chatFileSegmentMapper.deleteChatFileSegmentBySegmentId(segmentId);
     }
+
+
+    /**
+     * 删除文件分片信息
+     * @param knowledgeId 知识库ID
+     * @return
+     */
+    @Override
+    public int deleteChatFileSegmentByKnowledgeId(String knowledgeId) {
+        return chatFileSegmentMapper.deleteChatFileSegmentByKnowledgeId(knowledgeId);
+    }
 }
