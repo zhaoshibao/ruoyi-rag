@@ -126,8 +126,8 @@ http://localhost:8080/swagger-ui/index.html
 2. 添加 `@BeanType` 注解指定模型类型
 3. 实现必要的方法（如 `chatStream`、`upload` 等）
 
-## 前端项目
-
+## github源码地址
+- [AI知识库服务端](https://github.com/zhaoshibao/ruoyi-rag.git)：服务端
 - [AI知识库管理系统](https://github.com/zhaoshibao/ruoyi-rag-admin.git)：管理端页面
 - [AI知识库用户端](https://github.com/zhaoshibao/ruoyi-rag-web.git)：用户端页面
 
