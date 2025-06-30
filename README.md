@@ -4,6 +4,9 @@
 
 RuoYi-RAG 是一个基于 RuoYi 框架开发的 AI 知识库检索增强生成（RAG）系统的服务端。该系统为 [AI知识库管理系统](https://github.com/zhaoshibao/ruoyi-rag-admin.git) 和 [AI知识库用户端](https://github.com/zhaoshibao/ruoyi-rag-web.git) 提供接口服务，支持多种 AI 模型进行知识检索和问答。
 
+
+## 服务启动文档
+- [文档地址](https://blog.csdn.net/u013795511/article/details/149027129)
 ## 功能特性
 
 ### 项目管理
