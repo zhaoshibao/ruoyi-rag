@@ -4,6 +4,7 @@ import cn.hutool.core.util.IdUtil;
 import com.ruoyi.annotation.BeanType;
 import com.ruoyi.component.QdrantVectorStoreComponet;
 import com.ruoyi.controller.ChatController;
+import com.ruoyi.domain.ChatKnowledge;
 import com.ruoyi.domain.ChatProject;
 import com.ruoyi.enums.AiTypeEnum;
 import com.ruoyi.searxng.SearXNGSearchResult;
@@ -236,20 +237,21 @@ public class OllamaOperator implements AiOperator {
     }
 
     @Override
-    public Boolean upload(ChatProject chatProject, String knowledgeId, String content) throws Exception {
+    public Boolean upload(ChatProject chatProject, ChatKnowledge chatKnowledge, String content) throws Exception {
         String projectId = chatProject.getProjectId();
         String baseUrl = chatProject.getBaseUrl();
         String embeddingModel = chatProject.getEmbeddingModel();
-        Document document = new Document(knowledgeId, content, Map.of("projectId", projectId));
+        Document document = new Document(chatKnowledge.getKnowledgeId(), content, Map.of("projectId", projectId));
         QdrantVectorStore ollamaQdrantVectorStore = qdrantVectorStoreComponet.getOllamaQdrantVectorStore(baseUrl, embeddingModel);
         ollamaQdrantVectorStore.add(List.of(document));
         return true;
     }
 
     @Override
-    public Boolean upload(ChatProject chatProject, String knowledgeId, MultipartFile file) throws Exception {
+    public Boolean upload(ChatProject chatProject, ChatKnowledge chatKnowledge, MultipartFile file) throws Exception {
         return null;
     }
+
 
 //    @Override
 //    public Boolean remove(String docId) {

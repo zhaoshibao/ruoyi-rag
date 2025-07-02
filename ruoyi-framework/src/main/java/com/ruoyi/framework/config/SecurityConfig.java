@@ -97,7 +97,7 @@ public class SecurityConfig
                 // 处理请求
                 .authorizeHttpRequests(authorize -> {
                     authorize
-                            .requestMatchers("/ai/**","/sse/**","/searxng/**").permitAll()
+                            .requestMatchers("/ai/**","/sse/**","/searxng/**","/neo4j/**").permitAll()
                             // 对于登录login 注册register 验证码captchaImage 允许匿名访问
                             .requestMatchers("/login", "/register", "/captchaImage").permitAll()
 //                            .requestMatchers("/chat/knowledge/upload").permitAll()

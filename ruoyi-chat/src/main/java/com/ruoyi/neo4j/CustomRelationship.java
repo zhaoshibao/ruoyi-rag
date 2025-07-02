@@ -1,18 +1,22 @@
 package com.ruoyi.neo4j;
 
-import org.springframework.data.neo4j.core.schema.GeneratedValue;
-import org.springframework.data.neo4j.core.schema.Id;
-import org.springframework.data.neo4j.core.schema.RelationshipProperties;
-import org.springframework.data.neo4j.core.schema.TargetNode;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
+import org.springframework.data.neo4j.core.schema.*;
+import org.springframework.data.neo4j.core.support.UUIDStringGenerator;
 
 @RelationshipProperties
-public class Relationship {
+@Data
+@ToString(exclude = "target")
+@EqualsAndHashCode(exclude = "target")
+public class CustomRelationship {
     @Id
     @GeneratedValue
     private Long id;
 
     @TargetNode
-    private Role target;
+    private CustomRole target;
 
     private String relationshipType;
     private String description;

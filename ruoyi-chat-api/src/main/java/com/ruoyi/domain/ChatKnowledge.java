@@ -11,12 +11,13 @@ import com.ruoyi.common.core.domain.BaseEntity;
  * @author lixianfeng
  * @date 2024-06-27
  */
-public class ChatKnowledge extends BaseEntity
-{
+public class ChatKnowledge extends BaseEntity {
     private static final long serialVersionUID = 1L;
 
     /** $column.columnComment */
     private String  knowledgeId;
+
+
 
     /** 用户id */
     @Excel(name = "用户id")
@@ -39,6 +40,11 @@ public class ChatKnowledge extends BaseEntity
     /** 是否向量化完成（0 否 1是） */
     @Excel(name = "是否向量化完成（0 否 1是）")
     private Integer isVector;
+
+
+    /** 是否开启知识图谱（0 否 1是） */
+    @Excel(name = "是否开启知识图谱（0 否 1是）")
+    private Integer isKnowledgeGraph;
 
     public void setKnowledgeId(String knowledgeId)
     {
@@ -95,6 +101,14 @@ public class ChatKnowledge extends BaseEntity
         this.isVector = isVector;
     }
 
+    public Integer getIsKnowledgeGraph() {
+        return isKnowledgeGraph;
+    }
+
+    public void setIsKnowledgeGraph(Integer isKnowledgeGraph) {
+        this.isKnowledgeGraph = isKnowledgeGraph;
+    }
+
     @Override
     public String toString() {
         return "ChatKnowledge{" +
@@ -104,6 +118,7 @@ public class ChatKnowledge extends BaseEntity
                 ", fileName='" + fileName + '\'' +
                 ", content='" + content + '\'' +
                 ", isVector=" + isVector +
+                ", isKnowledgeGraph=" + isKnowledgeGraph +
                 '}';
     }
 }

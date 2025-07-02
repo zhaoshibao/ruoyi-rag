@@ -101,7 +101,7 @@ public class AiService implements ApplicationContextAware {
         this.getAiOperator(chatProject.getType()).chatStreamv2(chatProject, queryVo);
     }
 
-    @Transactional
+    @Transactional("transactionManager")
     public String upload(ChatKnowledge chatKnowledge, MultipartFile file) throws Exception {
 
         // 根据项目id查询项目，获取类型 及 具体模型
@@ -121,11 +121,11 @@ public class AiService implements ApplicationContextAware {
 
         // 上传到redis向量数据库
        //this.getAiOperator(chatProject.getType()).upload(chatProject, knowledgeId, content);
-        this.getAiOperator(chatProject.getType()).upload(chatProject, knowledgeId, file);
+        this.getAiOperator(chatProject.getType()).upload(chatProject, chatKnowledge, file);
         return knowledgeId;
     }
 
-    @Transactional
+    @Transactional("transactionManager")
     public Boolean remove(String projectId,String  knowledgeId) throws Exception {
         // 根据项目id查询项目，获取类型 及 具体模型
         ChatProject project = this.projectService.selectChatProjectByProjectId(projectId);

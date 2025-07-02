@@ -1,6 +1,7 @@
 package com.ruoyi.operator;
 
 import com.ruoyi.controller.ChatController;
+import com.ruoyi.domain.ChatKnowledge;
 import com.ruoyi.domain.ChatProject;
 import com.ruoyi.vo.QueryVo;
 import org.springframework.web.multipart.MultipartFile;
@@ -94,7 +95,7 @@ public interface AiOperator {
      * @param content
      * @return
      */
-    Boolean upload(ChatProject chatProject, String knowledgeId, String content) throws Exception;
+    Boolean upload(ChatProject chatProject, ChatKnowledge chatKnowledge, String content) throws Exception;
 
 
     /**
@@ -105,7 +106,7 @@ public interface AiOperator {
      * @param file
      * @return
      */
-    Boolean upload(ChatProject chatProject, String knowledgeId, MultipartFile file) throws Exception;
+    Boolean upload(ChatProject chatProject, ChatKnowledge chatKnowledge, MultipartFile file) throws Exception;
 
     /**
      * 移除本地知识库

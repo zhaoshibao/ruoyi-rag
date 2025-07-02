@@ -5,12 +5,14 @@ import com.ruoyi.annotation.BeanType;
 import com.ruoyi.component.QdrantVectorStoreComponet;
 import com.ruoyi.controller.ChatController;
 import com.ruoyi.domain.ChatFileSegment;
+import com.ruoyi.domain.ChatKnowledge;
 import com.ruoyi.domain.ChatProject;
 import com.ruoyi.searxng.SearXNGSearchParams;
 import com.ruoyi.searxng.SearXNGSearchResult;
 import com.ruoyi.searxng.SearXNGService;
 import com.ruoyi.service.IChatFileSegmentService;
 import com.ruoyi.service.IChatProjectService;
+import com.ruoyi.service.Neo4jService;
 import com.ruoyi.service.async.VectorStoreAsyncService;
 import com.ruoyi.sse.SSEMsgType;
 import com.ruoyi.sse.SSEServer;
@@ -89,6 +91,9 @@ public class OpenAiOperator implements AiOperator {
 
     @Autowired
     private SearXNGService searXNGService;
+
+    @Autowired
+    private Neo4jService neo4jService;
 
     // 历史消息列表，用于存储聊天的历史记录
     private static List<Message> historyMessage = new ArrayList<>();
@@ -211,16 +216,28 @@ public class OpenAiOperator implements AiOperator {
 
         List<Message> msgList;
         // 把本地知识库的内容作为系统提示放入
+        List<String> knoledgeIds = new ArrayList<>();
         if (!CollectionUtils.isEmpty(documentList)) {
-            msgList = documentList.stream().map(result ->
-                    new SystemMessage(result.getText())).collect(Collectors.toList());
+            msgList = documentList.stream().map(result -> {
+                        Object o = result.getMetadata().get("knowledgeId");
+                        if (o != null) {
+                            knoledgeIds.add(o.toString());
+                        }
+                        return new SystemMessage(result.getText());
+            }
+            ).collect(Collectors.toList());
         } else {
             msgList = new ArrayList<>();
         }
 
-
+        // 添加 Neo4j 图数据库查询结果
+        String graphContext = neo4jService.getAllRelationshipsContext(queryVo.getProjectId(), knoledgeIds);
+        if (graphContext != null && !graphContext.isEmpty() && !graphContext.startsWith("未指定") && !graphContext.startsWith("指定的")) {
+            msgList.add(new SystemMessage("以下是从图数据库中查询到的相关信息：\n" + graphContext));
+        }
         //是否开启联网搜索
         Boolean useWebSearch = queryVo.getUseWebSearch();
+
         if (useWebSearch) {
             SearXNGSearchResult search = searXNGService.search(queryVo.getMsg());
             List<SearXNGSearchResult.Result> searchResultList = search.getResults();
@@ -328,9 +345,9 @@ public class OpenAiOperator implements AiOperator {
     }
 
     @Override
-    public Boolean upload( ChatProject chatProject, String knowledgeId, String content) throws Exception {
+    public Boolean upload(ChatProject chatProject, ChatKnowledge chatKnowledge, String content) throws Exception {
         String projectId = chatProject.getProjectId();
-        Document document = new Document(knowledgeId, content, Map.of("projectId", projectId));
+        Document document = new Document(chatKnowledge.getKnowledgeId(), content, Map.of("projectId", projectId));
         String baseUrl = chatProject.getBaseUrl();
         String apiKey = chatProject.getApiKey();
         String embeddingModel = chatProject.getEmbeddingModel();
@@ -340,7 +357,7 @@ public class OpenAiOperator implements AiOperator {
     }
 
     @Override
-    public Boolean upload(ChatProject chatProject, String knowledgeId, MultipartFile file) throws Exception {
+    public Boolean upload(ChatProject chatProject, ChatKnowledge chatKnowledge, MultipartFile file) throws Exception {
         String filename = file.getOriginalFilename();
         String fileSuffix  = filename.substring(filename.lastIndexOf(".") + 1).toLowerCase();
         List<Document> documentList = new ArrayList<>();
@@ -351,6 +368,7 @@ public class OpenAiOperator implements AiOperator {
                 break;
             case "txt":
             case "md":
+            case "csv":
                 TextReader textReader = new TextReader(file.getResource());
                 List<Document> documents = textReader.get();
                 documentList = new TokenTextSplitter().apply(documents);
@@ -385,6 +403,7 @@ public class OpenAiOperator implements AiOperator {
 
          }
         String projectId = chatProject.getProjectId();
+        String knowledgeId = chatKnowledge.getKnowledgeId();
         List<Document> docList = new ArrayList<>();
         if (!CollectionUtils.isEmpty(documentList)) {
 
@@ -416,6 +435,11 @@ public class OpenAiOperator implements AiOperator {
                     chatFileSegment.setCreateTime(new Date());
                     iChatFileSegmentService.insertChatFileSegment(chatFileSegment);
                 }
+                //判断是否开启知识图谱
+                Integer isKnowledgeGraph = chatKnowledge.getIsKnowledgeGraph();
+                if (isKnowledgeGraph == 1) {
+                    neo4jService.processCsvFile(file,projectId,knowledgeId);
+                }
 
                 String baseUrl = chatProject.getBaseUrl();
                 String apiKey = chatProject.getApiKey();
@@ -423,7 +447,9 @@ public class OpenAiOperator implements AiOperator {
                 QdrantVectorStore openAiQdrantVectorStore = qdrantVectorStoreComponet.getOpenAiQdrantVectorStore(baseUrl, apiKey, embeddingModel);
                 //openAiQdrantVectorStore.add(documentList);
                 //异步执行
-                this.vectorStoreAsyncService.addVectorStore(knowledgeId,openAiQdrantVectorStore, documentList);
+                this.vectorStoreAsyncService.addVectorStore(knowledgeId,openAiQdrantVectorStore, docList);
+
+
             }
 
         }

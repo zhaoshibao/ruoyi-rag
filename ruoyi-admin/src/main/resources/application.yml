@@ -53,7 +53,7 @@ spring:
     basename: i18n/messages
   profiles:
     active: druid
-    include: mongodb
+    include: mongodb,neo4j
   # 文件上传
   servlet:
     multipart:

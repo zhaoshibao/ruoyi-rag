@@ -1,4 +1,26 @@
 spring:
+  neo4j:
+    uri: bolt://localhost:7687
+    authentication:
+      username: neo4j
+      password: ruoyiRag123456
+    database: ruoyiRag
   data:
-    mongodb:
-      uri: mongodb://localhost:27017/ruoyi_rag
+    neo4j:
+      database: ruoyiRag
+      #设置 repositories 类型为 imperative（命令式）
+      repositories:
+        type: imperative
+      #启用原生类型支持
+      use-native-types: true
+      #使用 Neo4j 的原生 ID 生成（使用 elementId() 而不是 id()）
+      id-generation: NATIVE
+      # 配置 Neo4j 驱动
+      driver:
+        config:
+          database: ruoyiRag
+          # 启用日志记录
+          logging:
+            level: debug
+          # 启用 native 数字类型
+          native-numbers: true
