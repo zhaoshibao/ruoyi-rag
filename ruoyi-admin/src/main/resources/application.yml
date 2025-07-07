@@ -102,7 +102,7 @@ spring:
       # ollama config: qwen2:7b  llama3:latest
       base-url: http://localhost:11434
       embedding:
-        model: qwen2:7b
+        model: mxbai-embed-large
     vectorstore:
       qdrant:
         host: localhost

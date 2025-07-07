@@ -38,8 +38,8 @@ public class QdrantVectorStoreComponet {
      * @throws Exception
      */
     public QdrantVectorStore getOpenAiQdrantVectorStore(String baseUrl, String apiKey, String embeddingmodel) throws Exception  {
-        if (!qdrantClient.collectionExistsAsync(SystemConstant.OPENAI_GPT3_QDRANT).get()) {
-            qdrantClient.createCollectionAsync(SystemConstant.OPENAI_GPT3_QDRANT,
+        if (!qdrantClient.collectionExistsAsync(SystemConstant.OPENAI_QDRANT).get()) {
+            qdrantClient.createCollectionAsync(SystemConstant.OPENAI_QDRANT,
                     Collections.VectorParams.newBuilder()
                             .setDistance(Collections.Distance.Cosine).setSize(1536).build()).get();
         }
@@ -56,7 +56,7 @@ public class QdrantVectorStoreComponet {
                         .build(),
                 RetryUtils.DEFAULT_RETRY_TEMPLATE);
         return QdrantVectorStore.builder(qdrantClient,embeddingModel)
-                .collectionName(SystemConstant.OPENAI_GPT3_QDRANT)
+                .collectionName(SystemConstant.OPENAI_QDRANT)
                 .initializeSchema(properties.isInitializeSchema())
                 .build();
     }
@@ -69,10 +69,12 @@ public class QdrantVectorStoreComponet {
      * @throws Exception
      */
     public QdrantVectorStore getOllamaQdrantVectorStore (String baseUrl, String embeddingmodel ) throws Exception {
-        if (!qdrantClient.collectionExistsAsync(SystemConstant.OLLAMA_QWEN2_QDRANT).get()) {
-            qdrantClient.createCollectionAsync(SystemConstant.OLLAMA_QWEN2_QDRANT,
+        if (!qdrantClient.collectionExistsAsync(SystemConstant.OLLAMA_QDRANT).get()) {
+            qdrantClient.createCollectionAsync(SystemConstant.OLLAMA_QDRANT,
                     Collections.VectorParams.newBuilder()
-                            .setDistance(Collections.Distance.Cosine).setSize(3584).build()).get();
+                            .setDistance(Collections.Distance.Cosine)
+                            .setSize(1024)
+                            .build()).get();
         }
         //var ollamaApi = new OllamaApi(baseUrl);
         var ollamaApi = OllamaApi.builder().baseUrl(baseUrl).build();
@@ -80,7 +82,7 @@ public class QdrantVectorStoreComponet {
                 .ollamaApi(ollamaApi).defaultOptions(
                 OllamaOptions.builder().model(embeddingmodel).build()).build();
         return QdrantVectorStore.builder(qdrantClient,embeddingModel)
-                .collectionName(SystemConstant.OLLAMA_QWEN2_QDRANT)
+                .collectionName(SystemConstant.OLLAMA_QDRANT)
                 .initializeSchema(properties.isInitializeSchema())
                 .build();
     }

@@ -19,7 +19,7 @@
     <description>ruoyi-rag</description>
 
     <properties>
-        <ruoyi-rag.version>3.8.7</ruoyi-rag.version>
+        <ruoyi-rag.version>1.0.0</ruoyi-rag.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>17</java.version>

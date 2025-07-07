@@ -1,6 +1,7 @@
 package com.ruoyi.operator;
 
 import cn.hutool.core.util.IdUtil;
+import com.google.errorprone.annotations.Var;
 import com.ruoyi.annotation.BeanType;
 import com.ruoyi.component.QdrantVectorStoreComponet;
 import com.ruoyi.controller.ChatController;
@@ -31,6 +32,11 @@ import org.apache.pdfbox.rendering.PDFRenderer;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.apache.pdfbox.tools.imageio.ImageIOUtil;
 import org.apache.poi.util.StringUtil;
+import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
+import org.springframework.ai.chat.client.advisor.PromptChatMemoryAdvisor;
+import org.springframework.ai.chat.memory.ChatMemory;
+import org.springframework.ai.chat.memory.MessageWindowChatMemory;
 import org.springframework.ai.chat.messages.AssistantMessage;
 import org.springframework.ai.chat.messages.Message;
 import org.springframework.ai.chat.messages.SystemMessage;
@@ -60,6 +66,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -95,18 +102,18 @@ public class OpenAiOperator implements AiOperator {
     @Autowired
     private Neo4jService neo4jService;
 
-    // 历史消息列表，用于存储聊天的历史记录
-    private static List<Message> historyMessage = new ArrayList<>();
-
-    // 历史消息列表的最大长度，用于限制历史记录的数量
-    private static final int maxLen = 50;
-
 
     @Autowired
     private IChatFileSegmentService iChatFileSegmentService;
 
     @Autowired
     private VectorStoreAsyncService vectorStoreAsyncService;
+
+
+    @Autowired
+    private  ChatMemory chatMemory;
+
+
 
 
     /**
@@ -185,22 +192,16 @@ public class OpenAiOperator implements AiOperator {
     @Override
     public Flux<String> chatStream(ChatProject chatProject, QueryVo queryVo) throws Exception {
         // 把问题记录到mongodb
+        Long chatId = queryVo.getChatId();
         com.ruoyi.pojo.Message msg = new com.ruoyi.pojo.Message();
-        msg.setChatId(queryVo.getChatId());
+        msg.setChatId(chatId);
         msg.setType(0);
         msg.setContent(queryVo.getMsg());
         msg.setCreateTime(new Date());
         msg.setId(IdUtil.getSnowflake().nextId());
-        this.mongoTemplate.insert(msg, MongoUtil.getMessageCollection(queryVo.getChatId()));
+        this.mongoTemplate.insert(msg, MongoUtil.getMessageCollection(chatId));
 
-        // 查询本地知识库
-//        List<Document> results = openaiQdrantVectorStore.similaritySearch(SearchRequest
-//                .query(queryVo.getMsg())
-//                .withFilterExpression(
-//                        new FilterExpressionBuilder()
-//                                .eq("projectId", queryVo.getProjectId()) // 查询当前用户及管理员的本地知识库
-//                                .build())
-//                .withTopK(SystemConstant.TOPK)); // 取前10个
+
         String baseUrl = chatProject.getBaseUrl();
         String apiKey = chatProject.getApiKey();
         String model = chatProject.getModel();
@@ -253,29 +254,30 @@ public class OpenAiOperator implements AiOperator {
         msgList.add(new SystemMessage(LanguageEnum.getMsg(queryVo.getLanguage())));
         msgList.add(new SystemMessage(chatProject.getSystemPrompt()));
 
-
-        historyMessage.add(new UserMessage(queryVo.getMsg()));
-        if (historyMessage.size() > maxLen) {
-            historyMessage.remove(0);
-        }
-        msgList.addAll(historyMessage);
         // 加入当前用户的提问
         msgList.add(new UserMessage(queryVo.getMsg()));
 
 
+      OpenAiChatModel openAiChatModel = ChatModelUtil.getOpenAiChatModel(baseUrl, apiKey, model);
 
         // 提交到大模型获取最终结果
-//        Flux<ChatResponse> responseFlux = this.openAiChatModel.stream(
-//                new Prompt(msgList, OpenAiChatOptions.builder().model(chatProject.getModel()).build()));
+        ChatClient chatClient = ChatClient.builder(openAiChatModel)
+                .defaultAdvisors(MessageChatMemoryAdvisor.builder(chatMemory).build())
+                .build();
 
-      OpenAiChatModel openAiChatModel = ChatModelUtil.getOpenAiChatModel(baseUrl, apiKey, model);
-        Flux<ChatResponse> responseFlux = openAiChatModel.stream(new Prompt(msgList, OpenAiChatOptions.builder().model(model).build()));
-        Flux<String> flux = responseFlux.map(response -> response.getResult() != null
-                && response.getResult().getOutput() != null
-                && response.getResult().getOutput().getText() != null
-                ? response.getResult().getOutput().getText() : "");
+        Flux<ChatResponse> responseFlux =chatClient.prompt(new Prompt(msgList)).stream().chatResponse();
 
-        // flux.collectList().subscribe(list -> {\
+        Flux<String> flux = responseFlux.map(response -> {
+                   String result =  response.getResult() != null
+                            && response.getResult().getOutput() != null
+                            && response.getResult().getOutput().getText() != null
+                            ? response.getResult().getOutput().getText() : "";
+                    return result;
+                 }
+        );
+
+
+        // flux.collectList().subscribe(list -> {
         //     此处获取的信息和最终返回的信息 是两个结果
         //     System.out.println(StringUtils.join(list, ""));
         // });
