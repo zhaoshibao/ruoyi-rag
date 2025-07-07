@@ -31,8 +31,8 @@ public class ChatModelUtil {
                 .maxTokens(200)
                 .build();
 
-
-        return  new OpenAiChatModel(openAiApi, openAiChatOptions);
+       return  OpenAiChatModel.builder().openAiApi(openAiApi).defaultOptions(openAiChatOptions).build();
+        //return  new OpenAiChatModel(openAiApi, openAiChatOptions);
     }
 
 
@@ -43,7 +43,8 @@ public class ChatModelUtil {
      * @return
      */
     public static OllamaChatModel getOllamaChatModel(String baseUrl, String model) {
-        var ollamaApi = new OllamaApi(baseUrl);
+        //var ollamaApi = new OllamaApi(baseUrl);
+        var ollamaApi = OllamaApi.builder().baseUrl(baseUrl).build();
         return  OllamaChatModel.builder()
                 .ollamaApi(ollamaApi)
                 .defaultOptions(

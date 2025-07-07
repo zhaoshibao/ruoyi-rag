@@ -3,22 +3,18 @@ package com.ruoyi.component;
 import com.ruoyi.enums.SystemConstant;
 import io.qdrant.client.QdrantClient;
 import io.qdrant.client.grpc.Collections;
-import org.springframework.ai.autoconfigure.vectorstore.qdrant.QdrantVectorStoreProperties;
 import org.springframework.ai.document.MetadataMode;
 import org.springframework.ai.ollama.OllamaEmbeddingModel;
 import org.springframework.ai.ollama.api.OllamaApi;
-import org.springframework.ai.ollama.api.OllamaModel;
 import org.springframework.ai.ollama.api.OllamaOptions;
 import org.springframework.ai.openai.OpenAiEmbeddingModel;
 import org.springframework.ai.openai.OpenAiEmbeddingOptions;
 import org.springframework.ai.openai.api.OpenAiApi;
 import org.springframework.ai.retry.RetryUtils;
 import org.springframework.ai.vectorstore.qdrant.QdrantVectorStore;
+import org.springframework.ai.vectorstore.qdrant.autoconfigure.QdrantVectorStoreProperties;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
-
-import java.util.concurrent.ExecutionException;
 
 /**
  * Qdrant向量存储组件
@@ -78,7 +74,8 @@ public class QdrantVectorStoreComponet {
                     Collections.VectorParams.newBuilder()
                             .setDistance(Collections.Distance.Cosine).setSize(3584).build()).get();
         }
-        var ollamaApi = new OllamaApi(baseUrl);
+        //var ollamaApi = new OllamaApi(baseUrl);
+        var ollamaApi = OllamaApi.builder().baseUrl(baseUrl).build();
         var embeddingModel = OllamaEmbeddingModel.builder()
                 .ollamaApi(ollamaApi).defaultOptions(
                 OllamaOptions.builder().model(embeddingmodel).build()).build();

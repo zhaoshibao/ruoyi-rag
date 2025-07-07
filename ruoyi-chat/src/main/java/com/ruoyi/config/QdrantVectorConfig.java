@@ -3,14 +3,13 @@ package com.ruoyi.config;
 import com.ruoyi.enums.SystemConstant;
 import io.qdrant.client.QdrantClient;
 import io.qdrant.client.grpc.Collections;
-import org.springframework.ai.autoconfigure.vectorstore.qdrant.QdrantVectorStoreProperties;
 import org.springframework.ai.ollama.OllamaEmbeddingModel;
 import org.springframework.ai.openai.OpenAiEmbeddingModel;
 import org.springframework.ai.vectorstore.qdrant.QdrantVectorStore;
+import org.springframework.ai.vectorstore.qdrant.autoconfigure.QdrantVectorStoreProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.stereotype.Component;
 
 import java.util.concurrent.ExecutionException;
 

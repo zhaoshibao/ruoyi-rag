@@ -13,7 +13,7 @@
 
     <groupId>com.ruoyi</groupId>
     <artifactId>ruoyi-rag</artifactId>
-    <version>3.8.7</version>
+    <version>1.0.0</version>
 
     <name>ruoyi-rag</name>
     <description>ruoyi-rag</description>
@@ -26,7 +26,7 @@
         <maven-jar-plugin.version>3.1.1</maven-jar-plugin.version>
         <!--<spring-framework.version>6.1.8</spring-framework.version>-->
         <!--<spring-security.version>5.7.12</spring-security.version>-->
-        <spring-ai.version>1.0.0-M6</spring-ai.version>
+        <spring-ai.version>1.0.0</spring-ai.version>
         <druid.version>1.2.23</druid.version>
         <bitwalker.version>1.21</bitwalker.version>
         <knife4j.version>4.4.0</knife4j.version>
