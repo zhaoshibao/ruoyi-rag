@@ -228,6 +228,7 @@
         <module>ruoyi-common</module>
         <module>ruoyi-chat-api</module>
         <module>ruoyi-chat</module>
+        <module>ruoyi-mcp-server</module>
     </modules>
     <packaging>pom</packaging>
 

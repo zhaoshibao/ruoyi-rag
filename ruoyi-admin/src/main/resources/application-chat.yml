@@ -1,4 +1,6 @@
 spring:
+  config:
+    import: optional:file:.env[.properties]
   neo4j:
     uri: bolt://localhost:7687
     authentication:
@@ -6,6 +8,8 @@ spring:
       password: ruoyiRag123456
     database: ruoyiRag
   data:
+    mongodb:
+      uri: mongodb://localhost:27017/ruoyi_rag
     neo4j:
       database: ruoyiRag
       #设置 repositories 类型为 imperative（命令式）
@@ -24,3 +28,56 @@ spring:
             level: debug
           # 启用 native 数字类型
           native-numbers: true
+
+  ai:
+    openai:
+      # openai: gpt-3.5-turbo gpt-4o
+      base-url: https://api.xty.app
+      api-key: ${OPEN_AI_API_KEY}
+      chat:
+        options:
+          model: gpt-4o
+          temperature: 0.7
+    ollama:
+      # ollama config: qwen2:7b  llama3:latest
+      base-url: http://localhost:11434
+      embedding:
+        model: mxbai-embed-large
+    zhipuai:
+      api-key: ${ZHIPUAI_API_KEY}
+      chat:
+        options:
+          model: glm-4-air
+          temperature: 0.7
+      embedding:
+        options:
+          model: embedding-3
+    vectorstore:
+      qdrant:
+        host: localhost
+        port: 6334
+        initialize-schema: true
+        collection-name: rag
+    mcp:
+      client:
+        enabled: true
+        name: spring-ai-mcp-client
+        type: ASYNC
+        sse:
+          connections:
+            server1:
+              url: https://mcp.amap.com
+              sse-endpoint: /sse?key=${GAODE_API_KEY}
+            server2:
+              url: http://localhost:9055
+              sse-endpoint: /sse
+        stdio:
+          servers-configuration: classpath:mcp-server.json
+
+
+
+
+# SearXNG配置
+searxng:
+  host: http://localhost:8080
+  timeout: 5000

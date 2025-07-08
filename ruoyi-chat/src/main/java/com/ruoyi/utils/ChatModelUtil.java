@@ -7,6 +7,12 @@ import org.springframework.ai.ollama.api.OllamaOptions;
 import org.springframework.ai.openai.OpenAiChatModel;
 import org.springframework.ai.openai.OpenAiChatOptions;
 import org.springframework.ai.openai.api.OpenAiApi;
+import org.springframework.ai.tool.ToolCallback;
+import org.springframework.ai.zhipuai.ZhiPuAiChatModel;
+import org.springframework.ai.zhipuai.ZhiPuAiChatOptions;
+import org.springframework.ai.zhipuai.api.ZhiPuAiApi;
+
+import java.util.List;
 
 /**
  * 工具类，用于获取聊天模型
@@ -20,7 +26,7 @@ public class ChatModelUtil {
      * @param model
      * @return
      */
-    public static OpenAiChatModel getOpenAiChatModel(String baseUrl, String apiKey, String model) {
+    public static OpenAiChatModel getOpenAiChatModel(String baseUrl, String apiKey, String model, ToolCallback... toolCallbacks) {
         var openAiApi = OpenAiApi.builder()
                 .baseUrl(baseUrl)
                 .apiKey(apiKey)
@@ -29,6 +35,7 @@ public class ChatModelUtil {
                 .model(model)
                 .temperature(0.4)
                 .maxTokens(200)
+                .toolCallbacks(toolCallbacks)
                 .build();
 
        return  OpenAiChatModel.builder().openAiApi(openAiApi).defaultOptions(openAiChatOptions).build();
@@ -42,7 +49,7 @@ public class ChatModelUtil {
      * @param model
      * @return
      */
-    public static OllamaChatModel getOllamaChatModel(String baseUrl, String model) {
+    public static OllamaChatModel getOllamaChatModel(String baseUrl, String model,ToolCallback... toolCallbacks) {
         //var ollamaApi = new OllamaApi(baseUrl);
         var ollamaApi = OllamaApi.builder().baseUrl(baseUrl).build();
         return  OllamaChatModel.builder()
@@ -54,5 +61,26 @@ public class ChatModelUtil {
                                 .build())
                 .build();
     }
+
+
+    /**
+     * 获取智普AI聊天模型
+     * @param baseUrl
+     * @param apiKey
+     * @param model
+     * @return
+     */
+    public static ZhiPuAiChatModel getZhiPuAiChatModel(String baseUrl, String apiKey, String model, ToolCallback... toolCallbacks) {
+        var zhiPuAiApi =  new ZhiPuAiApi(baseUrl,apiKey);
+        var openAiChatOptions = ZhiPuAiChatOptions.builder()
+                .model(model)
+                .temperature(0.4)
+                .maxTokens(200)
+                .toolCallbacks(toolCallbacks)
+                .build();
+
+        return  new ZhiPuAiChatModel(zhiPuAiApi, openAiChatOptions);
+    }
+
 
 }

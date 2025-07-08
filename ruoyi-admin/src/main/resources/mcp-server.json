@@ -1,11 +1,11 @@
 {
   "mcpServers": {
     "filesystem": {
-      "command": "npx",
+      "command": "D:\\soft\\nvm\\v20.18.0\\npx.cmd",
       "args": [
         "-y",
         "@modelcontextprotocol/server-filesystem",
-        "/Volumes/lee/docker"
+        "E:\\mcp"
       ]
     }
   }

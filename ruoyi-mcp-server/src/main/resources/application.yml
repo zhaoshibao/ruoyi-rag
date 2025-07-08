@@ -3,6 +3,21 @@ spring:
     name: ruoyi-mcp-server
   profiles:
     active: dev
+  datasource: # 数据源的相关配置
+    type: com.zaxxer.hikari.HikariDataSource      # 数据源的类型，可以更改为其他的数据源配置，比如druid
+    driver-class-name: com.mysql.cj.jdbc.Driver      # mysql/MariaDB 的数据库驱动类名称
+    url: jdbc:mysql://localhost:3306/ruoyi_rag?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+    username: root
+    password: 123456
+    hikari:
+      pool-name: DataSourceHikariCP           # 连接池的名字
+      connection-timeout: 30000               # 等待连接池分配连接的最大时间（毫秒），超过这个时长还没有可用的连接，则会抛出SQLException
+      minimum-idle: 5                         # 最小连接数
+      maximum-pool-size: 20                   # 最大连接数
+      auto-commit: true                       # 自动提交
+      idle-timeout: 600000                    # 连接超时的最大时长（毫秒），超时则会被释放（retired）
+      max-lifetime: 18000000                  # 连接池的最大生命时长（毫秒），超时则会被释放（retired）
+      connection-test-query: SELECT 1
   ai:
     mcp:
       server:
@@ -13,8 +28,8 @@ spring:
   mail:
     host: smtp.163.com               # 邮箱host
     port: 465                      # 邮箱固定端口
-    username: fatherfilm@163.com
-    password: ENgpxfu5GdTZW88P
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
     protocol: smtp                  # 邮箱协议
     default-encoding: UTF-8         # 默认编码
     properties:
@@ -29,3 +44,15 @@ spring:
 logging:
   level:
     root: info
+
+
+
+# MyBatisPlus 的配置
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  global-config:
+    db-config:
+      id-type:
+      update-strategy: not_empty
+  mapper-locations: classpath*:/mappers/*.xml

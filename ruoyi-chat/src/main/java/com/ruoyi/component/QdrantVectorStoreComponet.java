@@ -13,6 +13,9 @@ import org.springframework.ai.openai.api.OpenAiApi;
 import org.springframework.ai.retry.RetryUtils;
 import org.springframework.ai.vectorstore.qdrant.QdrantVectorStore;
 import org.springframework.ai.vectorstore.qdrant.autoconfigure.QdrantVectorStoreProperties;
+import org.springframework.ai.zhipuai.ZhiPuAiEmbeddingModel;
+import org.springframework.ai.zhipuai.ZhiPuAiEmbeddingOptions;
+import org.springframework.ai.zhipuai.api.ZhiPuAiApi;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -83,6 +86,34 @@ public class QdrantVectorStoreComponet {
                 OllamaOptions.builder().model(embeddingmodel).build()).build();
         return QdrantVectorStore.builder(qdrantClient,embeddingModel)
                 .collectionName(SystemConstant.OLLAMA_QDRANT)
+                .initializeSchema(properties.isInitializeSchema())
+                .build();
+    }
+
+    /**
+     * 获取智普AI 向量存储组件
+     * @param baseUrl
+     * @param embeddingmodel
+     * @return
+     * @throws Exception
+     */
+    public QdrantVectorStore getZhiPuAiQdrantVectorStore (String baseUrl, String apiKey, String embeddingmodel) throws Exception {
+        if (!qdrantClient.collectionExistsAsync(SystemConstant.ZHIPUAI_QDRANT).get()) {
+            qdrantClient.createCollectionAsync(SystemConstant.ZHIPUAI_QDRANT,
+                    Collections.VectorParams.newBuilder()
+                            .setDistance(Collections.Distance.Cosine).setSize(2048).build()).get();
+        }
+        var zhiPuAiApi = new ZhiPuAiApi(baseUrl,apiKey);
+
+        var embeddingModel = new ZhiPuAiEmbeddingModel(
+                zhiPuAiApi,
+                MetadataMode.EMBED,
+                ZhiPuAiEmbeddingOptions.builder()
+                        .model(embeddingmodel)
+                        .build(),
+                RetryUtils.DEFAULT_RETRY_TEMPLATE);
+        return QdrantVectorStore.builder(qdrantClient,embeddingModel)
+                .collectionName(SystemConstant.ZHIPUAI_QDRANT)
                 .initializeSchema(properties.isInitializeSchema())
                 .build();
     }

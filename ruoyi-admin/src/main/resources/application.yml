@@ -53,7 +53,7 @@ spring:
     basename: i18n/messages
   profiles:
     active: druid
-    include: mongodb,neo4j
+    include: chat
   # 文件上传
   servlet:
     multipart:
@@ -89,25 +89,8 @@ spring:
           max-active: 8
           # #连接池最大阻塞等待时间（使用负值表示没有限制）
           max-wait: -1ms
-  ai:
-    openai:
-      # openai: gpt-3.5-turbo gpt-4o
-      base-url: https://api.xty.app
-      api-key: ${OPEN_AI_API_KEY}
-      chat:
-        options:
-          model: gpt-4o
-          temperature: 0.7
-    ollama:
-      # ollama config: qwen2:7b  llama3:latest
-      base-url: http://localhost:11434
-      embedding:
-        model: mxbai-embed-large
-    vectorstore:
-      qdrant:
-        host: localhost
-        port: 6334
-        initialize-schema: true
+
+
   main:
     allow-bean-definition-overriding: true
 # token配置
@@ -153,7 +136,4 @@ springdoc:
     - group: default
       paths-to-match: /ai/**, /chat/**
 
-# SearXNG配置
-searxng:
-  host: http://localhost:8080
-  timeout: 5000
+

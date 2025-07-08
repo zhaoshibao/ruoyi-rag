@@ -1,6 +1,7 @@
-package com.ruoyi;
+package com.mcp;
 
-import com.ruoyi.mapper.ChatProjectMapper;
+import com.ruoyi.RuoyiMcpServerApplication;
+import com.ruoyi.mcp.mapper.ChatProjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 

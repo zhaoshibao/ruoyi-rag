@@ -1,22 +1,26 @@
 package com.ruoyi;
 
-import com.ruoyi.tool.ChatProjectTool;
-import com.ruoyi.tool.DateTool;
-import com.ruoyi.tool.EmailTool;
+import com.ruoyi.mcp.tool.ChatProjectTool;
+import com.ruoyi.mcp.tool.DateTool;
+import com.ruoyi.mcp.tool.EmailTool;
+import io.github.cdimascio.dotenv.Dotenv;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.ai.tool.ToolCallbackProvider;
 import org.springframework.ai.tool.method.MethodToolCallbackProvider;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 
 
-@MapperScan("com.ruoyi.mapper")
+@MapperScan("com.ruoyi.mcp.mapper")
 @SpringBootApplication
 public class RuoyiMcpServerApplication {
 
     public static void main(String[] args) {
+        // 加载.env文件
+        Dotenv dotenv = Dotenv.configure().ignoreIfMissing().load();
+        // 把.env文件中的变量设置到环境变量中
+        dotenv.entries().forEach(entry -> System.setProperty(entry.getKey(), entry.getValue()));
         SpringApplication.run(RuoyiMcpServerApplication.class, args);
     }
 

@@ -1,18 +1,18 @@
 package com.ruoyi.operator;
 
 import cn.hutool.core.util.IdUtil;
-import com.google.errorprone.annotations.Var;
 import com.ruoyi.annotation.BeanType;
 import com.ruoyi.component.QdrantVectorStoreComponet;
 import com.ruoyi.controller.ChatController;
 import com.ruoyi.domain.ChatFileSegment;
 import com.ruoyi.domain.ChatKnowledge;
 import com.ruoyi.domain.ChatProject;
-import com.ruoyi.searxng.SearXNGSearchParams;
+import com.ruoyi.enums.AiTypeEnum;
+import com.ruoyi.enums.LanguageEnum;
+import com.ruoyi.enums.SystemConstant;
 import com.ruoyi.searxng.SearXNGSearchResult;
 import com.ruoyi.searxng.SearXNGService;
 import com.ruoyi.service.IChatFileSegmentService;
-import com.ruoyi.service.IChatProjectService;
 import com.ruoyi.service.Neo4jService;
 import com.ruoyi.service.async.VectorStoreAsyncService;
 import com.ruoyi.sse.SSEMsgType;
@@ -20,9 +20,6 @@ import com.ruoyi.sse.SSEServer;
 import com.ruoyi.utils.ChatModelUtil;
 import com.ruoyi.utils.MongoUtil;
 import com.ruoyi.vo.QueryVo;
-import com.ruoyi.enums.AiTypeEnum;
-import com.ruoyi.enums.LanguageEnum;
-import com.ruoyi.enums.SystemConstant;
 import lombok.extern.slf4j.Slf4j;
 import net.sourceforge.tess4j.Tesseract;
 import net.sourceforge.tess4j.TesseractException;
@@ -30,13 +27,9 @@ import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.rendering.PDFRenderer;
 import org.apache.pdfbox.text.PDFTextStripper;
-import org.apache.pdfbox.tools.imageio.ImageIOUtil;
-import org.apache.poi.util.StringUtil;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
-import org.springframework.ai.chat.client.advisor.PromptChatMemoryAdvisor;
 import org.springframework.ai.chat.memory.ChatMemory;
-import org.springframework.ai.chat.memory.MessageWindowChatMemory;
 import org.springframework.ai.chat.messages.AssistantMessage;
 import org.springframework.ai.chat.messages.Message;
 import org.springframework.ai.chat.messages.SystemMessage;
@@ -46,20 +39,18 @@ import org.springframework.ai.chat.model.Generation;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.chat.prompt.PromptTemplate;
 import org.springframework.ai.document.Document;
-import org.springframework.ai.ollama.api.OllamaOptions;
 import org.springframework.ai.openai.OpenAiChatModel;
 import org.springframework.ai.openai.OpenAiChatOptions;
-import org.springframework.ai.reader.ExtractedTextFormatter;
 import org.springframework.ai.reader.JsonReader;
 import org.springframework.ai.reader.TextReader;
-import org.springframework.ai.reader.pdf.PagePdfDocumentReader;
-import org.springframework.ai.reader.pdf.config.PdfDocumentReaderConfig;
 import org.springframework.ai.reader.tika.TikaDocumentReader;
+import org.springframework.ai.tool.ToolCallback;
 import org.springframework.ai.tool.ToolCallbackProvider;
 import org.springframework.ai.transformer.splitter.TokenTextSplitter;
 import org.springframework.ai.vectorstore.SearchRequest;
 import org.springframework.ai.vectorstore.filter.FilterExpressionBuilder;
 import org.springframework.ai.vectorstore.qdrant.QdrantVectorStore;
+import org.springframework.ai.zhipuai.ZhiPuAiChatModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -67,24 +58,22 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.io.PipedReader;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@BeanType(AiTypeEnum.OPENAI)
+@BeanType(AiTypeEnum.ZHIPUAI)
 @Slf4j
-public class OpenAiOperator implements AiOperator {
+public class ZhiPuAiOperator implements AiOperator {
 
     @Autowired
-    private OpenAiChatModel openAiChatModel;
+    private ZhiPuAiChatModel zhiPuAiChatModel;
 
-    @Value("${spring.ai.openai.chat.options.temperature}")
+    @Value("${spring.ai.zhipuai.chat.options.temperature}")
     private double temperature;
 
    // @Autowired
@@ -145,7 +134,7 @@ public class OpenAiOperator implements AiOperator {
         // 3. 构建提示并获取补全
         Prompt prompt = promptTemplate.create(Map.of("context", context));
 
-        String completion = openAiChatModel.call(prompt).getResult().getOutput().getText();
+        String completion = zhiPuAiChatModel.call(prompt).getResult().getOutput().getText();
 
         //String completion = chatClient.prompt(prompt).call().content();
 
@@ -177,7 +166,7 @@ public class OpenAiOperator implements AiOperator {
         // 2. 获取多个候选项
         //ChatResponse response = chatClient.prompt(prompt).call().chatResponse();
 
-        List<Generation> results = openAiChatModel.call(prompt).getResults();
+        List<Generation> results = zhiPuAiChatModel.call(prompt).getResults();
 
         // 3. 处理每个候选项
         return results.stream().map(result -> {
@@ -210,8 +199,8 @@ public class OpenAiOperator implements AiOperator {
         String apiKey = chatProject.getApiKey();
         String model = chatProject.getModel();
         String embeddingModel = chatProject.getEmbeddingModel();
-        QdrantVectorStore openAiQdrantVectorStore = qdrantVectorStoreComponet.getOpenAiQdrantVectorStore(baseUrl, apiKey, embeddingModel);
-        List<Document> documentList = openAiQdrantVectorStore.similaritySearch(
+        QdrantVectorStore zhiPuAiQdrantVectorStore = qdrantVectorStoreComponet.getZhiPuAiQdrantVectorStore(baseUrl, apiKey, embeddingModel);
+        List<Document> documentList = zhiPuAiQdrantVectorStore.similaritySearch(
                 SearchRequest.builder().query(queryVo.getMsg())
                         .filterExpression(
                                 new FilterExpressionBuilder()
@@ -261,11 +250,15 @@ public class OpenAiOperator implements AiOperator {
         // 加入当前用户的提问
         msgList.add(new UserMessage(queryVo.getMsg()));
 
+        ToolCallback[] toolCallbacks = tools.getToolCallbacks();
+        Arrays.stream(toolCallbacks).forEach(toolCallback -> {
+            log.info("toolCallback:{}",toolCallback);
+        });
 
-      OpenAiChatModel openAiChatModel = ChatModelUtil.getOpenAiChatModel(baseUrl, apiKey, model,tools.getToolCallbacks());
+        ZhiPuAiChatModel zhiPuAiChatModel = ChatModelUtil.getZhiPuAiChatModel(baseUrl, apiKey, model,toolCallbacks);
 
         // 提交到大模型获取最终结果
-        ChatClient chatClient = ChatClient.builder(openAiChatModel)
+        ChatClient chatClient = ChatClient.builder(zhiPuAiChatModel)
                 .defaultToolCallbacks(tools)
                 .defaultAdvisors(MessageChatMemoryAdvisor.builder(chatMemory).build())
                 .build();

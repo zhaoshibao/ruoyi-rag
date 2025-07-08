@@ -55,6 +55,7 @@ import org.springframework.ai.reader.TextReader;
 import org.springframework.ai.reader.pdf.PagePdfDocumentReader;
 import org.springframework.ai.reader.pdf.config.PdfDocumentReaderConfig;
 import org.springframework.ai.reader.tika.TikaDocumentReader;
+import org.springframework.ai.tool.ToolCallbackProvider;
 import org.springframework.ai.transformer.splitter.TokenTextSplitter;
 import org.springframework.ai.vectorstore.SearchRequest;
 import org.springframework.ai.vectorstore.filter.FilterExpressionBuilder;
@@ -112,6 +113,9 @@ public class OpenAiOperator implements AiOperator {
 
     @Autowired
     private  ChatMemory chatMemory;
+
+    @Autowired
+    private ToolCallbackProvider tools;
 
 
 
@@ -258,10 +262,11 @@ public class OpenAiOperator implements AiOperator {
         msgList.add(new UserMessage(queryVo.getMsg()));
 
 
-      OpenAiChatModel openAiChatModel = ChatModelUtil.getOpenAiChatModel(baseUrl, apiKey, model);
+      OpenAiChatModel openAiChatModel = ChatModelUtil.getOpenAiChatModel(baseUrl, apiKey, model,tools.getToolCallbacks());
 
         // 提交到大模型获取最终结果
         ChatClient chatClient = ChatClient.builder(openAiChatModel)
+                .defaultToolCallbacks(tools)
                 .defaultAdvisors(MessageChatMemoryAdvisor.builder(chatMemory).build())
                 .build();
 

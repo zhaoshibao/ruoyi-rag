@@ -40,6 +40,7 @@ import org.springframework.ai.ollama.OllamaChatModel;
 import org.springframework.ai.reader.JsonReader;
 import org.springframework.ai.reader.TextReader;
 import org.springframework.ai.reader.tika.TikaDocumentReader;
+import org.springframework.ai.tool.ToolCallbackProvider;
 import org.springframework.ai.transformer.splitter.TokenTextSplitter;
 import org.springframework.ai.vectorstore.SearchRequest;
 import org.springframework.ai.vectorstore.filter.FilterExpressionBuilder;
@@ -89,6 +90,9 @@ public class OllamaOperator implements AiOperator {
     private VectorStoreAsyncService vectorStoreAsyncService;
     @Autowired
     private ChatMemory chatMemory;
+
+    @Autowired
+    private ToolCallbackProvider tools;
 
     @Override
     public ChatController.CompletionResponse complete(ChatController.CompletionRequest request) {
@@ -176,8 +180,9 @@ public class OllamaOperator implements AiOperator {
         msgList.add(new UserMessage(queryVo.getMsg()));
 
         // 提交到大模型获取最终结果
-        OllamaChatModel ollamaChatModel = ChatModelUtil.getOllamaChatModel(baseUrl, model);
+        OllamaChatModel ollamaChatModel = ChatModelUtil.getOllamaChatModel(baseUrl, model,tools.getToolCallbacks());
         ChatClient chatClient = ChatClient.builder(ollamaChatModel)
+                .defaultToolCallbacks(tools)
                 .defaultAdvisors(MessageChatMemoryAdvisor.builder(chatMemory).build())
                 .build();
 
