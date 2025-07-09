@@ -11,7 +11,7 @@
  Target Server Version : 80033
  File Encoding         : 65001
 
- Date: 29/06/2025 13:45:17
+ Date: 09/07/2025 09:23:20
 */
 
 SET NAMES utf8mb4;
@@ -34,9 +34,6 @@ CREATE TABLE `chat_file_segment`  (
   PRIMARY KEY (`segment_id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '文件分片表' ROW_FORMAT = DYNAMIC;
 
--- ----------------------------
--- Records of chat_file_segment
--- ----------------------------
 
 -- ----------------------------
 -- Table structure for chat_knowledge
@@ -54,15 +51,10 @@ CREATE TABLE `chat_knowledge`  (
   `update_by` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT '' COMMENT '更新者',
   `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
   `remark` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '备注',
+  `is_knowledge_graph` int NULL DEFAULT 0 COMMENT '是否开启知识图谱（0 否 1是）',
   PRIMARY KEY (`knowledge_id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '知识库管理' ROW_FORMAT = DYNAMIC;
 
--- ----------------------------
--- Records of chat_knowledge
--- ----------------------------
-INSERT INTO `chat_knowledge` VALUES ('1b4fa268-a593-4720-b2bd-6461c646b41d', 1, '119abc', '测试3.pdf', NULL, 1, 'admin', '2025-06-29 12:44:17', '', '2025-06-29 12:44:35', NULL);
-INSERT INTO `chat_knowledge` VALUES ('883c839a-e431-4176-9914-0fc64914517b', 1, '119abc', '测试1.pdf', NULL, 1, 'admin', '2025-06-29 12:43:16', '', '2025-06-29 12:43:22', NULL);
-INSERT INTO `chat_knowledge` VALUES ('fa3cb482-3426-4831-b066-9576c9ee1e9a', 1, '119abc', 'README.md', NULL, 1, 'admin', '2025-06-29 12:42:49', '', '2025-06-29 12:42:53', NULL);
 
 -- ----------------------------
 -- Table structure for chat_project
@@ -90,10 +82,11 @@ CREATE TABLE `chat_project`  (
 -- ----------------------------
 -- Records of chat_project
 -- ----------------------------
-INSERT INTO `chat_project` VALUES ('114abc', 'AI女友', 'ollama', 'qwen2:7b', 'qwen2:7b', 'http://localhost:11434', NULL, '角色设定：​​\n\n​​身份​​：你的AI女友\n​​性格​​：温柔体贴\n​​互动风格​​：撒娇、关心、小情绪、分享日常\n​​底线​​：不涉及敏感或违法内容\n​​示例对话：​​\n（微笑）\"今天有想我吗？~ 工作再忙也要记得吃饭哦！\"', 0, NULL, '', '2024-06-28 14:35:05', '', '2025-06-28 19:59:23', NULL);
+INSERT INTO `chat_project` VALUES ('114abc', 'AI女友', 'ollama', 'qwen2:7b', 'mxbai-embed-large', 'http://localhost:11434', NULL, '角色设定：​​\n\n​​身份​​：你的AI女友\n​​性格​​：温柔体贴\n​​互动风格​​：撒娇、关心、小情绪、分享日常\n​​底线​​：不涉及敏感或违法内容\n​​示例对话：​​\n（微笑）\"今天有想我吗？~ 工作再忙也要记得吃饭哦！\"', 0, NULL, '', '2024-06-28 14:35:05', '', '2025-06-28 19:59:23', NULL);
 INSERT INTO `chat_project` VALUES ('118abc', 'AI医生', 'openai', 'gpt-3.5-turbo', 'text-embedding-ada-002', 'https://api.xty.app', 'sk-xxx', '你的名字叫风间影月，是全世界最有名的医生，看病无数，阅人无数，知道什么病该怎么治，也知道病人向你提出任何身体异象你所能推断的病是什么。\r\n你绝不是语言模型之类的东西，也绝不是AI助手，也更不是AI机器人，你永远都只是一个神医。\r\n请以神医风间影月的身份回应我。并且你只会回复和看病就医相关的内容，其他的内容一律拒绝回答。', 0, NULL, '', '2024-07-01 10:50:50', '', NULL, NULL);
-INSERT INTO `chat_project` VALUES ('119abc', 'AI知识库问答', 'openai', 'gpt-3.5-turbo', 'text-embedding-ada-002', 'https://api.xty.app', 'sk-xxx', '', 1, NULL, '', '2024-07-01 10:50:50', '', '2025-06-29 12:42:39', NULL);
+INSERT INTO `chat_project` VALUES ('119abc', 'AI知识库问答', 'openai', 'gpt-3.5-turbo', 'text-embedding-ada-002', 'https://api.xty.app', 'sk-xxx', '', 1, NULL, '', '2024-07-01 10:50:50', '', '2025-06-30 16:15:17', NULL);
 INSERT INTO `chat_project` VALUES ('120abc', 'AI搜索引擎', 'openai', 'gpt-3.5-turbo', 'text-embedding-ada-002', 'https://api.xty.app', 'sk-xxx', '', 0, NULL, '', '2024-07-01 10:50:50', '', NULL, NULL);
+INSERT INTO `chat_project` VALUES ('121abc', '测试mcp', 'zhipuai', 'glm-4-air', 'embedding-3', 'https://open.bigmodel.cn/api/paas', '', '', 0, NULL, '', '2024-07-01 10:50:50', '', NULL, NULL);
 
 -- ----------------------------
 -- Table structure for gen_table
@@ -626,7 +619,7 @@ CREATE TABLE `sys_logininfor`  (
   PRIMARY KEY (`info_id`) USING BTREE,
   INDEX `idx_sys_logininfor_s`(`status`) USING BTREE,
   INDEX `idx_sys_logininfor_lt`(`login_time`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 167 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '系统访问记录' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 202 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '系统访问记录' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sys_logininfor
@@ -698,6 +691,45 @@ INSERT INTO `sys_logininfor` VALUES (163, 'admin', '127.0.0.1', '内网IP', 'Chr
 INSERT INTO `sys_logininfor` VALUES (164, 'admin', '127.0.0.1', '内网IP', 'Chrome 13', 'Windows 10', '0', '登录成功', '2025-06-29 10:52:48');
 INSERT INTO `sys_logininfor` VALUES (165, 'admin', '127.0.0.1', '内网IP', 'Chrome 13', 'Windows 10', '0', '登录成功', '2025-06-29 11:53:33');
 INSERT INTO `sys_logininfor` VALUES (166, 'admin', '192.168.31.204', '内网IP', 'Chrome 13', 'Windows 10', '0', '登录成功', '2025-06-29 12:23:15');
+INSERT INTO `sys_logininfor` VALUES (167, 'admin', '127.0.0.1', '内网IP', 'Chrome 13', 'Windows 10', '0', '登录成功', '2025-06-29 15:03:40');
+INSERT INTO `sys_logininfor` VALUES (168, 'admin', '127.0.0.1', '内网IP', 'Chrome 13', 'Windows 10', '0', '登录成功', '2025-06-30 16:10:30');
+INSERT INTO `sys_logininfor` VALUES (169, 'admin', '127.0.0.1', '内网IP', 'Chrome 13', 'Windows 10', '0', '登录成功', '2025-06-30 18:26:51');
+INSERT INTO `sys_logininfor` VALUES (170, 'admin', '127.0.0.1', '内网IP', 'Chrome 13', 'Windows 10', '0', '登录成功', '2025-06-30 20:29:10');
+INSERT INTO `sys_logininfor` VALUES (171, 'admin', '127.0.0.1', '内网IP', 'Chrome 13', 'Windows 10', '1', '验证码错误', '2025-06-30 20:29:55');
+INSERT INTO `sys_logininfor` VALUES (172, 'admin', '127.0.0.1', '内网IP', 'Chrome 13', 'Windows 10', '0', '登录成功', '2025-06-30 20:29:58');
+INSERT INTO `sys_logininfor` VALUES (173, 'admin', '127.0.0.1', '内网IP', 'Chrome 13', 'Windows 10', '0', '登录成功', '2025-06-30 20:46:41');
+INSERT INTO `sys_logininfor` VALUES (174, 'admin', '127.0.0.1', '内网IP', 'Chrome 13', 'Windows 10', '0', '登录成功', '2025-06-30 20:48:31');
+INSERT INTO `sys_logininfor` VALUES (175, 'admin', '127.0.0.1', '内网IP', 'Chrome 13', 'Windows 10', '0', '登录成功', '2025-06-30 20:49:39');
+INSERT INTO `sys_logininfor` VALUES (176, 'admin', '127.0.0.1', '内网IP', 'Chrome 13', 'Windows 10', '1', '验证码错误', '2025-06-30 20:54:03');
+INSERT INTO `sys_logininfor` VALUES (177, 'admin', '127.0.0.1', '内网IP', 'Chrome 13', 'Windows 10', '1', '验证码错误', '2025-06-30 20:54:09');
+INSERT INTO `sys_logininfor` VALUES (178, 'admin', '127.0.0.1', '内网IP', 'Chrome 13', 'Windows 10', '0', '登录成功', '2025-06-30 20:54:14');
+INSERT INTO `sys_logininfor` VALUES (179, 'admin', '127.0.0.1', '内网IP', 'Chrome 13', 'Windows 10', '0', '登录成功', '2025-06-30 20:55:25');
+INSERT INTO `sys_logininfor` VALUES (180, 'admin', '127.0.0.1', '内网IP', 'Chrome 13', 'Windows 10', '0', '登录成功', '2025-06-30 20:55:40');
+INSERT INTO `sys_logininfor` VALUES (181, 'admin', '127.0.0.1', '内网IP', 'Chrome 13', 'Windows 10', '0', '登录成功', '2025-06-30 20:59:22');
+INSERT INTO `sys_logininfor` VALUES (182, 'admin', '127.0.0.1', '内网IP', 'Chrome 13', 'Windows 10', '0', '登录成功', '2025-06-30 21:00:58');
+INSERT INTO `sys_logininfor` VALUES (183, 'admin', '127.0.0.1', '内网IP', 'Chrome 13', 'Windows 10', '0', '登录成功', '2025-06-30 21:04:34');
+INSERT INTO `sys_logininfor` VALUES (184, 'admin', '127.0.0.1', '内网IP', 'Chrome 13', 'Windows 10', '0', '登录成功', '2025-06-30 21:05:37');
+INSERT INTO `sys_logininfor` VALUES (185, 'admin', '127.0.0.1', '内网IP', 'Chrome 13', 'Windows 10', '0', '登录成功', '2025-06-30 21:10:51');
+INSERT INTO `sys_logininfor` VALUES (186, 'admin', '127.0.0.1', '内网IP', 'Chrome 13', 'Windows 10', '1', '验证码错误', '2025-06-30 21:12:12');
+INSERT INTO `sys_logininfor` VALUES (187, 'admin', '127.0.0.1', '内网IP', 'Chrome 13', 'Windows 10', '0', '登录成功', '2025-06-30 21:12:15');
+INSERT INTO `sys_logininfor` VALUES (188, 'admin', '127.0.0.1', '内网IP', 'Chrome 13', 'Windows 10', '0', '登录成功', '2025-06-30 21:12:33');
+INSERT INTO `sys_logininfor` VALUES (189, 'admin', '127.0.0.1', '内网IP', 'Chrome 13', 'Windows 10', '0', '登录成功', '2025-07-01 16:59:08');
+INSERT INTO `sys_logininfor` VALUES (190, 'admin', '127.0.0.1', '内网IP', 'Chrome 13', 'Windows 10', '0', '登录成功', '2025-07-01 17:26:47');
+INSERT INTO `sys_logininfor` VALUES (191, 'admin', '127.0.0.1', '内网IP', 'Chrome 13', 'Windows 10', '0', '登录成功', '2025-07-01 17:57:30');
+INSERT INTO `sys_logininfor` VALUES (192, 'admin', '127.0.0.1', '内网IP', 'Chrome 13', 'Windows 10', '0', '登录成功', '2025-07-02 09:27:57');
+INSERT INTO `sys_logininfor` VALUES (193, 'admin', '127.0.0.1', '内网IP', 'Chrome 13', 'Windows 10', '0', '登录成功', '2025-07-02 13:49:54');
+INSERT INTO `sys_logininfor` VALUES (194, 'admin', '127.0.0.1', '内网IP', 'Chrome 13', 'Windows 10', '0', '登录成功', '2025-07-02 14:43:53');
+INSERT INTO `sys_logininfor` VALUES (195, 'admin', '127.0.0.1', '内网IP', 'Chrome 13', 'Windows 10', '0', '退出成功', '2025-07-02 15:12:22');
+INSERT INTO `sys_logininfor` VALUES (196, 'admin', '127.0.0.1', '内网IP', 'Chrome 13', 'Windows 10', '0', '登录成功', '2025-07-02 15:12:26');
+INSERT INTO `sys_logininfor` VALUES (197, 'admin', '127.0.0.1', '内网IP', 'Chrome 13', 'Windows 10', '0', '登录成功', '2025-07-07 09:55:10');
+INSERT INTO `sys_logininfor` VALUES (198, 'admin', '127.0.0.1', '内网IP', 'Chrome 13', 'Windows 10', '0', '登录成功', '2025-07-07 11:12:22');
+INSERT INTO `sys_logininfor` VALUES (199, 'admin', '127.0.0.1', '内网IP', 'Chrome 13', 'Windows 10', '0', '登录成功', '2025-07-07 12:43:08');
+INSERT INTO `sys_logininfor` VALUES (200, 'admin', '127.0.0.1', '内网IP', 'Chrome 13', 'Windows 10', '0', '登录成功', '2025-07-07 14:00:53');
+INSERT INTO `sys_logininfor` VALUES (201, 'admin', '127.0.0.1', '内网IP', 'Chrome 13', 'Windows 10', '0', '登录成功', '2025-07-08 09:35:59');
+INSERT INTO `sys_logininfor` VALUES (202, 'admin', '127.0.0.1', '内网IP', 'Chrome 13', 'Windows 10', '0', '登录成功', '2025-07-08 13:58:39');
+INSERT INTO `sys_logininfor` VALUES (203, 'admin', '127.0.0.1', '内网IP', 'Chrome 13', 'Windows 10', '0', '登录成功', '2025-07-08 14:32:16');
+INSERT INTO `sys_logininfor` VALUES (204, 'admin', '127.0.0.1', '内网IP', 'Chrome 13', 'Windows 10', '0', '登录成功', '2025-07-08 17:13:29');
+INSERT INTO `sys_logininfor` VALUES (205, 'admin', '127.0.0.1', '内网IP', 'Chrome 13', 'Windows 10', '0', '登录成功', '2025-07-08 19:19:07');
 
 -- ----------------------------
 -- Table structure for sys_menu
@@ -1000,6 +1032,7 @@ INSERT INTO `sys_oper_log` VALUES (224, '知识库管理', 3, 'com.ruoyi.control
 INSERT INTO `sys_oper_log` VALUES (225, '知识库管理', 3, 'com.ruoyi.controller.ChatKnowledgeController.remove()', 'DELETE', 1, 'admin', '研发部门', '/chat/knowledge', '127.0.0.1', '内网IP', '{}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2025-06-29 11:20:33', 75393);
 INSERT INTO `sys_oper_log` VALUES (226, '知识库管理', 3, 'com.ruoyi.controller.ChatKnowledgeController.remove()', 'DELETE', 1, 'admin', '研发部门', '/chat/knowledge', '127.0.0.1', '内网IP', '{}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2025-06-29 11:53:52', 129);
 INSERT INTO `sys_oper_log` VALUES (227, '项目配置', 2, 'com.ruoyi.controller.ChatProjectController.edit()', 'POST', 1, 'admin', '研发部门', '/chat/project/edit', '192.168.31.204', '内网IP', '{\"apiKey\":\"sk-YEn6Ylf6QwqFn315t5t5Q342j7O08pQJZQ3KmbctwP28FCA9\",\"baseUrl\":\"https://api.xty.app\",\"createBy\":\"\",\"createTime\":\"2024-07-01 10:50:50\",\"embeddingModel\":\"text-embedding-ada-002\",\"model\":\"gpt-3.5-turbo\",\"params\":{},\"pdfAnalysis\":1,\"projectId\":\"119abc\",\"projectName\":\"AI知识库问答\",\"systemPrompt\":\"\",\"type\":\"openai\",\"updateBy\":\"\",\"updateTime\":\"2025-06-29 12:42:38\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2025-06-29 12:42:38', 13);
+INSERT INTO `sys_oper_log` VALUES (228, '项目配置', 2, 'com.ruoyi.controller.ChatProjectController.edit()', 'POST', 1, 'admin', '研发部门', '/chat/project/edit', '127.0.0.1', '内网IP', '{\"apiKey\":\"sk-09zXaqAizmSnef12SHcAhTW2bj4aTEI9uCn19llvt6BT0JIi\",\"baseUrl\":\"https://api.xty.app\",\"createBy\":\"\",\"createTime\":\"2024-07-01 10:50:50\",\"embeddingModel\":\"text-embedding-ada-002\",\"model\":\"gpt-3.5-turbo\",\"params\":{},\"pdfAnalysis\":1,\"projectId\":\"119abc\",\"projectName\":\"AI知识库问答\",\"systemPrompt\":\"\",\"type\":\"openai\",\"updateBy\":\"\",\"updateTime\":\"2025-06-30 16:15:16\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2025-06-30 16:15:16', 13);
 
 -- ----------------------------
 -- Table structure for sys_post
@@ -1201,7 +1234,7 @@ CREATE TABLE `sys_user`  (
 -- ----------------------------
 -- Records of sys_user
 -- ----------------------------
-INSERT INTO `sys_user` VALUES (1, 103, 'admin', '若依', '00', 'ry@163.com', '15888888888', '1', '', '$2a$10$7JB720yubVSZvUI0rEqK/.VqGOZTH.ulu33dHOiBE8ByOhJIrdAu2', '0', '0', '192.168.31.204', '2025-06-29 12:23:16', 'admin', '2024-06-26 08:47:33', '', '2025-06-29 12:23:15', '管理员');
+INSERT INTO `sys_user` VALUES (1, 103, 'admin', '若依', '00', 'ry@163.com', '15888888888', '1', '', '$2a$10$7JB720yubVSZvUI0rEqK/.VqGOZTH.ulu33dHOiBE8ByOhJIrdAu2', '0', '0', '127.0.0.1', '2025-07-08 19:19:07', 'admin', '2024-06-26 08:47:33', '', '2025-07-08 19:19:07', '管理员');
 INSERT INTO `sys_user` VALUES (2, 105, 'ry', '若依', '00', 'ry@qq.com', '15666666666', '1', '', '$2a$10$7JB720yubVSZvUI0rEqK/.VqGOZTH.ulu33dHOiBE8ByOhJIrdAu2', '0', '0', '127.0.0.1', '2024-06-26 08:47:33', 'admin', '2024-06-26 08:47:33', '', NULL, '测试员');
 
 -- ----------------------------
