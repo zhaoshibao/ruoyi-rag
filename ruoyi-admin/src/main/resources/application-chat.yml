@@ -1,6 +1,4 @@
 spring:
-  config:
-    import: optional:file:.env[.properties]
   neo4j:
     uri: bolt://localhost:7687
     authentication:

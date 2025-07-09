@@ -19,7 +19,7 @@ import com.ruoyi.common.utils.StringUtils;
 /**
  * swagger 用户测试方法
  * 
- * @author lixianfeng
+ * @author zhaoshibao
  */
 @RestController
 @RequestMapping("/test/user")

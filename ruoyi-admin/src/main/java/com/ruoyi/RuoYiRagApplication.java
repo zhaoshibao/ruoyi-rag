@@ -10,13 +10,12 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 /**
  * 启动程序
  * 
- * @author lixianfeng
+ * @author zhaoshibao
  */
 @EnableAsync
 @EnableScheduling
 @SpringBootApplication(exclude = { DataSourceAutoConfiguration.class })
-public class RuoYiRagApplication
-{
+public class RuoYiRagApplication {
     public static void main(String[] args) {
         // 加载.env文件
         Dotenv dotenv = Dotenv.configure().ignoreIfMissing().load();
