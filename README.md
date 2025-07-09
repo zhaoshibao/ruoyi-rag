@@ -4,6 +4,13 @@
 
 RuoYi-RAG 是一个基于 RuoYi 框架开发的 AI 知识库检索增强生成（RAG）系统的服务端。该系统为 [AI知识库管理系统](https://github.com/zhaoshibao/ruoyi-rag-admin.git) 和 [AI知识库用户端](https://github.com/zhaoshibao/ruoyi-rag-web.git) 提供接口服务，支持多种 AI 模型进行知识检索和问答，并引入SearXNG搜索引擎、Neo4j知识图谱、mcp服务（高德地图、邮件、数据库）来增强大模型回答能力，使模型回答更丰富、更准确、更及时。
 
+**核心特点：**
+
+- 🤖 多模型支持：适配 OpenAI、各大国内主流大模型平台，以及本地 vllm、ollama 部署
+- 📚 灵活知识库：支持 PDF、TXT、MD 等多种格式文档
+- 🕸️ 知识图谱集成：基于 Neo4j 的知识图谱问答能力
+- 🚀 简单配置：只需配置对应服务平台的 `API_KEY` 即可使用
+
 
 ## 服务启动文档
 - [文档地址](https://blog.csdn.net/u013795511/article/details/149218898)
@@ -146,6 +153,18 @@ http://localhost:8080/swagger-ui/index.html
 - [AI知识库服务端](https://github.com/zhaoshibao/ruoyi-rag.git)：服务端
 - [AI知识库管理系统](https://github.com/zhaoshibao/ruoyi-rag-admin.git)：管理端页面
 - [AI知识库用户端](https://github.com/zhaoshibao/ruoyi-rag-web.git)：用户端页面
+
+## 贡献者名单
+
+感谢以下贡献者的支持！
+
+<a href="https://github.com/zhaoshibao/ruoyi-rag/contributors">
+    <img src="https://contributors.nn.ci/api?repo=zhaoshibao/ruoyi-rag" alt="贡献者名单">
+</a>
+
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=zhaoshibao/ruoyi-rag)](https://www.star-history.com/#zhaoshibao/ruoyi-rag)
 
 ## 许可证
 
