@@ -2,7 +2,7 @@
 
 ## 项目介绍
 
-RuoYi-RAG 是一个基于 RuoYi 框架开发的 AI 知识库检索增强生成（RAG）系统的服务端。该系统为 [AI知识库管理系统](https://github.com/zhaoshibao/ruoyi-rag-admin.git) 和 [AI知识库用户端](https://github.com/zhaoshibao/ruoyi-rag-web.git) 提供接口服务，支持多种 AI 模型进行知识检索和问答。
+RuoYi-RAG 是一个基于 RuoYi 框架开发的 AI 知识库检索增强生成（RAG）系统的服务端。该系统为 [AI知识库管理系统](https://github.com/zhaoshibao/ruoyi-rag-admin.git) 和 [AI知识库用户端](https://github.com/zhaoshibao/ruoyi-rag-web.git) 提供接口服务，支持多种 AI 模型进行知识检索和问答，并引入SearXNG搜索引擎、Neo4j知识图谱、mcp服务（高德地图、邮件、数据库）来增强大模型回答能力，使模型回答更丰富、更准确、更及时。
 
 
 ## 服务启动文档
@@ -12,16 +12,19 @@ RuoYi-RAG 是一个基于 RuoYi 框架开发的 AI 知识库检索增强生成�
 ### 项目管理
 
 - 创建、修改、删除项目
-- 支持多种 AI 模型类型（如 OpenAI GPT-3.5-turbo、Ollama Qwen2:7b 等）
-- 自定义系统提示词
 - 项目列表展示与搜索
+- 支持多种 AI 模型类型（OpenAI 、Ollama 、智谱AI等）
+- 自定义系统提示词
+- 支持上传多种文件格式（如 PDF、DOCX、TXT、Markdown，CSV 等）
+- 支持知识图谱展示与搜索
+
 
 ### 知识库管理
 
-- 按项目上传知识文件
-- 知识文件内容向量化存储
-- 知识库文件删除
 - 知识库列表展示与搜索
+- 知识库文件删除
+- 知识文件内容查看
+
 
 ### AI 对话功能
 
@@ -32,15 +35,20 @@ RuoYi-RAG 是一个基于 RuoYi 框架开发的 AI 知识库检索增强生成�
 - 联网搜索：支持 AI 在回答问题时进行网络搜索，获取最新信息
 - 智能补全：提供代码和文本的智能补全功能
 
+### MCP 服务
+- 集成文件系统、高德地图等mcp服务
+- 自定义获取时间、发送邮件、查询数据库等mcp服务
+
 ## 技术架构
 
 ### 核心技术栈
 
 - **后端框架**：Spring Boot 3.3.0
-- **AI 框架**：Spring AI 1.0.0-M6
-- **数据库**：MySQL、MongoDB
+- **AI 框架**：Spring AI 1.0.0
+- **数据库**：MySQL、Redis、MongoDB
 - **向量存储**：Qdrant Vector Store
 - **搜索引擎**：SearXNG
+- **图数据库**：Neo4j
 
 ### 主要模块
 
@@ -52,11 +60,13 @@ RuoYi-RAG 是一个基于 RuoYi 框架开发的 AI 知识库检索增强生成�
 - **ruoyi-system**：系统功能模块
 - **ruoyi-quartz**：定时任务模块
 - **ruoyi-generator**：代码生成模块
+- **ruoyi-mcp-server**：MCP服务端模块
 
 ### AI 模型支持
 
 - **OpenAI**：支持 GPT-3.5-turbo 等模型
 - **Ollama**：支持 Qwen2:7b 等开源模型
+- **智谱AI**：支持 智谱AI 等模型
 
 ## 安装部署
 
@@ -65,8 +75,11 @@ RuoYi-RAG 是一个基于 RuoYi 框架开发的 AI 知识库检索增强生成�
 - JDK 17+
 - MySQL 8.0+
 - MongoDB 4.0+
+- Redis 6.0+
 - Qdrant Vector Store
 - Maven 3.6+
+- Neo4j 5.7+
+- SearXNG 2025.7.8-fe52290
 
 ### 数据库配置
 
