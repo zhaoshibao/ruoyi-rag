@@ -63,9 +63,9 @@ spring:
         type: ASYNC
         sse:
           connections:
-            server1:
-              url: https://mcp.amap.com
-              sse-endpoint: /sse?key=${GAODE_API_KEY}
+#            server1:
+#              url: https://mcp.amap.com
+#              sse-endpoint: /sse?key=${GAODE_API_KEY}
             server2:
               url: http://localhost:9055
               sse-endpoint: /sse

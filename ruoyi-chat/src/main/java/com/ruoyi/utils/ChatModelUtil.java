@@ -34,7 +34,7 @@ public class ChatModelUtil {
         var openAiChatOptions = OpenAiChatOptions.builder()
                 .model(model)
                 .temperature(0.4)
-                .maxTokens(200)
+               // .maxTokens(200)
                 .toolCallbacks(toolCallbacks)
                 .build();
 
@@ -75,8 +75,8 @@ public class ChatModelUtil {
         var openAiChatOptions = ZhiPuAiChatOptions.builder()
                 .model(model)
                 .temperature(0.4)
-                .maxTokens(200)
-                .toolCallbacks(toolCallbacks)
+                //.maxTokens(200)
+               .toolCallbacks(toolCallbacks)
                 .build();
 
         return  new ZhiPuAiChatModel(zhiPuAiApi, openAiChatOptions);

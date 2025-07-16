@@ -251,9 +251,9 @@ public class ZhiPuAiOperator implements AiOperator {
         msgList.add(new UserMessage(queryVo.getMsg()));
 
         ToolCallback[] toolCallbacks = tools.getToolCallbacks();
-        Arrays.stream(toolCallbacks).forEach(toolCallback -> {
-            log.info("toolCallback:{}",toolCallback);
-        });
+//        Arrays.stream(toolCallbacks).forEach(toolCallback -> {
+//            log.info("toolCallback:{}",toolCallback);
+//        });
 
         ZhiPuAiChatModel zhiPuAiChatModel = ChatModelUtil.getZhiPuAiChatModel(baseUrl, apiKey, model,toolCallbacks);
 
@@ -270,6 +270,7 @@ public class ZhiPuAiOperator implements AiOperator {
                             && response.getResult().getOutput() != null
                             && response.getResult().getOutput().getText() != null
                             ? response.getResult().getOutput().getText() : "";
+                   log.info(result);
                     return result;
                  }
         );
