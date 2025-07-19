@@ -11,8 +11,7 @@ import com.ruoyi.common.core.domain.BaseEntity;
  * @author lixianfeng
  * @date 2024-06-27
  */
-public class ChatProject extends BaseEntity
-{
+public class ChatProject extends BaseEntity {
     private static final long serialVersionUID = 1L;
 
     /** 项目主键 */
@@ -55,9 +54,17 @@ public class ChatProject extends BaseEntity
 
 
 
+
     /** 是否开启pdf增强解析 */
     @Excel(name = "isPdfAnalysis")
     private Integer isPdfAnalysis;
+
+
+
+
+    /** 用户Id */
+    @Excel(name = "userId")
+    private Long userId;
 
     public String getBaseUrl() {
         return baseUrl;
@@ -145,6 +152,25 @@ public class ChatProject extends BaseEntity
     }
 
 
+
+
+    public Integer getIsPdfAnalysis() {
+        return isPdfAnalysis;
+    }
+
+    public void setIsPdfAnalysis(Integer isPdfAnalysis) {
+        this.isPdfAnalysis = isPdfAnalysis;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
+
     @Override
     public String toString() {
         return "ChatProject{" +
@@ -157,11 +183,9 @@ public class ChatProject extends BaseEntity
                 ", apiKey='" + apiKey + '\'' +
                 ", systemPrompt='" + systemPrompt + '\'' +
                 ", isPdfAnalysis=" + isPdfAnalysis +
+                ", userId=" + userId +
                 '}';
     }
-
-
-
 
 
 }

@@ -1,5 +1,6 @@
 package com.ruoyi.controller;
 
+import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.domain.ChatProject;
 import com.ruoyi.service.IChatProjectService;
 import com.ruoyi.common.annotation.Log;
@@ -43,15 +44,16 @@ public class ChatProjectController extends BaseController
     @Operation(summary = "分页查询项目列表")
 //    @PreAuthorize("@ss.hasPermi('chat:project:list')")
     @GetMapping("/list")
-    public TableDataInfo list(ChatProject chatProject)
-    {
+    public TableDataInfo list(ChatProject chatProject) {
+        Long userId = SecurityUtils.getUserId();
         startPage();
+        chatProject.setUserId(userId);
         List<ChatProject> list = chatProjectService.selectChatProjectList(chatProject);
         return getDataTable(list);
     }
 
     @Operation(summary = "导出项目配置列表")
-    @PreAuthorize("@ss.hasPermi('chat:project:export')")
+    //@PreAuthorize("@ss.hasPermi('chat:project:export')")
     @Log(title = "项目配置", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public void export(HttpServletResponse response, ChatProject chatProject)
@@ -62,7 +64,7 @@ public class ChatProjectController extends BaseController
     }
 
     @Operation(summary = "获取一个项目的详细信息")
-    @PreAuthorize("@ss.hasPermi('chat:project:query')")
+    //@PreAuthorize("@ss.hasPermi('chat:project:query')")
     @GetMapping(value = "/{projectId}")
     public AjaxResult getInfo(@PathVariable("projectId") String projectId)
     {
@@ -70,20 +72,20 @@ public class ChatProjectController extends BaseController
     }
 
     @Operation(summary = "新增项目配置")
-    @PreAuthorize("@ss.hasPermi('chat:project:add')")
+    //@PreAuthorize("@ss.hasPermi('chat:project:add')")
     @Log(title = "项目配置", businessType = BusinessType.INSERT)
     @PostMapping
-    public AjaxResult add(@RequestBody ChatProject chatProject)
-    {
+    public AjaxResult add(@RequestBody ChatProject chatProject) {
+        Long userId = SecurityUtils.getUserId();
+        chatProject.setUserId(userId);
         return toAjax(chatProjectService.insertChatProject(chatProject));
     }
 
     @Operation(summary = "修改项目")
-    @PreAuthorize("@ss.hasPermi('chat:project:edit')")
+    //@PreAuthorize("@ss.hasPermi('chat:project:edit')")
     @Log(title = "项目配置", businessType = BusinessType.UPDATE)
     @PostMapping(value = "/edit")
-    public AjaxResult edit(@RequestBody ChatProject chatProject)
-    {
+    public AjaxResult edit(@RequestBody ChatProject chatProject) {
         return toAjax(chatProjectService.updateChatProject(chatProject));
     }
 

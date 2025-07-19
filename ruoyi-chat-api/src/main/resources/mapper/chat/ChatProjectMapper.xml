@@ -14,11 +14,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="apiKey"    column="api_key"    />
         <result property="systemPrompt"    column="system_prompt"    />
         <result property="isPdfAnalysis"    column="is_pdf_analysis"    />
+        <result property="userId"    column="user_id"    />
         <result property="createBy"    column="create_by"    />
         <result property="createTime"    column="create_time"    />
         <result property="updateBy"    column="update_by"    />
         <result property="updateTime"    column="update_time"    />
         <result property="remark"    column="remark"    />
+
     </resultMap>
 
     <sql id="selectChatProjectVo">
@@ -32,6 +34,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="projectName != null  and projectName != ''"> and project_name like concat('%', #{projectName}, '%')</if>
             <if test="type != null  and type != ''"> and type = #{type}</if>
             <if test="model != null  and model != ''"> and model = #{model}</if>
+            <if test="userId != null  and userId != ''"> and user_id = #{userId}</if>
         </where>
     </select>
     
@@ -52,6 +55,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="apiKey != null">api_key,</if>
             <if test="systemPrompt != null">system_prompt,</if>
             <if test="isPdfAnalysis != null">is_pdf_analysis,</if>
+            <if test="userId != null">user_id,</if>
             <if test="createBy != null">create_by,</if>
             <if test="createTime != null">create_time,</if>
             <if test="updateBy != null">update_by,</if>
@@ -68,6 +72,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="apiKey != null">#{apiKey},</if>
             <if test="systemPrompt != null">#{systemPrompt},</if>
             <if test="isPdfAnalysis != null">#{isPdfAnalysis},</if>
+            <if test="userId != null">#{userId},</if>
             <if test="createBy != null">#{createBy},</if>
             <if test="createTime != null">#{createTime},</if>
             <if test="updateBy != null">#{updateBy},</if>
