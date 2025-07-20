@@ -10,6 +10,7 @@ import org.springframework.ai.vectorstore.qdrant.QdrantVectorStore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 
@@ -46,11 +47,15 @@ public class VectorStoreAsyncService {
      */
     @Async
     public void addVectorStore(String knowledgeId,QdrantVectorStore qdrantVectorStore, List<Document> documentList) throws Exception {
-        qdrantVectorStore.add(documentList);
+        if (!CollectionUtils.isEmpty(documentList)) {
+            qdrantVectorStore.add(documentList);
+            log.info("异步执行新增向量存储成功");
+        }
+
         ChatKnowledge chatKnowledge = new ChatKnowledge();
         chatKnowledge.setKnowledgeId(knowledgeId);
         chatKnowledge.setIsVector(1);
         chatKnowledgeService.updateChatKnowledge(chatKnowledge);
-        log.info("异步执行新增向量存储成功");
+        log.info("异步修改知识库是否向量化完成为完成状态");
     }
 }

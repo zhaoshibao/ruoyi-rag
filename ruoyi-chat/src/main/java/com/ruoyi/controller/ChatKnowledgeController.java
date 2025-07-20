@@ -63,6 +63,7 @@ public class ChatKnowledgeController extends BaseController
     public TableDataInfo list(ChatKnowledge chatKnowledge)
     {
         startPage();
+        chatKnowledge.setUserId(getUserId());
         List<ChatKnowledge> list = chatKnowledgeService.selectChatKnowledgeList(chatKnowledge);
         return getDataTable(list);
     }

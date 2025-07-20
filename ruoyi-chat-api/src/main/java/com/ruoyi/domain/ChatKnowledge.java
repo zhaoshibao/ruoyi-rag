@@ -12,6 +12,8 @@ import com.ruoyi.common.core.domain.BaseEntity;
  * @date 2024-06-27
  */
 public class ChatKnowledge extends BaseEntity {
+
+
     private static final long serialVersionUID = 1L;
 
     /** $column.columnComment */
@@ -27,6 +29,9 @@ public class ChatKnowledge extends BaseEntity {
     @Excel(name = "项目id")
     private String projectId;
 
+
+    /** 项目名称 */
+    private String projectName;
     /** 文件名 */
     @Excel(name = "文件名")
     private String fileName;
@@ -109,12 +114,23 @@ public class ChatKnowledge extends BaseEntity {
         this.isKnowledgeGraph = isKnowledgeGraph;
     }
 
+
+
+    public String getProjectName() {
+        return projectName;
+    }
+
+    public void setProjectName(String projectName) {
+        this.projectName = projectName;
+    }
+
     @Override
     public String toString() {
         return "ChatKnowledge{" +
                 "knowledgeId='" + knowledgeId + '\'' +
                 ", userId=" + userId +
                 ", projectId='" + projectId + '\'' +
+                ", projectName='" + projectName + '\'' +
                 ", fileName='" + fileName + '\'' +
                 ", content='" + content + '\'' +
                 ", isVector=" + isVector +

@@ -1,6 +1,8 @@
 package com.ruoyi.service.impl;
 
 import java.util.List;
+import java.util.stream.Collectors;
+
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.domain.ChatKnowledge;
 import com.ruoyi.domain.ChatProject;
@@ -9,6 +11,7 @@ import com.ruoyi.mapper.ChatProjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ruoyi.service.IChatKnowledgeService;
+import org.springframework.util.CollectionUtils;
 
 /**
  * 知识库管理Service业务层处理
@@ -44,9 +47,19 @@ public class ChatKnowledgeServiceImpl implements IChatKnowledgeService {
      * @return 知识库管理
      */
     @Override
-    public List<ChatKnowledge> selectChatKnowledgeList(ChatKnowledge chatKnowledge)
-    {
-        return chatKnowledgeMapper.selectChatKnowledgeList(chatKnowledge);
+    public List<ChatKnowledge> selectChatKnowledgeList(ChatKnowledge chatKnowledge) {
+        List<ChatKnowledge> chatKnowledgeList = chatKnowledgeMapper.selectChatKnowledgeList(chatKnowledge);
+        if (CollectionUtils.isEmpty(chatKnowledgeList)) {
+            return chatKnowledgeList;
+        }
+        chatKnowledgeList = chatKnowledgeList.stream().map(chatKnowledge1 -> {
+            String projectId = chatKnowledge1.getProjectId();
+            ChatProject chatProject = chatProjectMapper.selectChatProjectByProjectId(projectId);
+            chatKnowledge1.setProjectName(chatProject.getProjectName());
+            return chatKnowledge1;
+        }).collect(Collectors.toList());
+
+        return chatKnowledgeList;
     }
 
     /**

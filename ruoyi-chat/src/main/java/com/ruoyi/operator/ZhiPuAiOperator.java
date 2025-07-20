@@ -451,8 +451,14 @@ public class ZhiPuAiOperator implements AiOperator {
                 this.vectorStoreAsyncService.addVectorStore(knowledgeId,zhiPuAiQdrantVectorStore, docList);
 
 
+            } else {
+                //异步执行
+                this.vectorStoreAsyncService.addVectorStore(knowledgeId,null, null);
             }
 
+        } else {
+            //异步执行
+            this.vectorStoreAsyncService.addVectorStore(knowledgeId,null, null);
         }
         return true;
     }
