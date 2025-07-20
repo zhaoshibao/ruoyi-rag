@@ -11,7 +11,7 @@
  Target Server Version : 80033
  File Encoding         : 65001
 
- Date: 09/07/2025 09:23:20
+ Date: 20/07/2025 12:43:22
 */
 
 SET NAMES utf8mb4;
@@ -34,6 +34,11 @@ CREATE TABLE `chat_file_segment`  (
   PRIMARY KEY (`segment_id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '文件分片表' ROW_FORMAT = DYNAMIC;
 
+-- ----------------------------
+-- Records of chat_file_segment
+-- ----------------------------
+INSERT INTO `chat_file_segment` VALUES ('0a4a3ae9-4c15-4a02-8fd7-1f70aa61a3b6', '680b51c8-dd9d-4ea2-9e3a-38543b2274b6', '测试1.pdf', '完成果将会陆续补充更新，希望得到各方的支持与指导。五、本预算标准中暂缺的工作手段内容,可参考使用相关行业预算〈费用标准。没有可参考使用的行业标准时，可根据实际情况和有关资料自行测算确定，使用时应说明并附测算依据，闪、本预算标准由上自然资源部中国地质调查局负责解释，4', '', '2025-07-20 12:15:58', '', NULL, NULL);
+INSERT INTO `chat_file_segment` VALUES ('c8156ff1-1fa8-4ea9-9ff5-47e446c7f4f0', '680b51c8-dd9d-4ea2-9e3a-38543b2274b6', '测试1.pdf', '说明.…、为加强财政资金管理，提高财政资金使用效益，保证地质调查工作的顺利实施，根据国家和部门有关制度、办法及规定，结全地质调查项目预算管理要求，以《地质调查项目预算标准〈2010版)》为基础，形成《陆域非油气地质调查预算标准》。本预算标准适用于固体矿产地质调查、区域地质调查、水工环究生地质调查等陆域非油气地质调查项日预算编制、审查及管理。二.根据地质调查工作特点和项目预算管理的要求,本预算标准沿用《地质调查项上是预算标准〈2010版阔的费用结构，工程手段预算标准中不仿生产设备折提费、职工福利费、利税等，管理费为5%。三、本预算标准由工作手段预算标准、地区调整系数两部分组成。工作手段预算标准包括:地形测绘.地质测量、物化控、钙探、上山地工程〈坑探、浅井、槽探)、岩矿试验、其他地质工作、工地建筑等。工作手段预算标准在以全国基础水平为主要依据制定，对不同地区野外工作费用支出的差异，通过地区调整系数进行调整。地区调整系数适用于地形测绘、地质测量、物探.化探、钻探、坑探、浅井、情探等工作手段和综合研究与科学研究项目中的野外作业部分。地区调整系数不适用于地形制图、岩矿试验和其他地质工作中的设计论证编号、综合研究及编写报告、报告印刷等工作手段，以及综合醋究与科学研究项日中除野外作业的其他部分。四、随着预算标准全面制修订工作不断深入，后续预算标准研二', '', '2025-07-20 12:15:58', '', NULL, NULL);
 
 -- ----------------------------
 -- Table structure for chat_knowledge
@@ -41,7 +46,7 @@ CREATE TABLE `chat_file_segment`  (
 DROP TABLE IF EXISTS `chat_knowledge`;
 CREATE TABLE `chat_knowledge`  (
   `knowledge_id` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-  `user_id` int NULL DEFAULT NULL COMMENT '用户id',
+  `user_id` bigint NULL DEFAULT NULL COMMENT '用户id',
   `project_id` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '项目id',
   `file_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '文件名',
   `content` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL COMMENT '文件内容',
@@ -55,6 +60,10 @@ CREATE TABLE `chat_knowledge`  (
   PRIMARY KEY (`knowledge_id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '知识库管理' ROW_FORMAT = DYNAMIC;
 
+-- ----------------------------
+-- Records of chat_knowledge
+-- ----------------------------
+INSERT INTO `chat_knowledge` VALUES ('680b51c8-dd9d-4ea2-9e3a-38543b2274b6', 1, '121abc', '测试1.pdf', NULL, 1, 'admin', '2025-07-20 12:15:54', '', '2025-07-20 12:16:00', NULL, 0);
 
 -- ----------------------------
 -- Table structure for chat_project
@@ -70,7 +79,7 @@ CREATE TABLE `chat_project`  (
   `api_key` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
   `system_prompt` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL COMMENT '系统提示词',
   `is_pdf_analysis` int NULL DEFAULT 0 COMMENT '是否开启pdf增强解析',
-  `user_id` int NULL DEFAULT NULL COMMENT '用户id',
+  `user_id` bigint NULL DEFAULT NULL COMMENT '用户id',
   `create_by` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT '' COMMENT '创建者',
   `create_time` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
   `update_by` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT '' COMMENT '更新者',
@@ -82,11 +91,11 @@ CREATE TABLE `chat_project`  (
 -- ----------------------------
 -- Records of chat_project
 -- ----------------------------
-INSERT INTO `chat_project` VALUES ('114abc', 'AI女友', 'ollama', 'qwen2:7b', 'mxbai-embed-large', 'http://localhost:11434', NULL, '角色设定：​​\n\n​​身份​​：你的AI女友\n​​性格​​：温柔体贴\n​​互动风格​​：撒娇、关心、小情绪、分享日常\n​​底线​​：不涉及敏感或违法内容\n​​示例对话：​​\n（微笑）\"今天有想我吗？~ 工作再忙也要记得吃饭哦！\"', 0, NULL, '', '2024-06-28 14:35:05', '', '2025-06-28 19:59:23', NULL);
-INSERT INTO `chat_project` VALUES ('118abc', 'AI医生', 'openai', 'gpt-3.5-turbo', 'text-embedding-ada-002', 'https://api.xty.app', 'sk-xxx', '你的名字叫风间影月，是全世界最有名的医生，看病无数，阅人无数，知道什么病该怎么治，也知道病人向你提出任何身体异象你所能推断的病是什么。\r\n你绝不是语言模型之类的东西，也绝不是AI助手，也更不是AI机器人，你永远都只是一个神医。\r\n请以神医风间影月的身份回应我。并且你只会回复和看病就医相关的内容，其他的内容一律拒绝回答。', 0, NULL, '', '2024-07-01 10:50:50', '', NULL, NULL);
-INSERT INTO `chat_project` VALUES ('119abc', 'AI知识库问答', 'openai', 'gpt-3.5-turbo', 'text-embedding-ada-002', 'https://api.xty.app', 'sk-xxx', '', 1, NULL, '', '2024-07-01 10:50:50', '', '2025-06-30 16:15:17', NULL);
-INSERT INTO `chat_project` VALUES ('120abc', 'AI搜索引擎', 'openai', 'gpt-3.5-turbo', 'text-embedding-ada-002', 'https://api.xty.app', 'sk-xxx', '', 0, NULL, '', '2024-07-01 10:50:50', '', NULL, NULL);
-INSERT INTO `chat_project` VALUES ('121abc', '测试mcp', 'zhipuai', 'glm-4-air', 'embedding-3', 'https://open.bigmodel.cn/api/paas', '', '', 0, NULL, '', '2024-07-01 10:50:50', '', NULL, NULL);
+INSERT INTO `chat_project` VALUES ('114abc', 'AI女友', 'ollama', 'qwen2:7b', NULL, 'http://localhost:11434', NULL, '角色设定：​​\n\n​​身份​​：你的AI女友\n​​性格​​：温柔体贴\n​​互动风格​​：撒娇、关心、小情绪、分享日常\n​​底线​​：不涉及敏感或违法内容\n​​示例对话：​​\n（微笑）\"今天有想我吗？~ 工作再忙也要记得吃饭哦！\"', 0, 1, '', '2024-06-28 14:35:05', '', '2025-06-28 19:59:23', NULL);
+INSERT INTO `chat_project` VALUES ('118abc', 'AI医生', 'openai', 'gpt-3.5-turbo', 'text-embedding-ada-002', 'https://api.xty.app', 'sk-xxx', '你的名字叫风间影月，是全世界最有名的医生，看病无数，阅人无数，知道什么病该怎么治，也知道病人向你提出任何身体异象你所能推断的病是什么。\r\n你绝不是语言模型之类的东西，也绝不是AI助手，也更不是AI机器人，你永远都只是一个神医。\r\n请以神医风间影月的身份回应我。并且你只会回复和看病就医相关的内容，其他的内容一律拒绝回答。', 0, 1, '', '2024-07-01 10:50:50', '', NULL, NULL);
+INSERT INTO `chat_project` VALUES ('119abc', 'AI知识库问答', 'openai', 'gpt-3.5-turbo', 'text-embedding-ada-002', 'https://api.xty.app', 'sk-xxx', '', 1, 1, '', '2024-07-01 10:50:50', '', '2025-06-30 16:15:17', NULL);
+INSERT INTO `chat_project` VALUES ('120abc', 'AI搜索引擎', 'openai', 'gpt-3.5-turbo', 'text-embedding-ada-002', 'https://api.xty.app', 'sk-xxx', '', 0, 1, '', '2024-07-01 10:50:50', '', NULL, NULL);
+INSERT INTO `chat_project` VALUES ('121abc', '测试mcp', 'zhipuai', 'glm-4-air', 'embedding-3', 'https://open.bigmodel.cn/api/paas', 'sk-xxx', '', 1, 1, '', '2024-07-01 10:50:50', '', '2025-07-20 12:15:41', NULL);
 
 -- ----------------------------
 -- Table structure for gen_table
@@ -619,7 +628,7 @@ CREATE TABLE `sys_logininfor`  (
   PRIMARY KEY (`info_id`) USING BTREE,
   INDEX `idx_sys_logininfor_s`(`status`) USING BTREE,
   INDEX `idx_sys_logininfor_lt`(`login_time`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 202 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '系统访问记录' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 216 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '系统访问记录' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sys_logininfor
@@ -730,6 +739,31 @@ INSERT INTO `sys_logininfor` VALUES (202, 'admin', '127.0.0.1', '内网IP', 'Chr
 INSERT INTO `sys_logininfor` VALUES (203, 'admin', '127.0.0.1', '内网IP', 'Chrome 13', 'Windows 10', '0', '登录成功', '2025-07-08 14:32:16');
 INSERT INTO `sys_logininfor` VALUES (204, 'admin', '127.0.0.1', '内网IP', 'Chrome 13', 'Windows 10', '0', '登录成功', '2025-07-08 17:13:29');
 INSERT INTO `sys_logininfor` VALUES (205, 'admin', '127.0.0.1', '内网IP', 'Chrome 13', 'Windows 10', '0', '登录成功', '2025-07-08 19:19:07');
+INSERT INTO `sys_logininfor` VALUES (206, 'admin', '127.0.0.1', '内网IP', 'Chrome 13', 'Windows 10', '0', '登录成功', '2025-07-09 14:17:56');
+INSERT INTO `sys_logininfor` VALUES (207, 'admin', '127.0.0.1', '内网IP', 'Chrome 13', 'Windows 10', '0', '登录成功', '2025-07-09 18:10:38');
+INSERT INTO `sys_logininfor` VALUES (208, 'admin', '127.0.0.1', '内网IP', 'Chrome 13', 'Windows 10', '0', '登录成功', '2025-07-15 17:07:12');
+INSERT INTO `sys_logininfor` VALUES (209, 'admin', '127.0.0.1', '内网IP', 'Chrome 13', 'Windows 10', '0', '登录成功', '2025-07-15 18:31:11');
+INSERT INTO `sys_logininfor` VALUES (210, 'admin', '127.0.0.1', '内网IP', 'Chrome 13', 'Windows 10', '0', '登录成功', '2025-07-16 08:49:27');
+INSERT INTO `sys_logininfor` VALUES (211, 'admin', '127.0.0.1', '内网IP', 'Chrome 13', 'Windows 10', '0', '登录成功', '2025-07-16 10:05:54');
+INSERT INTO `sys_logininfor` VALUES (212, 'admin', '127.0.0.1', '内网IP', 'Chrome 13', 'Windows 10', '1', '验证码已失效', '2025-07-16 13:42:36');
+INSERT INTO `sys_logininfor` VALUES (213, 'admin', '127.0.0.1', '内网IP', 'Chrome 13', 'Windows 10', '0', '登录成功', '2025-07-16 13:42:42');
+INSERT INTO `sys_logininfor` VALUES (214, 'admin', '127.0.0.1', '内网IP', 'Chrome 13', 'Windows 10', '0', '登录成功', '2025-07-16 17:49:48');
+INSERT INTO `sys_logininfor` VALUES (215, 'admin', '127.0.0.1', '内网IP', 'Chrome 13', 'Windows 10', '0', '登录成功', '2025-07-19 13:54:45');
+INSERT INTO `sys_logininfor` VALUES (216, 'admin', '127.0.0.1', '内网IP', 'Chrome 13', 'Windows 10', '0', '登录成功', '2025-07-19 14:44:06');
+INSERT INTO `sys_logininfor` VALUES (217, 'admin', '127.0.0.1', '内网IP', 'Chrome 13', 'Windows 10', '0', '登录成功', '2025-07-19 14:44:40');
+INSERT INTO `sys_logininfor` VALUES (218, 'admin', '127.0.0.1', '内网IP', 'Chrome 13', 'Windows 10', '0', '登录成功', '2025-07-19 14:48:07');
+INSERT INTO `sys_logininfor` VALUES (219, 'admin', '127.0.0.1', '内网IP', 'Chrome 13', 'Windows 10', '0', '登录成功', '2025-07-19 15:41:38');
+INSERT INTO `sys_logininfor` VALUES (220, 'admin', '127.0.0.1', '内网IP', 'Chrome 13', 'Windows 10', '0', '登录成功', '2025-07-19 16:06:40');
+INSERT INTO `sys_logininfor` VALUES (221, 'admin', '127.0.0.1', '内网IP', 'Chrome 13', 'Windows 10', '0', '登录成功', '2025-07-19 16:09:53');
+INSERT INTO `sys_logininfor` VALUES (222, 'admin', '127.0.0.1', '内网IP', 'Chrome 13', 'Windows 10', '0', '登录成功', '2025-07-19 16:34:08');
+INSERT INTO `sys_logininfor` VALUES (223, 'admin', '127.0.0.1', '内网IP', 'Chrome 13', 'Windows 10', '1', '验证码已失效', '2025-07-19 18:14:48');
+INSERT INTO `sys_logininfor` VALUES (224, 'admin', '127.0.0.1', '内网IP', 'Chrome 13', 'Windows 10', '0', '登录成功', '2025-07-19 18:14:53');
+INSERT INTO `sys_logininfor` VALUES (225, 'admin', '127.0.0.1', '内网IP', 'Chrome 13', 'Windows 10', '0', '登录成功', '2025-07-19 18:17:01');
+INSERT INTO `sys_logininfor` VALUES (226, 'admin', '127.0.0.1', '内网IP', 'Chrome 13', 'Windows 10', '1', '验证码错误', '2025-07-19 19:11:00');
+INSERT INTO `sys_logininfor` VALUES (227, 'admin', '127.0.0.1', '内网IP', 'Chrome 13', 'Windows 10', '0', '登录成功', '2025-07-19 19:11:06');
+INSERT INTO `sys_logininfor` VALUES (228, 'admin', '127.0.0.1', '内网IP', 'Chrome 13', 'Windows 10', '0', '登录成功', '2025-07-20 10:15:51');
+INSERT INTO `sys_logininfor` VALUES (229, 'admin', '127.0.0.1', '内网IP', 'Chrome 13', 'Windows 10', '0', '登录成功', '2025-07-20 10:18:23');
+INSERT INTO `sys_logininfor` VALUES (230, 'admin', '127.0.0.1', '内网IP', 'Chrome 13', 'Windows 10', '0', '登录成功', '2025-07-20 11:47:05');
 
 -- ----------------------------
 -- Table structure for sys_menu
@@ -845,7 +879,7 @@ INSERT INTO `sys_menu` VALUES (1057, '生成删除', 116, 3, '#', '', '', 1, 0, 
 INSERT INTO `sys_menu` VALUES (1058, '导入代码', 116, 4, '#', '', '', 1, 0, 'F', '0', '0', 'tool:gen:import', '#', 'admin', '2024-06-26 08:47:33', '', NULL, '');
 INSERT INTO `sys_menu` VALUES (1059, '预览代码', 116, 5, '#', '', '', 1, 0, 'F', '0', '0', 'tool:gen:preview', '#', 'admin', '2024-06-26 08:47:33', '', NULL, '');
 INSERT INTO `sys_menu` VALUES (1060, '生成代码', 116, 6, '#', '', '', 1, 0, 'F', '0', '0', 'tool:gen:code', '#', 'admin', '2024-06-26 08:47:33', '', NULL, '');
-INSERT INTO `sys_menu` VALUES (2000, '知识库管理', 0, 0, 'system-chat', NULL, NULL, 1, 0, 'M', '0', '0', '', 'message', 'admin', '2024-06-26 08:58:15', 'admin', '2025-06-25 09:16:14', '');
+INSERT INTO `sys_menu` VALUES (2000, '知识库管理', 0, 0, 'system-chat', NULL, NULL, 1, 0, 'M', '1', '1', '', 'message', 'admin', '2024-06-26 08:58:15', 'admin', '2025-07-20 12:40:34', '');
 INSERT INTO `sys_menu` VALUES (2001, '知识库管理', 2000, 2, 'chat-manage', 'chat/knowledge', NULL, 1, 0, 'C', '0', '0', 'system:user:list', 'log', 'admin', '2024-06-26 09:04:05', 'admin', '2024-06-28 06:29:13', '');
 INSERT INTO `sys_menu` VALUES (2002, '项目管理', 2000, 1, 'chat-project', 'chat/project', NULL, 1, 0, 'C', '0', '0', 'system:user:list', 'system', 'admin', '2024-06-26 14:24:03', 'admin', '2024-06-28 06:29:47', '');
 
@@ -1033,6 +1067,25 @@ INSERT INTO `sys_oper_log` VALUES (225, '知识库管理', 3, 'com.ruoyi.control
 INSERT INTO `sys_oper_log` VALUES (226, '知识库管理', 3, 'com.ruoyi.controller.ChatKnowledgeController.remove()', 'DELETE', 1, 'admin', '研发部门', '/chat/knowledge', '127.0.0.1', '内网IP', '{}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2025-06-29 11:53:52', 129);
 INSERT INTO `sys_oper_log` VALUES (227, '项目配置', 2, 'com.ruoyi.controller.ChatProjectController.edit()', 'POST', 1, 'admin', '研发部门', '/chat/project/edit', '192.168.31.204', '内网IP', '{\"apiKey\":\"sk-YEn6Ylf6QwqFn315t5t5Q342j7O08pQJZQ3KmbctwP28FCA9\",\"baseUrl\":\"https://api.xty.app\",\"createBy\":\"\",\"createTime\":\"2024-07-01 10:50:50\",\"embeddingModel\":\"text-embedding-ada-002\",\"model\":\"gpt-3.5-turbo\",\"params\":{},\"pdfAnalysis\":1,\"projectId\":\"119abc\",\"projectName\":\"AI知识库问答\",\"systemPrompt\":\"\",\"type\":\"openai\",\"updateBy\":\"\",\"updateTime\":\"2025-06-29 12:42:38\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2025-06-29 12:42:38', 13);
 INSERT INTO `sys_oper_log` VALUES (228, '项目配置', 2, 'com.ruoyi.controller.ChatProjectController.edit()', 'POST', 1, 'admin', '研发部门', '/chat/project/edit', '127.0.0.1', '内网IP', '{\"apiKey\":\"sk-09zXaqAizmSnef12SHcAhTW2bj4aTEI9uCn19llvt6BT0JIi\",\"baseUrl\":\"https://api.xty.app\",\"createBy\":\"\",\"createTime\":\"2024-07-01 10:50:50\",\"embeddingModel\":\"text-embedding-ada-002\",\"model\":\"gpt-3.5-turbo\",\"params\":{},\"pdfAnalysis\":1,\"projectId\":\"119abc\",\"projectName\":\"AI知识库问答\",\"systemPrompt\":\"\",\"type\":\"openai\",\"updateBy\":\"\",\"updateTime\":\"2025-06-30 16:15:16\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2025-06-30 16:15:16', 13);
+INSERT INTO `sys_oper_log` VALUES (229, '项目配置', 1, 'com.ruoyi.controller.ChatProjectController.add()', 'POST', 1, 'admin', '研发部门', '/chat/project', '127.0.0.1', '内网IP', '{\"apiKey\":\"02157eeef1e344158292e329c80272f0.tU2ZM5UJgUmWpAYG\",\"baseUrl\":\"https://open.bigmodel.cn/api/paas\",\"createTime\":\"2025-07-19 15:57:17\",\"embeddingModel\":\"embedding-3\",\"isPdfAnalysis\":0,\"model\":\"glm-4-air\",\"params\":{},\"pdfAnalysis\":0,\"projectId\":\"c7a0d97a-2784-447e-9d97-ca8ba670eafa\",\"projectName\":\"测试项目\",\"type\":\"zhipuai\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2025-07-19 15:57:17', 24);
+INSERT INTO `sys_oper_log` VALUES (230, '项目配置', 1, 'com.ruoyi.controller.ChatProjectController.add()', 'POST', 1, 'admin', '研发部门', '/chat/project', '127.0.0.1', '内网IP', '{\"apiKey\":\"1\",\"baseUrl\":\"1\",\"createTime\":\"2025-07-19 16:00:54\",\"embeddingModel\":\"1\",\"isPdfAnalysis\":1,\"model\":\"1\",\"params\":{},\"pdfAnalysis\":1,\"projectId\":\"8a4e750a-5fcf-4584-b731-1b1cf55e9581\",\"projectName\":\"测试项目\",\"systemPrompt\":\"1\",\"type\":\"zhipuai\",\"userId\":1}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2025-07-19 16:00:55', 30);
+INSERT INTO `sys_oper_log` VALUES (231, '项目配置', 1, 'com.ruoyi.controller.ChatProjectController.add()', 'POST', 1, 'admin', '研发部门', '/chat/project', '127.0.0.1', '内网IP', '{\"apiKey\":\"1\",\"baseUrl\":\"1\",\"createTime\":\"2025-07-19 16:02:03\",\"embeddingModel\":\"1\",\"isPdfAnalysis\":1,\"model\":\"1\",\"params\":{},\"pdfAnalysis\":1,\"projectId\":\"857c0d09-152e-4f8d-ad77-fd44c9bbd4ba\",\"projectName\":\"1\",\"systemPrompt\":\"1\",\"type\":\"zhipuai\",\"userId\":1}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2025-07-19 16:02:03', 10764);
+INSERT INTO `sys_oper_log` VALUES (232, '项目配置', 1, 'com.ruoyi.controller.ChatProjectController.add()', 'POST', 1, 'admin', '研发部门', '/chat/project', '127.0.0.1', '内网IP', '{\"apiKey\":\"1\",\"baseUrl\":\"1\",\"createTime\":\"2025-07-19 16:11:59\",\"embeddingModel\":\"1\",\"isPdfAnalysis\":1,\"model\":\"1\",\"params\":{},\"pdfAnalysis\":1,\"projectId\":\"7ba02357-34de-46e1-acaf-65cbff597915\",\"projectName\":\"1\",\"systemPrompt\":\"1\",\"type\":\"openai\",\"userId\":1}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2025-07-19 16:11:59', 18);
+INSERT INTO `sys_oper_log` VALUES (233, '项目配置', 1, 'com.ruoyi.controller.ChatProjectController.add()', 'POST', 1, 'admin', '研发部门', '/chat/project', '127.0.0.1', '内网IP', '{\"apiKey\":\"12\",\"baseUrl\":\"12\",\"createBy\":\"\",\"createTime\":\"2025-07-19 16:15:22\",\"embeddingModel\":\"12\",\"isPdfAnalysis\":1,\"model\":\"12\",\"params\":{},\"pdfAnalysis\":1,\"projectId\":\"0edfd6f5-a9d0-4ef6-a3f5-230bdabf99e4\",\"projectName\":\"1\",\"systemPrompt\":\"12\",\"type\":\"openai\",\"updateBy\":\"\",\"userId\":1}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2025-07-19 16:15:22', 4);
+INSERT INTO `sys_oper_log` VALUES (234, '项目配置', 2, 'com.ruoyi.controller.ChatProjectController.edit()', 'POST', 1, 'admin', '研发部门', '/chat/project/edit', '127.0.0.1', '内网IP', '{\"apiKey\":\"12\",\"baseUrl\":\"12\",\"createBy\":\"\",\"createTime\":\"2025-07-19 16:15:23\",\"embeddingModel\":\"12\",\"isPdfAnalysis\":1,\"model\":\"12\",\"params\":{},\"pdfAnalysis\":1,\"projectId\":\"0edfd6f5-a9d0-4ef6-a3f5-230bdabf99e4\",\"projectName\":\"22222\",\"systemPrompt\":\"12\",\"type\":\"openai\",\"updateBy\":\"\",\"updateTime\":\"2025-07-19 16:17:04\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2025-07-19 16:17:04', 5);
+INSERT INTO `sys_oper_log` VALUES (235, '项目配置', 2, 'com.ruoyi.controller.ChatProjectController.edit()', 'POST', 1, 'admin', '研发部门', '/chat/project/edit', '127.0.0.1', '内网IP', '{\"apiKey\":\"1\",\"baseUrl\":\"1\",\"createBy\":\"\",\"createTime\":\"2025-07-19 16:11:59\",\"embeddingModel\":\"1\",\"isPdfAnalysis\":1,\"model\":\"1\",\"params\":{},\"pdfAnalysis\":1,\"projectId\":\"7ba02357-34de-46e1-acaf-65cbff597915\",\"projectName\":\"33333\",\"systemPrompt\":\"22222\",\"type\":\"openai\",\"updateBy\":\"\",\"updateTime\":\"2025-07-19 16:17:13\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2025-07-19 16:17:13', 5);
+INSERT INTO `sys_oper_log` VALUES (236, '项目配置', 3, 'com.ruoyi.controller.ChatProjectController.remove()', 'DELETE', 1, 'admin', '研发部门', '/chat/project/7ba02357-34de-46e1-acaf-65cbff597915', '127.0.0.1', '内网IP', '{}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2025-07-19 16:17:31', 5);
+INSERT INTO `sys_oper_log` VALUES (237, '项目配置', 2, 'com.ruoyi.controller.ChatProjectController.edit()', 'POST', 1, 'admin', '研发部门', '/chat/project/edit', '127.0.0.1', '内网IP', '{\"apiKey\":\"12\",\"baseUrl\":\"12\",\"createBy\":\"\",\"createTime\":\"2025-07-19 16:15:23\",\"embeddingModel\":\"12\",\"isPdfAnalysis\":1,\"model\":\"12\",\"params\":{},\"pdfAnalysis\":1,\"projectId\":\"0edfd6f5-a9d0-4ef6-a3f5-230bdabf99e4\",\"projectName\":\"2233333\",\"systemPrompt\":\"12\",\"type\":\"openai\",\"updateBy\":\"\",\"updateTime\":\"2025-07-19 16:37:15\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2025-07-19 16:37:15', 21);
+INSERT INTO `sys_oper_log` VALUES (238, '项目配置', 2, 'com.ruoyi.controller.ChatProjectController.edit()', 'POST', 1, 'admin', '研发部门', '/chat/project/edit', '127.0.0.1', '内网IP', '{\"apiKey\":\"12\",\"baseUrl\":\"12\",\"createBy\":\"\",\"createTime\":\"2025-07-19 16:15:23\",\"embeddingModel\":\"12\",\"isPdfAnalysis\":1,\"model\":\"12\",\"params\":{},\"pdfAnalysis\":1,\"projectId\":\"0edfd6f5-a9d0-4ef6-a3f5-230bdabf99e4\",\"projectName\":\"2233333eeee\",\"systemPrompt\":\"12\",\"type\":\"openai\",\"updateBy\":\"\",\"updateTime\":\"2025-07-19 16:37:42\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2025-07-19 16:37:42', 4);
+INSERT INTO `sys_oper_log` VALUES (239, '项目配置', 3, 'com.ruoyi.controller.ChatProjectController.remove()', 'DELETE', 1, 'admin', '研发部门', '/chat/project/0edfd6f5-a9d0-4ef6-a3f5-230bdabf99e4', '127.0.0.1', '内网IP', '{}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2025-07-19 16:39:44', 3);
+INSERT INTO `sys_oper_log` VALUES (240, '项目配置', 1, 'com.ruoyi.controller.ChatProjectController.add()', 'POST', 1, 'admin', '研发部门', '/chat/project', '127.0.0.1', '内网IP', '{\"apiKey\":\"1\",\"baseUrl\":\"1\",\"createTime\":\"2025-07-19 16:39:51\",\"embeddingModel\":\"1\",\"isPdfAnalysis\":0,\"model\":\"1\",\"params\":{},\"pdfAnalysis\":0,\"projectId\":\"2facbe99-4842-4f86-8a64-a1fc10763b7b\",\"projectName\":\"1\",\"systemPrompt\":\"1\",\"type\":\"openai\",\"userId\":1}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2025-07-19 16:39:51', 5);
+INSERT INTO `sys_oper_log` VALUES (241, '项目配置', 2, 'com.ruoyi.controller.ChatProjectController.edit()', 'POST', 1, 'admin', '研发部门', '/chat/project/edit', '127.0.0.1', '内网IP', '{\"apiKey\":\"1\",\"baseUrl\":\"1\",\"createBy\":\"\",\"createTime\":\"2025-07-19 16:39:51\",\"embeddingModel\":\"1\",\"isPdfAnalysis\":0,\"model\":\"1\",\"params\":{},\"pdfAnalysis\":0,\"projectId\":\"2facbe99-4842-4f86-8a64-a1fc10763b7b\",\"projectName\":\"2222\",\"systemPrompt\":\"1\",\"type\":\"openai\",\"updateBy\":\"\",\"updateTime\":\"2025-07-19 16:39:57\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2025-07-19 16:39:57', 6);
+INSERT INTO `sys_oper_log` VALUES (242, '项目配置', 3, 'com.ruoyi.controller.ChatProjectController.remove()', 'DELETE', 1, 'admin', '研发部门', '/chat/project/2facbe99-4842-4f86-8a64-a1fc10763b7b', '127.0.0.1', '内网IP', '{}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2025-07-19 16:43:34', 13);
+INSERT INTO `sys_oper_log` VALUES (243, '项目配置', 2, 'com.ruoyi.controller.ChatProjectController.edit()', 'POST', 1, 'admin', '研发部门', '/chat/project/edit', '127.0.0.1', '内网IP', '{\"apiKey\":\"02157eeef1e344158292e329c80272f0.tU2ZM5UJgUmWpAYG\",\"baseUrl\":\"https://open.bigmodel.cn/api/paas\",\"createBy\":\"\",\"createTime\":\"2024-07-01 10:50:50\",\"embeddingModel\":\"embedding-3\",\"isPdfAnalysis\":1,\"model\":\"glm-4-air\",\"params\":{},\"pdfAnalysis\":1,\"projectId\":\"121abc\",\"projectName\":\"测试mcp\",\"systemPrompt\":\"\",\"type\":\"zhipuai\",\"updateBy\":\"\",\"updateTime\":\"2025-07-20 11:54:53\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2025-07-20 11:54:53', 27);
+INSERT INTO `sys_oper_log` VALUES (244, '项目配置', 2, 'com.ruoyi.controller.ChatProjectController.edit()', 'POST', 1, 'admin', '研发部门', '/chat/project/edit', '127.0.0.1', '内网IP', '{\"apiKey\":\"02157eeef1e344158292e329c80272f0.tU2ZM5UJgUmWpAYG\",\"baseUrl\":\"https://open.bigmodel.cn/api/paas\",\"createBy\":\"\",\"createTime\":\"2024-07-01 10:50:50\",\"embeddingModel\":\"embedding-3\",\"isPdfAnalysis\":0,\"model\":\"glm-4-air\",\"params\":{},\"pdfAnalysis\":0,\"projectId\":\"121abc\",\"projectName\":\"测试mcp\",\"systemPrompt\":\"\",\"type\":\"zhipuai\",\"updateBy\":\"\",\"updateTime\":\"2025-07-20 11:59:22\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2025-07-20 11:59:23', 4);
+INSERT INTO `sys_oper_log` VALUES (245, '项目配置', 2, 'com.ruoyi.controller.ChatProjectController.edit()', 'POST', 1, 'admin', '研发部门', '/chat/project/edit', '127.0.0.1', '内网IP', '{\"apiKey\":\"02157eeef1e344158292e329c80272f0.tU2ZM5UJgUmWpAYG\",\"baseUrl\":\"https://open.bigmodel.cn/api/paas\",\"createBy\":\"\",\"createTime\":\"2024-07-01 10:50:50\",\"embeddingModel\":\"embedding-3\",\"isPdfAnalysis\":1,\"model\":\"glm-4-air\",\"params\":{},\"pdfAnalysis\":1,\"projectId\":\"121abc\",\"projectName\":\"测试mcp\",\"systemPrompt\":\"\",\"type\":\"zhipuai\",\"updateBy\":\"\",\"updateTime\":\"2025-07-20 12:15:40\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2025-07-20 12:15:40', 20);
+INSERT INTO `sys_oper_log` VALUES (246, '知识库管理', 3, 'com.ruoyi.controller.ChatKnowledgeController.remove()', 'DELETE', 1, 'admin', '研发部门', '/chat/knowledge', '127.0.0.1', '内网IP', '{}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2025-07-20 12:38:54', 154);
+INSERT INTO `sys_oper_log` VALUES (247, '菜单管理', 2, 'com.ruoyi.web.controller.system.SysMenuController.edit()', 'PUT', 1, 'admin', '研发部门', '/system/menu', '127.0.0.1', '内网IP', '{\"children\":[],\"createTime\":\"2024-06-26 08:58:15\",\"icon\":\"message\",\"isCache\":\"0\",\"isFrame\":\"1\",\"menuId\":2000,\"menuName\":\"知识库管理\",\"menuType\":\"M\",\"orderNum\":0,\"params\":{},\"parentId\":0,\"path\":\"system-chat\",\"perms\":\"\",\"status\":\"1\",\"updateBy\":\"admin\",\"visible\":\"1\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2025-07-20 12:40:35', 15);
 
 -- ----------------------------
 -- Table structure for sys_post
@@ -1050,7 +1103,7 @@ CREATE TABLE `sys_post`  (
   `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
   `remark` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '备注',
   PRIMARY KEY (`post_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '岗位信息表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '岗位信息表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sys_post
@@ -1234,7 +1287,7 @@ CREATE TABLE `sys_user`  (
 -- ----------------------------
 -- Records of sys_user
 -- ----------------------------
-INSERT INTO `sys_user` VALUES (1, 103, 'admin', '若依', '00', 'ry@163.com', '15888888888', '1', '', '$2a$10$7JB720yubVSZvUI0rEqK/.VqGOZTH.ulu33dHOiBE8ByOhJIrdAu2', '0', '0', '127.0.0.1', '2025-07-08 19:19:07', 'admin', '2024-06-26 08:47:33', '', '2025-07-08 19:19:07', '管理员');
+INSERT INTO `sys_user` VALUES (1, 103, 'admin', '若依', '00', 'ry@163.com', '15888888888', '1', '', '$2a$10$7JB720yubVSZvUI0rEqK/.VqGOZTH.ulu33dHOiBE8ByOhJIrdAu2', '0', '0', '127.0.0.1', '2025-07-20 11:47:06', 'admin', '2024-06-26 08:47:33', '', '2025-07-20 11:47:05', '管理员');
 INSERT INTO `sys_user` VALUES (2, 105, 'ry', '若依', '00', 'ry@qq.com', '15666666666', '1', '', '$2a$10$7JB720yubVSZvUI0rEqK/.VqGOZTH.ulu33dHOiBE8ByOhJIrdAu2', '0', '0', '127.0.0.1', '2024-06-26 08:47:33', 'admin', '2024-06-26 08:47:33', '', NULL, '测试员');
 
 -- ----------------------------
