@@ -258,7 +258,7 @@ public class SysUserServiceImpl implements ISysUserService
      * @return 结果
      */
     @Override
-    @Transactional
+    @Transactional("transactionManager")
     public int insertUser(SysUser user)
     {
         // 新增用户信息
