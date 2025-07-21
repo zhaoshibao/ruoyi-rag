@@ -2,12 +2,11 @@ package com.ruoyi.pojo;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
-import org.springframework.data.annotation.Id;
 
 import java.util.Date;
 
 @Data
-public class ChatVo {
+public class ChatList {
 
     @Schema(description = "聊天历史id")
     private String chatId;

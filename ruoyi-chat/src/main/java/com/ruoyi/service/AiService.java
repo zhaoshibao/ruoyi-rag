@@ -1,10 +1,13 @@
 package com.ruoyi.service;
 
 import cn.hutool.core.util.IdUtil;
+import com.google.errorprone.annotations.Var;
 import com.ruoyi.annotation.BeanType;
+import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.component.QdrantVectorStoreComponet;
 import com.ruoyi.controller.ChatController;
 import com.ruoyi.enums.SystemConstant;
+import com.ruoyi.pojo.ChatList;
 import com.ruoyi.pojo.Message;
 import com.ruoyi.utils.MongoUtil;
 import com.ruoyi.pojo.Chat;
@@ -36,10 +39,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.web.multipart.MultipartFile;
 import reactor.core.publisher.Flux;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
@@ -150,13 +150,24 @@ public class AiService implements ApplicationContextAware {
         return chatId.toString();
     }
 
-    public List<Chat> listChat(String projectId, Long userId) {
-
-        return this.mongoTemplate.find(
+    public AjaxResult listChat(String projectId, Long userId) {
+        List<ChatList> result = new ArrayList<>();
+        List<Chat> chatList = this.mongoTemplate.find(
                 Query.query(Criteria.where("userId").is(userId)).with(Sort.by(Sort.Order.desc("createTime"))),
                 Chat.class,
-                MongoUtil.getChatCollection(projectId)
-        );
+                MongoUtil.getChatCollection(projectId));
+        if (CollectionUtils.isEmpty(chatList)) {
+            return AjaxResult.success(result);
+        }
+        result = chatList.stream().map(chat -> {
+            ChatList chatList1 = new ChatList();
+            BeanUtils.copyProperties(chat,chatList1);
+            chatList1.setChatId(chat.getChatId().toString());
+            return chatList1;
+        }).collect(Collectors.toList());
+
+        return AjaxResult.success(result);
+
     }
 
     public void updateChat(ChatVo chatVo) {
@@ -177,15 +188,16 @@ public class AiService implements ApplicationContextAware {
         this.mongoTemplate.remove(Query.query(Criteria.where("_id").is(chatId)), MongoUtil.getChatCollection(projectId));
     }
 
-    public List<Message> listMsg(Long chatId) {
+    public AjaxResult listMsg(Long chatId) {
         if (chatId == null) {
             throw new RuntimeException("chatId不能为空");
         }
-        return this.mongoTemplate.find(
+        List<Message> messageList = this.mongoTemplate.find(
                 Query.query(Criteria.where("chatId").is(chatId)).with(Sort.by(Sort.Order.asc("createTime"))),
                 Message.class,
                 MongoUtil.getMessageCollection(chatId)
         );
+        return AjaxResult.success(messageList);
     }
 
     public void saveMsg(MessageVo messageVo) {

@@ -174,7 +174,10 @@ public class OllamaOperator implements AiOperator {
         }
         // 中英文切换
         msgList.add(new SystemMessage(LanguageEnum.getMsg(queryVo.getLanguage())));
-        msgList.add(new SystemMessage(chatProject.getSystemPrompt()));
+        if (StringUtils.hasLength(chatProject.getSystemPrompt())) {
+            msgList.add(new SystemMessage(chatProject.getSystemPrompt()));
+        }
+
 
         // 加入当前用户的提问
         msgList.add(new UserMessage(queryVo.getMsg()));

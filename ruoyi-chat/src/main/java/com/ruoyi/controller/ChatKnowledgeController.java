@@ -50,7 +50,7 @@ public class ChatKnowledgeController extends BaseController
     private AiService aiService;
 
     @Operation(summary = "不分页查询知识库管理列表")
-    @PreAuthorize("@ss.hasPermi('chat:knowledge:list')")
+    //@PreAuthorize("@ss.hasPermi('chat:knowledge:list')")
     @GetMapping
     public TableDataInfo getByProjectId(ChatKnowledge chatKnowledge){
         List<ChatKnowledge> list = chatKnowledgeService.selectChatKnowledgeList(chatKnowledge);
@@ -58,7 +58,7 @@ public class ChatKnowledgeController extends BaseController
     }
 
     @Operation(summary = "分页查询知识库管理列表")
-    @PreAuthorize("@ss.hasPermi('chat:knowledge:list')")
+    //@PreAuthorize("@ss.hasPermi('chat:knowledge:list')")
     @GetMapping("/list")
     public TableDataInfo list(ChatKnowledge chatKnowledge)
     {
@@ -69,7 +69,7 @@ public class ChatKnowledgeController extends BaseController
     }
 
     @Operation(summary = "知识库上传")
-    @PreAuthorize("@ss.hasPermi('chat:knowledge:add')")
+    //@PreAuthorize("@ss.hasPermi('chat:knowledge:add')")
     @PostMapping("upload")
     public AjaxResult upload(ChatKnowledge chatKnowledge, MultipartFile file){
 
@@ -84,7 +84,7 @@ public class ChatKnowledgeController extends BaseController
     }
 
     @Operation(summary = "知识库删除")
-    @PreAuthorize("@ss.hasPermi('chat:knowledge:remove')")
+    //@PreAuthorize("@ss.hasPermi('chat:knowledge:remove')")
     @DeleteMapping("remove")
     public AjaxResult removeFile(@RequestParam String projectId, @RequestParam String knowledgeId){
         try {
@@ -97,7 +97,7 @@ public class ChatKnowledgeController extends BaseController
     }
 
     @Operation(summary = "导出知识库管理列表")
-    @PreAuthorize("@ss.hasPermi('chat:knowledge:export')")
+    //@PreAuthorize("@ss.hasPermi('chat:knowledge:export')")
     @Log(title = "知识库管理", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public void export(HttpServletResponse response, ChatKnowledge chatKnowledge)
@@ -108,7 +108,7 @@ public class ChatKnowledgeController extends BaseController
     }
 
     @Operation(summary = "获取知识库管理详细信息")
-    @PreAuthorize("@ss.hasPermi('chat:knowledge:query')")
+    //@PreAuthorize("@ss.hasPermi('chat:knowledge:query')")
     @GetMapping(value = "/{projectId}/{knowledgeId}")
     public AjaxResult getInfo(@PathVariable("projectId") String projectId,@PathVariable("knowledgeId") String knowledgeId) {
         List<ChatFileSegment> result = null;
@@ -126,7 +126,7 @@ public class ChatKnowledgeController extends BaseController
     }
 
     @Operation(summary = "新增知识库管理")
-    @PreAuthorize("@ss.hasPermi('chat:knowledge:add')")
+    //@PreAuthorize("@ss.hasPermi('chat:knowledge:add')")
     @Log(title = "知识库管理", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody ChatKnowledge chatKnowledge)
@@ -135,7 +135,7 @@ public class ChatKnowledgeController extends BaseController
     }
 
     @Operation(summary = "修改知识库管理")
-    @PreAuthorize("@ss.hasPermi('chat:knowledge:edit')")
+    //@PreAuthorize("@ss.hasPermi('chat:knowledge:edit')")
     @Log(title = "知识库管理", businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(@RequestBody ChatKnowledge chatKnowledge)
@@ -144,7 +144,7 @@ public class ChatKnowledgeController extends BaseController
     }
 
     @Operation(summary = "删除知识库管理")
-    @PreAuthorize("@ss.hasPermi('chat:knowledge:remove')")
+    //@PreAuthorize("@ss.hasPermi('chat:knowledge:remove')")
     @Log(title = "知识库管理", businessType = BusinessType.DELETE)
 	@DeleteMapping
     public AjaxResult remove(@RequestBody ChatKnowledge knowledge){

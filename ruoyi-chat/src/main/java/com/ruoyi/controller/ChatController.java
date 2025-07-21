@@ -1,5 +1,6 @@
 package com.ruoyi.controller;
 
+import com.alibaba.fastjson2.JSON;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.pojo.Chat;
@@ -51,6 +52,8 @@ public class ChatController extends BaseController {
     @Operation(summary = "创建新的会话")
     @PostMapping("create-chat")
     public String createChat(@Valid @RequestBody ChatVo chatVo){
+        Long userId = getUserId();
+        chatVo.setUserId(userId);
         return this.aiService.createChat(chatVo);
     }
 
@@ -63,8 +66,11 @@ public class ChatController extends BaseController {
 
     @Operation(summary = "查询会话列表")
     @GetMapping("list-chat")
-    public List<Chat> listChat(String projectId, Long userId){
-        return this.aiService.listChat(projectId, userId);
+    public AjaxResult listChat(String projectId){
+        Long userId = getUserId();
+        AjaxResult ajaxResult = this.aiService.listChat(projectId, userId);
+        log.info("查询会话列表:{}", JSON.toJSONString(ajaxResult.get("data")));
+        return ajaxResult;
     }
 
     @Operation(summary = "删除一个会话")
@@ -76,7 +82,7 @@ public class ChatController extends BaseController {
 
     @Operation(summary = "查询一个会话中的问答消息")
     @GetMapping("list-msg")
-    public List<Message> listMsg(Long chatId){
+    public AjaxResult listMsg(Long chatId){
         return this.aiService.listMsg(chatId);
     }
 
