@@ -76,7 +76,7 @@ public class QdrantVectorStoreComponet {
             qdrantClient.createCollectionAsync(SystemConstant.OLLAMA_QDRANT,
                     Collections.VectorParams.newBuilder()
                             .setDistance(Collections.Distance.Cosine)
-                            .setSize(1024)
+                            .setSize(512)
                             .build()).get();
         }
         //var ollamaApi = new OllamaApi(baseUrl);

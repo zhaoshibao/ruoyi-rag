@@ -1,3 +1,4 @@
+/*
 package com.ruoyi.config;
 
 import com.ruoyi.enums.SystemConstant;
@@ -66,3 +67,4 @@ public class QdrantVectorConfig {
     }
 
 }
+*/
