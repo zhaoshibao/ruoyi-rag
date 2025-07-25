@@ -1,8 +1,15 @@
 package com.ruoyi.web.controller.system;
 
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.util.List;
+import java.util.Map;
 
+import cn.hutool.core.annotation.MirroredAnnotationAttribute;
 import jakarta.servlet.http.HttpServletResponse;
+import net.sourceforge.tess4j.ITesseract;
+import net.sourceforge.tess4j.Tesseract;
+import org.springframework.ai.transformers.TransformersEmbeddingModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
@@ -22,6 +29,8 @@ import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.system.domain.SysConfig;
 import com.ruoyi.system.service.ISysConfigService;
+
+import javax.imageio.ImageIO;
 
 /**
  * 参数配置 信息操作处理
@@ -130,5 +139,71 @@ public class SysConfigController extends BaseController
     {
         configService.resetConfigCache();
         return success();
+    }
+
+    public static void main(String[] args) {
+        //testLocalEmbeddingModel();
+        testOcrImage();
+    }
+
+    /**
+     * 测试本地嵌入式模型
+     */
+    public static void testLocalEmbeddingModel() {
+        TransformersEmbeddingModel embeddingModel= new TransformersEmbeddingModel();
+        // 设置tokenizer文件路径
+        embeddingModel.setTokenizerResource("classpath:/onnx/bge-small-zh-v1.5/tokenizer.json");
+        // 设置Onnx模型文件路径
+        embeddingModel.setModelResource("classpath:/onnx/bge-small-zh-v1.5/model.onnx");
+        // 缓存位置
+        embeddingModel.setResourceCacheDirectory("/tmp/onnx-cache");
+        // 自动填充
+        embeddingModel.setTokenizerOptions(Map.of("padding", "true"));
+        // 模型输出层的名称，默认是 last_hidden_state, 需要根据所选模型设置
+        embeddingModel.setModelOutputName("token_embeddings");
+        try {
+            embeddingModel.afterPropertiesSet();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        String text="你好，我是张三";
+        long t= System.currentTimeMillis();
+        // 生成文本嵌入向量
+        float[] embed = embeddingModel.embed(text);
+        long useTime= System.currentTimeMillis() - t;
+        System.out.println("embed finish: " + text + " ,len: " + embed.length + "  UseTime：" + useTime + "ms");
+        for (float f : embed)  {
+            System.out.print(f);
+        }
+    }
+
+    /**
+     * 测试图片识别
+     */
+    public static void testOcrImage() {
+        // 创建实例
+        ITesseract instance = new Tesseract();
+
+        // 设置识别语言
+
+        instance.setLanguage("chi_sim");
+        // instance.setLanguage("jpn");
+
+        // 设置识别引擎
+
+        instance.setOcrEngineMode(1);
+        instance.setPageSegMode(6);
+
+        // 读取文件
+        try {
+            BufferedImage image = ImageIO.read(new File("E:\\Desktop\\上传文件\\rag测试\\pdf截图.png"));
+
+            // 识别
+            //String res = instance.doOCR(new File("C:\\Users\\Lenovo\\Pictures\\联想截图\\联想截图_20230220144409.png"));
+            String result = instance.doOCR(image);
+            System.out.println(result);
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+        }
     }
 }

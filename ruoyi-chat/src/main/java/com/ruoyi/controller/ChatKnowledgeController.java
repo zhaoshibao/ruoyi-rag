@@ -18,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.sourceforge.tess4j.ITesseract;
 import net.sourceforge.tess4j.Tesseract;
 import net.sourceforge.tess4j.TesseractException;
+import org.springframework.ai.transformers.TransformersEmbeddingModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -27,6 +28,7 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 知识库管理Controller
@@ -157,33 +159,5 @@ public class ChatKnowledgeController extends BaseController
         }
         return toAjax(result);
     }
-
-    public static void main(String[] args) {
-        // 创建实例
-        ITesseract instance = new Tesseract();
-
-        // 设置识别语言
-
-        instance.setLanguage("chi_sim");
-       // instance.setLanguage("jpn");
-
-        // 设置识别引擎
-
-        instance.setOcrEngineMode(1);
-        instance.setPageSegMode(6);
-
-        // 读取文件
-        try {
-        BufferedImage image = ImageIO.read(new File("E:\\Desktop\\上传文件\\rag测试\\pdf截图.png"));
-
-            // 识别
-            //String res = instance.doOCR(new File("C:\\Users\\Lenovo\\Pictures\\联想截图\\联想截图_20230220144409.png"));
-            String result = instance.doOCR(image);
-            System.out.println(result);
-        } catch (Exception e) {
-            System.err.println(e.getMessage());
-        }
-    }
-
 
 }

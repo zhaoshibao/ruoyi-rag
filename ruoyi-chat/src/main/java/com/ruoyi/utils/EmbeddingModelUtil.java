@@ -8,79 +8,38 @@ import org.springframework.ai.openai.OpenAiChatModel;
 import org.springframework.ai.openai.OpenAiChatOptions;
 import org.springframework.ai.openai.api.OpenAiApi;
 import org.springframework.ai.tool.ToolCallback;
+import org.springframework.ai.transformers.TransformersEmbeddingModel;
 import org.springframework.ai.zhipuai.ZhiPuAiChatModel;
 import org.springframework.ai.zhipuai.ZhiPuAiChatOptions;
 import org.springframework.ai.zhipuai.api.ZhiPuAiApi;
 
-import java.util.List;
+import java.util.Map;
 
 /**
- * 工具类，用于获取聊天模型
+ * 工具类，用于获取嵌入式模型
  */
 @Slf4j
-public class ChatModelUtil {
+public class EmbeddingModelUtil {
     /**
-     * 获取OpenAI聊天模型
-     * @param baseUrl
-     * @param apiKey
-     * @param model
+     * 获取本地嵌入式模型
      * @return
+     * @throws Exception
      */
-    public static OpenAiChatModel getOpenAiChatModel(String baseUrl, String apiKey, String model, ToolCallback... toolCallbacks) {
-        var openAiApi = OpenAiApi.builder()
-                .baseUrl(baseUrl)
-                .apiKey(apiKey)
-                .build();
-        var openAiChatOptions = OpenAiChatOptions.builder()
-                .model(model)
-                .temperature(0.4)
-               // .maxTokens(200)
-                .toolCallbacks(toolCallbacks)
-                .build();
-
-       return  OpenAiChatModel.builder().openAiApi(openAiApi).defaultOptions(openAiChatOptions).build();
-        //return  new OpenAiChatModel(openAiApi, openAiChatOptions);
-    }
-
-
-    /**
-     * 获取Ollama聊天模型
-     * @param baseUrl
-     * @param model
-     * @return
-     */
-    public static OllamaChatModel getOllamaChatModel(String baseUrl, String model,ToolCallback... toolCallbacks) {
-        //var ollamaApi = new OllamaApi(baseUrl);
-        var ollamaApi = OllamaApi.builder().baseUrl(baseUrl).build();
-        return  OllamaChatModel.builder()
-                .ollamaApi(ollamaApi)
-                .defaultOptions(
-                        OllamaOptions.builder()
-                                .model(model)
-                                .temperature(0.4)
-                                .build())
-                .build();
-    }
-
-
-    /**
-     * 获取智普AI聊天模型
-     * @param baseUrl
-     * @param apiKey
-     * @param model
-     * @return
-     */
-    public static ZhiPuAiChatModel getZhiPuAiChatModel(String baseUrl, String apiKey, String model, ToolCallback... toolCallbacks) {
-        var zhiPuAiApi =  new ZhiPuAiApi(baseUrl,apiKey);
-        var openAiChatOptions = ZhiPuAiChatOptions.builder()
-                .model(model)
-                .temperature(0.4)
-                //.maxTokens(200)
-               .toolCallbacks(toolCallbacks)
-                .build();
-
-        return  new ZhiPuAiChatModel(zhiPuAiApi, openAiChatOptions);
-    }
+   public static TransformersEmbeddingModel getLocalEmbeddingModel() throws Exception {
+       TransformersEmbeddingModel embeddingModel = new TransformersEmbeddingModel();
+       // 设置tokenizer文件路径
+       embeddingModel.setTokenizerResource("classpath:/onnx/bge-small-zh-v1.5/tokenizer.json");
+       // 设置Onnx模型文件路径
+       embeddingModel.setModelResource("classpath:/onnx/bge-small-zh-v1.5/model.onnx");
+       // 缓存位置
+       embeddingModel.setResourceCacheDirectory("/tmp/onnx-cache");
+       // 自动填充
+       embeddingModel.setTokenizerOptions(Map.of("padding", "true"));
+       // 模型输出层的名称，默认是 last_hidden_state, 需要根据所选模型设置
+       embeddingModel.setModelOutputName("token_embeddings");
+       embeddingModel.afterPropertiesSet();
+       return embeddingModel;
+   }
 
 
 }
