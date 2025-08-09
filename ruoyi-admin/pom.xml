@@ -28,11 +28,11 @@
             <groupId>io.springfox</groupId>
             <artifactId>springfox-boot-starter</artifactId>
         </dependency>-->
-        <dependency>
-            <groupId>com.ruoyi</groupId>
-            <artifactId>ruoyi-chat-api</artifactId>
-            <version>${ruoyi-rag.version}</version>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>com.ruoyi</groupId>-->
+<!--            <artifactId>ruoyi-chat-api</artifactId>-->
+<!--            <version>${ruoyi-rag.version}</version>-->
+<!--        </dependency>-->
         <dependency>
             <groupId>com.ruoyi</groupId>
             <artifactId>ruoyi-chat</artifactId>

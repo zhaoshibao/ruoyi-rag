@@ -1,6 +1,5 @@
 package com.ruoyi.domain;
 
-import com.ruoyi.common.annotation.Excel;
 import com.ruoyi.common.core.domain.BaseEntity;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -11,23 +10,19 @@ import org.apache.commons.lang3.builder.ToStringStyle;
  * @author zhaoshibao
  * @date 2025-06-26
  */
-public class ChatFileSegment extends BaseEntity
-{
+public class ChatFileSegment extends BaseEntity {
     private static final long serialVersionUID = 1L;
 
     /** 文件分片ID */
     private String segmentId;
 
     /** 知识库id */
-    @Excel(name = "知识库id")
     private String knowledgeId;
 
     /** 文件名 */
-    @Excel(name = "文件名")
     private String fileName;
 
     /** 文件内容 */
-    @Excel(name = "文件内容")
     private String content;
 
     public void setSegmentId(String segmentId) 

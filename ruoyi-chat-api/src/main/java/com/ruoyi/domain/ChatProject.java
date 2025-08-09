@@ -1,8 +1,5 @@
 package com.ruoyi.domain;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
-import com.ruoyi.common.annotation.Excel;
 import com.ruoyi.common.core.domain.BaseEntity;
 
 /**
@@ -18,52 +15,43 @@ public class ChatProject extends BaseEntity {
     private String projectId;
 
     /** 项目名称 */
-    @Excel(name = "项目名称")
     private String projectName;
 
     /** 模型类型：ollama、openai */
-    @Excel(name = "模型类型：ollama、openai")
     private String type;
 
 
 
     /** 具体模型：qwen2:7B、gpt-3.5-turbo */
-    @Excel(name = "具体模型：qwen2:7B、gpt-3.5-turbo")
     private String model;
 
 
     /** 具嵌入模型 */
-    @Excel(name = "嵌入模型")
     private String embeddingModel;
 
 
     /** baseUrl */
-    @Excel(name = "baseUrl")
     private String baseUrl;
 
 
 
     /** apiKey */
-    @Excel(name = "apiKey")
     private String apiKey;
 
 
     /** 系统提示词 */
-    @Excel(name = "systemPrompt")
     private String systemPrompt;
 
 
 
 
     /** 是否开启pdf增强解析 */
-    @Excel(name = "isPdfAnalysis")
     private Integer isPdfAnalysis;
 
 
 
 
     /** 用户Id */
-    @Excel(name = "userId")
     private Long userId;
 
     public String getBaseUrl() {

@@ -1,8 +1,5 @@
 package com.ruoyi.domain;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
-import com.ruoyi.common.annotation.Excel;
 import com.ruoyi.common.core.domain.BaseEntity;
 
 /**
@@ -22,33 +19,27 @@ public class ChatKnowledge extends BaseEntity {
 
 
     /** 用户id */
-    @Excel(name = "用户id")
     private Long userId;
 
     /** 项目id */
-    @Excel(name = "项目id")
     private String projectId;
 
 
     /** 项目名称 */
     private String projectName;
     /** 文件名 */
-    @Excel(name = "文件名")
     private String fileName;
 
     /** 文件内容 */
-    @Excel(name = "文件内容")
     private String content;
 
 
 
     /** 是否向量化完成（0 否 1是） */
-    @Excel(name = "是否向量化完成（0 否 1是）")
     private Integer isVector;
 
 
     /** 是否开启知识图谱（0 否 1是） */
-    @Excel(name = "是否开启知识图谱（0 否 1是）")
     private Integer isKnowledgeGraph;
 
     public void setKnowledgeId(String knowledgeId)

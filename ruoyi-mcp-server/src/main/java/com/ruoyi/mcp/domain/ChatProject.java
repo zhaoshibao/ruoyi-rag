@@ -7,6 +7,8 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import lombok.ToString;
 
+import java.io.Serializable;
+
 /**
  * 项目配置对象 chat_project
  * 
@@ -16,7 +18,7 @@ import lombok.ToString;
 @Data
 @ToString
 @TableName("chat_project")
-public class ChatProject {
+public class ChatProject implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @TableId(
