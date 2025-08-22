@@ -34,7 +34,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
- * 图片服务
+ * 文档总结服务
  */
 @Service
 @Slf4j
