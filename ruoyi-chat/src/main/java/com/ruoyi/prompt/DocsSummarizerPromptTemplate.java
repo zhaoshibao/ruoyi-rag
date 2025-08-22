@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.alibaba.cloud.ai.application.config.prompt;
+package com.ruoyi.prompt;
 
 import org.springframework.ai.chat.prompt.PromptTemplate;
 import org.springframework.context.annotation.Bean;

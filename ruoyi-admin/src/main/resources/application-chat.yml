@@ -50,6 +50,8 @@ spring:
       embedding:
         options:
           model: embedding-3
+    dashscope:
+      api-key: ${DASHSCOPE_API_KEY}
     vectorstore:
       qdrant:
         host: localhost

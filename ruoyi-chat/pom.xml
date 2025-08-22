@@ -102,6 +102,12 @@
             <groupId>org.springframework.ai</groupId>
             <artifactId>spring-ai-mcp</artifactId>
         </dependency>
+        <!-- Spring AI Alibaba -->
+        <dependency>
+            <groupId>com.alibaba.cloud.ai</groupId>
+            <artifactId>spring-ai-alibaba-starter-dashscope</artifactId>
+            <version>1.0.0.3</version>
+        </dependency>
 
 
         <dependency>

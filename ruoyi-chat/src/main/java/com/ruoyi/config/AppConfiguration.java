@@ -15,18 +15,13 @@
  * limitations under the License.
  */
 
-package com.alibaba.cloud.ai.application.config;
+package com.ruoyi.config;
 
-import com.alibaba.cloud.ai.dashscope.api.DashScopeApi;
-import com.alibaba.cloud.ai.memory.jdbc.SQLiteChatMemoryRepository;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
 import org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor;
 import org.springframework.ai.chat.memory.ChatMemory;
-import org.springframework.ai.chat.memory.MessageWindowChatMemory;
-import org.springframework.ai.model.tool.ToolCallingManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.jdbc.core.JdbcTemplate;
 
 /**
  * @author yuluo
@@ -40,14 +35,6 @@ public class AppConfiguration {
 
 	private static final String AI_DASHSCOPE_API_KEY_PREFIX = "DASH_SCOPE_API_KEY";
 
-	@Bean
-	public ChatMemory SQLiteChatMemory(JdbcTemplate jdbcTemplate) {
-		return MessageWindowChatMemory.builder()
-				.chatMemoryRepository(SQLiteChatMemoryRepository.sqliteBuilder()
-						.jdbcTemplate(jdbcTemplate)
-						.build())
-				.build();
-	}
 
 	@Bean
 	public SimpleLoggerAdvisor simpleLoggerAdvisor() {
@@ -62,21 +49,6 @@ public class AppConfiguration {
 		return MessageChatMemoryAdvisor.builder(sqLiteChatMemory).build();
 	}
 
-	@Bean
-	public ToolCallingManager toolCallingManager() {
 
-		return ToolCallingManager.builder().build();
-	}
-
-	/**
-	 * For bailian call use.
-	 */
-	@Bean
-	public DashScopeApi dashScopeApi() {
-
-		return DashScopeApi.builder()
-				.apiKey(System.getenv(AI_DASHSCOPE_API_KEY_PREFIX))
-				.build();
-	}
 
 }
