@@ -3,7 +3,7 @@
     <div class="left-slot">
       <slot name="left"></slot>
     </div>
-    <div class="search-toggle">
+   <!-- <div class="search-toggle">
       <el-popover
         placement="top"
         :width="100"
@@ -27,7 +27,7 @@
           </div>
         </div>
       </el-popover>
-    </div>
+    </div>-->
     <!-- 聊天输入区域
       contenteditable="true" - 使div可编辑，实现输入功能
       ref="messageInput" - 用于获取输入框DOM引用

@@ -49,6 +49,14 @@ public class ChatProject extends BaseEntity {
     private Integer isPdfAnalysis;
 
 
+    /** 是否开启知识库搜索 */
+    private Integer isKnowledgeSearch;
+
+    /**
+     * 是否开启联网搜索
+     */
+    private Integer isWebSearch;
+
 
 
     /** 用户Id */
@@ -158,6 +166,21 @@ public class ChatProject extends BaseEntity {
         this.userId = userId;
     }
 
+    public Integer getIsKnowledgeSearch() {
+        return isKnowledgeSearch;
+    }
+
+    public void setIsKnowledgeSearch(Integer isKnowledgeSearch) {
+        this.isKnowledgeSearch = isKnowledgeSearch;
+    }
+
+    public Integer getIsWebSearch() {
+        return isWebSearch;
+    }
+
+    public void setIsWebSearch(Integer isWebSearch) {
+        this.isWebSearch = isWebSearch;
+    }
 
     @Override
     public String toString() {
@@ -171,9 +194,9 @@ public class ChatProject extends BaseEntity {
                 ", apiKey='" + apiKey + '\'' +
                 ", systemPrompt='" + systemPrompt + '\'' +
                 ", isPdfAnalysis=" + isPdfAnalysis +
+                ", isKnowledgeSearch=" + isKnowledgeSearch +
+                ", isWebSearch=" + isWebSearch +
                 ", userId=" + userId +
                 '}';
     }
-
-
 }

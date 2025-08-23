@@ -1,13 +1,16 @@
 package com.ruoyi.searxng;
 
+import org.springframework.ai.chat.messages.UserMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 @Service
 public class SearXNGService {
@@ -109,6 +112,8 @@ public class SearXNGService {
         return response.getBody();
     }
 
+
+
     /**
      * 简化的搜索方法，使用默认参数
      *
@@ -119,6 +124,51 @@ public class SearXNGService {
         SearXNGSearchParams params = new SearXNGSearchParams(query);
         return searchWithGet(params);
     }
+
+    /**
+     * 简化的搜索方法，使用默认参数
+     *
+     * @param query 搜索查询
+     * @return 搜索结果
+     */
+    public String searchV2(String query) {
+        //联网搜索提示词
+        String prompt = """
+                {query}
+                 
+                Context information is below, surrounded by ---------------------
+         
+                ---------------------
+                {question_answer_context}
+                ---------------------
+         
+                Given the context and provided history information and not prior knowledge,
+                reply to the user comment. If the answer is not in the context, inform
+                the user that you can't answer the question.
+                """;
+        
+        // 执行搜索
+        SearXNGSearchParams params = new SearXNGSearchParams(query);
+        SearXNGSearchResult search = searchWithGet(params);
+        List<SearXNGSearchResult.Result> searchResultList = search.getResults();
+        
+        // 构建搜索结果内容
+        StringBuilder contextBuilder = new StringBuilder();
+        if (!CollectionUtils.isEmpty(searchResultList)) {
+            searchResultList.forEach(result -> {
+                contextBuilder.append("标题: ").append(result.getTitle()).append("\n");
+                contextBuilder.append("内容: ").append(result.getContent()).append("\n\n");
+            });
+        }
+        
+        // 替换提示词中的变量
+        String questionAnswerContext = contextBuilder.toString();
+        String result = prompt.replace("{query}", query)
+                             .replace("{question_answer_context}", questionAnswerContext);
+        
+        return result;
+    }
+
 
     /**
      * 使用特定引擎进行搜索

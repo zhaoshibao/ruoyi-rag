@@ -142,16 +142,10 @@ public class OllamaOperator implements AiOperator {
 //        }
 
         //是否开启联网搜索
-        Boolean useWebSearch = queryVo.getUseWebSearch();
+        Boolean useWebSearch = chatProject.getIsWebSearch() == 1;
         if (useWebSearch) {
-            SearXNGSearchResult search = searXNGService.search(queryVo.getMsg());
-            List<SearXNGSearchResult.Result> searchResultList = search.getResults();
-            if (!CollectionUtils.isEmpty(searchResultList)) {
-                searchResultList.stream().forEach(result -> {
-                    msgList.add(new UserMessage("以下是从搜索引擎中查询到的相关信息,请根据这些信息回答问题：\n" + result.getTitle() + "\n" + result.getContent()));
-                });
-            }
-
+            String searchResult = searXNGService.searchV2(queryVo.getMsg());
+            msgList.add(new UserMessage(searchResult));
         }
         // 中英文切换
         msgList.add(new SystemMessage(LanguageEnum.getMsg(queryVo.getLanguage())));
@@ -173,24 +167,30 @@ public class OllamaOperator implements AiOperator {
                 )
                 .build();
 
-        Flux<ChatResponse> responseFlux = chatClient
+
+        ChatClient.ChatClientRequestSpec chatClientRequestSpec = chatClient
                 .prompt(new Prompt(msgList))
                 .advisors(memoryAdvisor -> memoryAdvisor
-                        .param(ChatMemory.CONVERSATION_ID, chatId))
-                .advisors(
-                        QuestionAnswerAdvisor
-                                .builder(ollamaQdrantVectorStore)
-                                .searchRequest(
-                                        SearchRequest.builder()
-                                                .filterExpression(
-                                                        new FilterExpressionBuilder()
-                                                                .eq("projectId", queryVo.getProjectId()) // 查询当前项目本地知识库
-                                                                .build())
-                                                .topK(SystemConstant.TOPK).build()
-                                )
-                                .build()
-                )
-                .stream().chatResponse();
+                        .param(ChatMemory.CONVERSATION_ID, chatId));
+
+        //开启知识库搜索
+        Boolean isKnowledgeSearch = chatProject.getIsKnowledgeSearch() == 1;
+        if (isKnowledgeSearch) {
+            QuestionAnswerAdvisor questionAnswerAdvisor = QuestionAnswerAdvisor
+                    .builder(ollamaQdrantVectorStore)
+                    .searchRequest(
+                            SearchRequest.builder()
+                                    .filterExpression(
+                                            new FilterExpressionBuilder()
+                                                    .eq("projectId", queryVo.getProjectId()) // 查询当前项目本地知识库
+                                                    .build())
+                                    .topK(SystemConstant.TOPK).build()
+                    )
+                    .build();
+            chatClientRequestSpec.advisors(questionAnswerAdvisor);
+        }
+
+        Flux<ChatResponse> responseFlux = chatClientRequestSpec.stream().chatResponse();
         return responseFlux.map(response -> response.getResult() != null
                 && response.getResult().getOutput() != null
                 && response.getResult().getOutput().getText() != null

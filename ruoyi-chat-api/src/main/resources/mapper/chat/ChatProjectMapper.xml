@@ -4,7 +4,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ruoyi.mapper.ChatProjectMapper">
     
-    <resultMap type="ChatProject" id="ChatProjectResult">
+    <resultMap type="com.ruoyi.domain.ChatProject" id="ChatProjectResult">
         <result property="projectId"    column="project_id"    />
         <result property="projectName"    column="project_name"    />
         <result property="type"    column="type"    />
@@ -14,6 +14,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="apiKey"    column="api_key"    />
         <result property="systemPrompt"    column="system_prompt"    />
         <result property="isPdfAnalysis"    column="is_pdf_analysis"    />
+        <result property="isKnowledgeSearch"    column="is_knowledge_search"    />
+        <result property="isWebSearch"    column="is_web_search"    />
         <result property="userId"    column="user_id"    />
         <result property="createBy"    column="create_by"    />
         <result property="createTime"    column="create_time"    />
@@ -25,6 +27,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <sql id="selectChatProjectVo">
         select project_id, project_name, type, model,embedding_model, base_url,api_key,system_prompt,is_pdf_analysis,
+                is_knowledge_search, is_web_search,
                create_by, create_time, update_by, update_time, remark from chat_project
     </sql>
 
@@ -55,6 +58,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="apiKey != null">api_key,</if>
             <if test="systemPrompt != null">system_prompt,</if>
             <if test="isPdfAnalysis != null">is_pdf_analysis,</if>
+            <if test="isKnowledgeSearch != null">is_knowledge_search,</if>
+            <if test="isWebSearch != null">is_web_search,</if>
             <if test="userId != null">user_id,</if>
             <if test="createBy != null">create_by,</if>
             <if test="createTime != null">create_time,</if>
@@ -72,6 +77,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="apiKey != null">#{apiKey},</if>
             <if test="systemPrompt != null">#{systemPrompt},</if>
             <if test="isPdfAnalysis != null">#{isPdfAnalysis},</if>
+            <if test="isKnowledgeSearch != null">#{isKnowledgeSearch},</if>
+            <if test="isWebSearch != null">#{isWebSearch},</if>
             <if test="userId != null">#{userId},</if>
             <if test="createBy != null">#{createBy},</if>
             <if test="createTime != null">#{createTime},</if>
@@ -92,6 +99,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="apiKey != null">api_key = #{apiKey},</if>
             <if test="systemPrompt != null">system_prompt = #{systemPrompt},</if>
             <if test="isPdfAnalysis != null">is_pdf_analysis = #{isPdfAnalysis},</if>
+            <if test="isKnowledgeSearch != null">is_knowledge_search = #{isKnowledgeSearch},</if>
+            <if test="isWebSearch != null">is_web_search = #{isWebSearch},</if>
+            <if test="userId != null">user_id = #{userId},</if>
             <if test="createBy != null">create_by = #{createBy},</if>
             <if test="createTime != null">create_time = #{createTime},</if>
             <if test="updateBy != null">update_by = #{updateBy},</if>

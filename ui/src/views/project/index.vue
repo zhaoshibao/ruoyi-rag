@@ -59,6 +59,18 @@
             <span v-else>否</span>
         </template>
       </el-table-column>
+       <el-table-column label="知识库" align="center" prop="isKnowledgeSearch" width="120">
+        <template #default="scope">
+            <span v-if="scope.row.isKnowledgeSearch == 1">是</span>
+            <span v-else>否</span>
+        </template>
+      </el-table-column>
+        <el-table-column label="联网搜索" align="center" prop="isWebSearch" width="120">
+        <template #default="scope">
+            <span v-if="scope.row.isWebSearch == 1">是</span>
+            <span v-else>否</span>
+        </template>
+      </el-table-column>
       <el-table-column label="创建时间" align="center" prop="createTime" width="180">
         <template #default="scope">
           <span>{{ parseTime(scope.row.createTime) }}</span>
@@ -116,6 +128,12 @@
         </el-form-item>
          <el-form-item label="是否开启pdf增强解析" prop="pdfAnalysis">
            <el-switch v-model="form.pdfAnalysis" :active-value="1" :inactive-value="0" />
+        </el-form-item>
+         <el-form-item label="知识库" prop="isKnowledgeSearch">
+           <el-switch v-model="form.isKnowledgeSearch" :active-value="1" :inactive-value="0" />
+        </el-form-item>
+         <el-form-item label="联网搜索" prop="isWebSearch">
+           <el-switch v-model="form.isWebSearch" :active-value="1" :inactive-value="0" />
         </el-form-item>
       </el-form>
       <template #footer>
@@ -188,6 +206,10 @@ const modelTypeOptions = ref([
        {
         label: "zhipuai",
         value: "zhipuai"
+       },
+       {
+        label: "dashscope",
+        value: "dashscope"
        }
 ])
 

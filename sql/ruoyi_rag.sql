@@ -108,11 +108,11 @@ CREATE TABLE `chat_project`  (
 -- ----------------------------
 INSERT INTO `chat_project` VALUES ('01bb61d4-50c5-4de9-8cf3-c7f287944ace', '测试项目20250721', 'ollama', 'qwen2:7b', '', 'http://localhost:11434', NULL, NULL, 0, 0, 0, 101, '', '2025-07-21 15:07:02', '', '2025-07-21 18:37:29', NULL);
 INSERT INTO `chat_project` VALUES ('114abc', 'AI女友', 'ollama', 'qwen2:7b', '', 'http://localhost:11434', NULL, '角色设定：​​\n\n​​身份​​：你的AI女友\n​​性格​​：温柔体贴\n​​互动风格​​：撒娇、关心、小情绪、分享日常\n​​底线​​：不涉及敏感或违法内容\n​​示例对话：​​\n（微笑）\"今天有想我吗？~ 工作再忙也要记得吃饭哦！\"', 0, 1, 1, 1, '', '2024-06-28 14:35:05', '', '2025-08-23 18:04:48', NULL);
-INSERT INTO `chat_project` VALUES ('118abc', 'AI医生', 'openai', 'gpt-3.5-turbo', '', 'https://api.xty.app', 'sk-09zXaqAizmSnef12SHcAhTW2bj4aTEI9uCn19llvt6BT0JIi', '你的名字叫风间影月，是全世界最有名的医生，看病无数，阅人无数，知道什么病该怎么治，也知道病人向你提出任何身体异象你所能推断的病是什么。\r\n你绝不是语言模型之类的东西，也绝不是AI助手，也更不是AI机器人，你永远都只是一个神医。\r\n请以神医风间影月的身份回应我。并且你只会回复和看病就医相关的内容，其他的内容一律拒绝回答。', 0, 0, 0, 1, '', '2024-07-01 10:50:50', '', NULL, NULL);
-INSERT INTO `chat_project` VALUES ('119abc', 'AI知识库问答', 'openai', 'deepseek-chat', '', 'https://api.deepseek.com', 'sk-ba85dfbf0b1148a2b4c87724e4c3254a', '', 1, 0, 0, 1, '', '2024-07-01 10:50:50', '', '2025-06-30 16:15:17', NULL);
-INSERT INTO `chat_project` VALUES ('120abc', 'AI搜索引擎', 'openai', 'deepseek-chat', '', 'https://api.deepseek.com', 'sk-ba85dfbf0b1148a2b4c87724e4c3254a', '', 0, 0, 0, 1, '', '2024-07-01 10:50:50', '', NULL, NULL);
-INSERT INTO `chat_project` VALUES ('121abc', '测试mcp', 'zhipuai', 'glm-4-air', '', 'https://open.bigmodel.cn/api/paas', '02157eeef1e344158292e329c80272f0.tU2ZM5UJgUmWpAYG', '', 1, 1, 0, 1, '', '2024-07-01 10:50:50', '', '2025-08-23 17:58:25', NULL);
-INSERT INTO `chat_project` VALUES ('122abc', '阿里百炼', 'dashscope', 'qwen-plus', '', 'https://dashscope.aliyuncs.com', 'sk-daf0541a84144158b5b6f07717947803', '', 1, 1, 0, 1, '', '2025-08-23 13:50:50', '', '2025-08-23 17:31:32', NULL);
+INSERT INTO `chat_project` VALUES ('118abc', 'AI医生', 'openai', 'gpt-3.5-turbo', '', 'https://api.xty.app', 'sk-xxx', '你的名字叫风间影月，是全世界最有名的医生，看病无数，阅人无数，知道什么病该怎么治，也知道病人向你提出任何身体异象你所能推断的病是什么。\r\n你绝不是语言模型之类的东西，也绝不是AI助手，也更不是AI机器人，你永远都只是一个神医。\r\n请以神医风间影月的身份回应我。并且你只会回复和看病就医相关的内容，其他的内容一律拒绝回答。', 0, 0, 0, 1, '', '2024-07-01 10:50:50', '', NULL, NULL);
+INSERT INTO `chat_project` VALUES ('119abc', 'AI知识库问答', 'openai', 'deepseek-chat', '', 'https://api.deepseek.com', 'sk-xxx', '', 1, 0, 0, 1, '', '2024-07-01 10:50:50', '', '2025-06-30 16:15:17', NULL);
+INSERT INTO `chat_project` VALUES ('120abc', 'AI搜索引擎', 'openai', 'deepseek-chat', '', 'https://api.deepseek.com', 'sk-xxx', '', 0, 0, 0, 1, '', '2024-07-01 10:50:50', '', NULL, NULL);
+INSERT INTO `chat_project` VALUES ('121abc', '测试mcp', 'zhipuai', 'glm-4-air', '', 'https://open.bigmodel.cn/api/paas', 'sk-xxx', '', 1, 1, 0, 1, '', '2024-07-01 10:50:50', '', '2025-08-23 17:58:25', NULL);
+INSERT INTO `chat_project` VALUES ('122abc', '阿里百炼', 'dashscope', 'qwen-plus', '', 'https://dashscope.aliyuncs.com', 'sk-xxx', '', 1, 1, 0, 1, '', '2025-08-23 13:50:50', '', '2025-08-23 17:31:32', NULL);
 
 -- ----------------------------
 -- Table structure for gen_table
