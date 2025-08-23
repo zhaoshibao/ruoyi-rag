@@ -43,7 +43,13 @@ RuoYi-RAG 是一个基于 Spring AI 框架开发的 AI 知识库检索增强生�
 - 流式响应：支持 AI 回复的流式显示，提供更好的用户体验
 - 普通响应：支持传统的一次性返回完整回复的模式
 - 联网搜索：支持 AI 在回答问题时进行网络搜索，获取最新信息
-- 智能补全：提供代码和文本的智能补全功能
+
+
+### 图片生成
+- 支持 AI 生成图片
+
+### 文档总结
+- 支持 AI 对文档内容进行总结
 
 ### MCP 服务
 - 集成文件系统、高德地图等mcp服务
@@ -54,6 +60,7 @@ RuoYi-RAG 是一个基于 Spring AI 框架开发的 AI 知识库检索增强生�
 ### 核心技术栈
 
 - **后端框架**：Spring Boot 3.3.0
+- **用户端**：Vue 3 + Element Plus
 - **AI 框架**：Spring AI 1.0.0
 - **数据库**：MySQL、Redis、MongoDB
 - **向量存储**：Qdrant Vector Store
@@ -71,6 +78,7 @@ RuoYi-RAG 是一个基于 Spring AI 框架开发的 AI 知识库检索增强生�
 - **ruoyi-quartz**：定时任务模块
 - **ruoyi-generator**：代码生成模块
 - **ruoyi-mcp-server**：MCP服务端模块
+- **ui**：用户端模块
 
 ### AI 模型支持
 
@@ -90,6 +98,7 @@ RuoYi-RAG 是一个基于 Spring AI 框架开发的 AI 知识库检索增强生�
 - Maven 3.6+
 - Neo4j 5.7+
 - SearXNG 2025.7.8-fe52290
+- node.js 18+
 
 ### 数据库配置
 
