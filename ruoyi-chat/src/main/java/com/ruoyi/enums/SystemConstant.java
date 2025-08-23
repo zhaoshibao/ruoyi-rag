@@ -11,4 +11,6 @@ public class SystemConstant {
     public static final String OPENAI_QDRANT = "openai.qdrant";
 
     public static final String ZHIPUAI_QDRANT = "zhipuai.qdrant";
+
+    public static final String DASHSCOPE_QDRANT = "dashscope.qdrant";
 }

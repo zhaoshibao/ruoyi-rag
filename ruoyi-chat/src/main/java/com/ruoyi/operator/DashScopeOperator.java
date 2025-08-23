@@ -1,6 +1,8 @@
 package com.ruoyi.operator;
 
 import cn.hutool.core.util.IdUtil;
+import com.alibaba.cloud.ai.dashscope.chat.DashScopeChatModel;
+import com.alibaba.cloud.ai.dashscope.chat.DashScopeChatOptions;
 import com.ruoyi.annotation.BeanType;
 import com.ruoyi.component.QdrantVectorStoreComponet;
 import com.ruoyi.controller.ChatController;
@@ -13,10 +15,7 @@ import com.ruoyi.enums.SystemConstant;
 import com.ruoyi.searxng.SearXNGSearchResult;
 import com.ruoyi.searxng.SearXNGService;
 import com.ruoyi.service.IChatFileSegmentService;
-import com.ruoyi.service.Neo4jService;
 import com.ruoyi.service.async.VectorStoreAsyncService;
-import com.ruoyi.sse.SSEMsgType;
-import com.ruoyi.sse.SSEServer;
 import com.ruoyi.utils.ChatModelUtil;
 import com.ruoyi.utils.MongoUtil;
 import com.ruoyi.vo.QueryVo;
@@ -29,6 +28,8 @@ import org.apache.pdfbox.rendering.PDFRenderer;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
+import org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor;
+import org.springframework.ai.chat.client.advisor.vectorstore.QuestionAnswerAdvisor;
 import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.chat.messages.AssistantMessage;
 import org.springframework.ai.chat.messages.Message;
@@ -39,8 +40,6 @@ import org.springframework.ai.chat.model.Generation;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.chat.prompt.PromptTemplate;
 import org.springframework.ai.document.Document;
-import org.springframework.ai.openai.OpenAiChatModel;
-import org.springframework.ai.openai.OpenAiChatOptions;
 import org.springframework.ai.reader.JsonReader;
 import org.springframework.ai.reader.TextReader;
 import org.springframework.ai.reader.tika.TikaDocumentReader;
@@ -50,7 +49,6 @@ import org.springframework.ai.transformer.splitter.TokenTextSplitter;
 import org.springframework.ai.vectorstore.SearchRequest;
 import org.springframework.ai.vectorstore.filter.FilterExpressionBuilder;
 import org.springframework.ai.vectorstore.qdrant.QdrantVectorStore;
-import org.springframework.ai.zhipuai.ZhiPuAiChatModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -66,19 +64,22 @@ import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@BeanType(AiTypeEnum.ZHIPUAI)
+/**
+ * 阿里百炼
+ */
+@BeanType(AiTypeEnum.DASHSCOPE)
 @Slf4j
-public class ZhiPuAiOperator implements AiOperator {
+public class DashScopeOperator implements AiOperator {
 
     @Autowired
-    private ZhiPuAiChatModel zhiPuAiChatModel;
+    private DashScopeChatModel dashScopeChatModel;
+
+    @Autowired
+    private SimpleLoggerAdvisor simpleLoggerAdvisor;
 
     @Value("${spring.ai.zhipuai.chat.options.temperature}")
     private double temperature;
 
-   // @Autowired
-    // private RedisVectorStore openaiRedisVectorStore;
-    //private QdrantVectorStore openAiQdrantVectorStore;
 
     @Autowired
     private QdrantVectorStoreComponet qdrantVectorStoreComponet;
@@ -89,8 +90,8 @@ public class ZhiPuAiOperator implements AiOperator {
     @Autowired
     private SearXNGService searXNGService;
 
-    @Autowired
-    private Neo4jService neo4jService;
+//    @Autowired
+//    private Neo4jService neo4jService;
 
 
     @Autowired
@@ -134,7 +135,7 @@ public class ZhiPuAiOperator implements AiOperator {
         // 3. 构建提示并获取补全
         Prompt prompt = promptTemplate.create(Map.of("context", context));
 
-        String completion = zhiPuAiChatModel.call(prompt).getResult().getOutput().getText();
+        String completion = dashScopeChatModel.call(prompt).getResult().getOutput().getText();
 
         //String completion = chatClient.prompt(prompt).call().content();
 
@@ -154,11 +155,11 @@ public class ZhiPuAiOperator implements AiOperator {
         String context = request.text().substring(Math.max(0, request.cursorPosition() - 1000), request.cursorPosition());
 
         // 1. 配置多候选项
-        OpenAiChatOptions options = OpenAiChatOptions.builder()
+        DashScopeChatOptions options = DashScopeChatOptions.builder()
                 //.model("text-davinci-003")
-                .temperature(temperature)
+                .withTemperature(temperature)
                 //.maxTokens(1000)
-                .N(3) // 获取3个候选项
+                .withTopK(3) // 获取3个候选项
                 .build();
 
         Prompt prompt = new Prompt(context, options);
@@ -166,7 +167,7 @@ public class ZhiPuAiOperator implements AiOperator {
         // 2. 获取多个候选项
         //ChatResponse response = chatClient.prompt(prompt).call().chatResponse();
 
-        List<Generation> results = zhiPuAiChatModel.call(prompt).getResults();
+        List<Generation> results = dashScopeChatModel.call(prompt).getResults();
 
         // 3. 处理每个候选项
         return results.stream().map(result -> {
@@ -199,36 +200,15 @@ public class ZhiPuAiOperator implements AiOperator {
         String apiKey = chatProject.getApiKey();
         String model = chatProject.getModel();
         String embeddingModel = chatProject.getEmbeddingModel();
-        QdrantVectorStore zhiPuAiQdrantVectorStore = qdrantVectorStoreComponet.getZhiPuAiQdrantVectorStore(baseUrl, apiKey, embeddingModel);
-        List<Document> documentList = zhiPuAiQdrantVectorStore.similaritySearch(
-                SearchRequest.builder().query(queryVo.getMsg())
-                        .filterExpression(
-                                new FilterExpressionBuilder()
-                                        .eq("projectId", queryVo.getProjectId()) // 查询当前用户及管理员的本地知识库
-                                        .build())
-                        .topK(SystemConstant.TOPK).build()); // 取前10个
+        QdrantVectorStore dashScopeQdrantVectorStore = qdrantVectorStoreComponet.getDashScopeQdrantVectorStore(baseUrl, apiKey, embeddingModel);
 
-        List<Message> msgList;
-        // 把本地知识库的内容作为系统提示放入
-        List<String> knoledgeIds = new ArrayList<>();
-        if (!CollectionUtils.isEmpty(documentList)) {
-            msgList = documentList.stream().map(result -> {
-                        Object o = result.getMetadata().get("knowledgeId");
-                        if (o != null) {
-                            knoledgeIds.add(o.toString());
-                        }
-                        return new SystemMessage(result.getText());
-            }
-            ).collect(Collectors.toList());
-        } else {
-            msgList = new ArrayList<>();
-        }
-
-        // 添加 Neo4j 图数据库查询结果
-        String graphContext = neo4jService.getAllRelationshipsContext(queryVo.getProjectId(), knoledgeIds);
-        if (graphContext != null && !graphContext.isEmpty() && !graphContext.startsWith("未指定") && !graphContext.startsWith("指定的")) {
-            msgList.add(new SystemMessage("以下是从图数据库中查询到的相关信息：\n" + graphContext));
-        }
+        List<Message> msgList = new ArrayList<>();
+        // 暂时注释掉知识图谱功能
+        // Neo4j 图数据库查询结果
+//        String graphContext = neo4jService.getAllRelationshipsContext(queryVo.getProjectId(), knoledgeIds);
+//        if (graphContext != null && !graphContext.isEmpty() && !graphContext.startsWith("未指定") && !graphContext.startsWith("指定的")) {
+//            msgList.add(new UserMessage("以下是从图数据库中查询到的相关信息,请根据这些信息回答问题：\n" + graphContext));
+//        }
         //是否开启联网搜索
         Boolean useWebSearch = queryVo.getUseWebSearch();
 
@@ -237,8 +217,7 @@ public class ZhiPuAiOperator implements AiOperator {
             List<SearXNGSearchResult.Result> searchResultList = search.getResults();
             if (!CollectionUtils.isEmpty(searchResultList)) {
                 searchResultList.stream().forEach(result -> {
-                    msgList.add(new SystemMessage(result.getTitle()));
-                    msgList.add(new SystemMessage(result.getContent()));
+                    msgList.add(new UserMessage("以下是从搜索引擎中查询到的相关信息,请根据这些信息回答问题：\n" + result.getTitle() + "\n" + result.getContent()));
                 });
             }
 
@@ -248,22 +227,38 @@ public class ZhiPuAiOperator implements AiOperator {
         msgList.add(new SystemMessage(chatProject.getSystemPrompt()));
 
         // 加入当前用户的提问
-        msgList.add(new UserMessage(queryVo.getMsg()));
+        msgList.add(new UserMessage("用户问题：" + queryVo.getMsg()));
 
         ToolCallback[] toolCallbacks = tools.getToolCallbacks();
-//        Arrays.stream(toolCallbacks).forEach(toolCallback -> {
-//            log.info("toolCallback:{}",toolCallback);
-//        });
 
-        ZhiPuAiChatModel zhiPuAiChatModel = ChatModelUtil.getZhiPuAiChatModel(baseUrl, apiKey, model,toolCallbacks);
+        DashScopeChatModel dashScopeChatModel1 = ChatModelUtil.getDashScopeChatModel(baseUrl, apiKey, model, Arrays.asList(toolCallbacks));
 
         // 提交到大模型获取最终结果
-        ChatClient chatClient = ChatClient.builder(zhiPuAiChatModel)
+        ChatClient chatClient = ChatClient.builder(dashScopeChatModel1)
                 .defaultToolCallbacks(tools)
-                .defaultAdvisors(MessageChatMemoryAdvisor.builder(chatMemory).build())
+                .defaultAdvisors(
+                        MessageChatMemoryAdvisor.builder(chatMemory).build(),
+                        simpleLoggerAdvisor)
                 .build();
 
-        Flux<ChatResponse> responseFlux =chatClient.prompt(new Prompt(msgList)).stream().chatResponse();
+        Flux<ChatResponse> responseFlux =chatClient
+                .prompt(new Prompt(msgList))
+                .advisors(memoryAdvisor -> memoryAdvisor
+                        .param(ChatMemory.CONVERSATION_ID, chatId))
+                .advisors(
+                        QuestionAnswerAdvisor
+                                .builder(dashScopeQdrantVectorStore)
+                                .searchRequest(
+                                        SearchRequest.builder()
+                                                .filterExpression(
+                                                        new FilterExpressionBuilder()
+                                                                .eq("projectId", queryVo.getProjectId()) // 查询当前项目本地知识库
+                                                                .build())
+                                                .topK(SystemConstant.TOPK).build()
+                                )
+                                .build()
+                )
+                .stream().chatResponse();
 
         Flux<String> flux = responseFlux.map(response -> {
                    String result =  response.getResult() != null
@@ -275,60 +270,9 @@ public class ZhiPuAiOperator implements AiOperator {
                  }
         );
 
-
-        // flux.collectList().subscribe(list -> {
-        //     此处获取的信息和最终返回的信息 是两个结果
-        //     System.out.println(StringUtils.join(list, ""));
-        // });
         return flux;
     }
 
-
-    @Override
-    public void chatStreamV2(ChatProject chatProject, QueryVo queryVo) throws Exception {
-        // 把问题记录到mongodb
-        com.ruoyi.pojo.Message msg = new com.ruoyi.pojo.Message();
-        msg.setChatId(queryVo.getChatId());
-        msg.setType(0);
-        msg.setContent(queryVo.getMsg());
-        msg.setCreateTime(new Date());
-        msg.setId(IdUtil.getSnowflake().nextId());
-        this.mongoTemplate.insert(msg, MongoUtil.getMessageCollection(queryVo.getChatId()));
-
-        String baseUrl = chatProject.getBaseUrl();
-        String apiKey = chatProject.getApiKey();
-        String model = chatProject.getModel();
-        String embeddingModel = chatProject.getEmbeddingModel();
-        QdrantVectorStore openAiQdrantVectorStore = qdrantVectorStoreComponet.getOpenAiQdrantVectorStore(baseUrl, apiKey, embeddingModel);
-        // 查询本地知识库
-        List<Document> results = openAiQdrantVectorStore.similaritySearch(
-                SearchRequest.builder().query(queryVo.getMsg())
-                        .filterExpression(
-                                new FilterExpressionBuilder()
-                                        .eq("projectId", queryVo.getProjectId()) // 查询当前用户及管理员的本地知识库
-                                        .build())
-                        .topK(SystemConstant.TOPK).build()); // 取前10个
-
-        // 把本地知识库的内容作为系统提示放入
-        List<Message> msgList = results.stream().map(result ->
-                new SystemMessage(result.getText())).collect(Collectors.toList());
-        // 中英文切换
-        msgList.add(new SystemMessage(LanguageEnum.getMsg(queryVo.getLanguage())));
-        // 加入当前用户的提问
-        msgList.add(new UserMessage(queryVo.getMsg()));
-
-        // 提交到大模型获取最终结果
-        OpenAiChatModel openAiChatModel = ChatModelUtil.getOpenAiChatModel(baseUrl, apiKey, model);
-        Flux<ChatResponse> streamResponse = openAiChatModel.stream(new Prompt(msgList));
-        List<String> list = streamResponse.toStream().map(chatResponse -> {
-            String content = chatResponse.getResult().getOutput().getText();
-            log.info(content);
-            SSEServer.sendMessage(queryVo.getUserId().toString(), content, SSEMsgType.ADD);
-
-
-            return content;
-        }).collect(Collectors.toList());
-    }
 
     @Override
     public String imageUrl(QueryVo queryVo) {
@@ -352,8 +296,8 @@ public class ZhiPuAiOperator implements AiOperator {
         String baseUrl = chatProject.getBaseUrl();
         String apiKey = chatProject.getApiKey();
         String embeddingModel = chatProject.getEmbeddingModel();
-        QdrantVectorStore openAiQdrantVectorStore = qdrantVectorStoreComponet.getOpenAiQdrantVectorStore(baseUrl, apiKey, embeddingModel);
-        openAiQdrantVectorStore.add(List.of(document));
+        QdrantVectorStore dashScopeQdrantVectorStore = qdrantVectorStoreComponet.getDashScopeQdrantVectorStore(baseUrl, apiKey, embeddingModel);
+        dashScopeQdrantVectorStore.add(List.of(document));
         return true;
     }
 
@@ -436,19 +380,19 @@ public class ZhiPuAiOperator implements AiOperator {
                     chatFileSegment.setCreateTime(new Date());
                     iChatFileSegmentService.insertChatFileSegment(chatFileSegment);
                 }
-                //判断是否开启知识图谱
-                Integer isKnowledgeGraph = chatKnowledge.getIsKnowledgeGraph();
-                if (isKnowledgeGraph == 1) {
-                    neo4jService.processCsvFile(file,projectId,knowledgeId);
-                }
+                // 暂时注释掉知识图谱功能
+                // 判断是否开启知识图谱
+//                Integer isKnowledgeGraph = chatKnowledge.getIsKnowledgeGraph();
+//                if (isKnowledgeGraph == 1) {
+//                    neo4jService.processCsvFile(file,projectId,knowledgeId);
+//                }
 
                 String baseUrl = chatProject.getBaseUrl();
                 String apiKey = chatProject.getApiKey();
                 String embeddingModel = chatProject.getEmbeddingModel();
-                QdrantVectorStore zhiPuAiQdrantVectorStore = qdrantVectorStoreComponet.getZhiPuAiQdrantVectorStore(baseUrl, apiKey, embeddingModel);
-                //openAiQdrantVectorStore.add(documentList);
+                QdrantVectorStore dashScopeQdrantVectorStore = qdrantVectorStoreComponet.getDashScopeQdrantVectorStore(baseUrl, apiKey, embeddingModel);
                 //异步执行
-                this.vectorStoreAsyncService.addVectorStore(knowledgeId,zhiPuAiQdrantVectorStore, docList);
+                this.vectorStoreAsyncService.addVectorStore(knowledgeId,dashScopeQdrantVectorStore, docList);
 
 
             } else {
@@ -575,17 +519,13 @@ public class ZhiPuAiOperator implements AiOperator {
         return ocrResults;
     }
 
-    //    @Override
-//    public Boolean remove(String docId) {
-//        return this.openaiQdrantVectorStore.delete(List.of(docId)).get();
-//    }
     @Override
     public void remove(ChatProject chatProject,String docId) throws Exception {
         String baseUrl = chatProject.getBaseUrl();
         String apiKey = chatProject.getApiKey();
         String embeddingModel = chatProject.getEmbeddingModel();
-        QdrantVectorStore openAiQdrantVectorStore = qdrantVectorStoreComponet.getOpenAiQdrantVectorStore(baseUrl, apiKey, embeddingModel);
-        openAiQdrantVectorStore.delete(List.of(docId));
+        QdrantVectorStore dashScopeQdrantVectorStore = qdrantVectorStoreComponet.getDashScopeQdrantVectorStore(baseUrl, apiKey, embeddingModel);
+        dashScopeQdrantVectorStore.delete(List.of(docId));
 
     }
 
@@ -594,12 +534,9 @@ public class ZhiPuAiOperator implements AiOperator {
         String baseUrl = chatProject.getBaseUrl();
         String apiKey = chatProject.getApiKey();
         String embeddingModel = chatProject.getEmbeddingModel();
-        QdrantVectorStore openAiQdrantVectorStore = qdrantVectorStoreComponet.getOpenAiQdrantVectorStore(baseUrl,apiKey,embeddingModel);
+        QdrantVectorStore dashScopeQdrantVectorStore = qdrantVectorStoreComponet.getDashScopeQdrantVectorStore(baseUrl,apiKey,embeddingModel);
         //异步执行
-        vectorStoreAsyncService.removeByknowledgeId(openAiQdrantVectorStore,knowledgeId);
-//        ollamaQdrantVectorStore.delete(
-//                new FilterExpressionBuilder().eq("knowledgeId", knowledgeId).build()
-//        );
+        vectorStoreAsyncService.removeByknowledgeId(dashScopeQdrantVectorStore,knowledgeId);
     }
 
 }

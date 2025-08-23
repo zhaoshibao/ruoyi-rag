@@ -70,7 +70,8 @@
           <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)">修改</el-button>
           <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" >删除</el-button>
            <el-button link type="primary" icon="Upload" @click="handleUpload(scope.row)">上传知识库</el-button>
-           <el-button link type="primary" icon="Share" @click="handleKnowledgeGraph(scope.row)">查看知识图谱</el-button>
+           
+          <!-- <el-button link type="primary" icon="Share" @click="handleKnowledgeGraph(scope.row)">查看知识图谱</el-button> -->
         </template>
       </el-table-column>
     </el-table>
@@ -144,12 +145,12 @@
             multiple
             :file-list="fileList">
             <el-button size="small" type="primary">点击上传</el-button>
-            <div class="el-upload__tip">如果需要查看文件详情，请移步知识库管理</div>
+            <div style="margin-left:10px;font-size: 12px; color:red;"> 如果需要查看文件详情，请移步知识库管理</div>
           </el-upload>
         </el-form-item>
-        <el-form-item label="开启知识图谱" prop="isKnowledgeGraph">
+        <!-- <el-form-item label="开启知识图谱" prop="isKnowledgeGraph">
           <el-switch v-model="fileData.isKnowledgeGraph" :active-value="1" :inactive-value="0" />
-        </el-form-item>
+        </el-form-item> -->
       </el-form>
       <template #footer>
         <div class="dialog-footer">

@@ -144,17 +144,17 @@
             </exclusions>
         </dependency>
 
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-neo4j</artifactId>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.springframework.boot</groupId>-->
+<!--            <artifactId>spring-boot-starter-data-neo4j</artifactId>-->
+<!--        </dependency>-->
 
         <!-- Neo4j Driver -->
-        <dependency>
-            <groupId>org.neo4j.driver</groupId>
-            <artifactId>neo4j-java-driver</artifactId>
-            <version>4.3.5</version> <!-- 使用最新或兼容的版本 -->
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.neo4j.driver</groupId>-->
+<!--            <artifactId>neo4j-java-driver</artifactId>-->
+<!--            <version>4.3.5</version> &lt;!&ndash; 使用最新或兼容的版本 &ndash;&gt;-->
+<!--        </dependency>-->
 
         <dependency>
             <groupId>org.projectlombok</groupId>

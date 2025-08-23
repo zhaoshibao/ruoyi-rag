@@ -17,7 +17,7 @@ public class ChatProject extends BaseEntity {
     /** 项目名称 */
     private String projectName;
 
-    /** 模型类型：ollama、openai */
+    /** 模型类型：ollama、openai 、zhipuai、dashscope*/
     private String type;
 
 

@@ -1,28 +1,22 @@
 package com.ruoyi.operator;
 
 import cn.hutool.core.util.IdUtil;
-import com.google.errorprone.annotations.Var;
 import com.ruoyi.annotation.BeanType;
 import com.ruoyi.component.QdrantVectorStoreComponet;
 import com.ruoyi.controller.ChatController;
 import com.ruoyi.domain.ChatFileSegment;
 import com.ruoyi.domain.ChatKnowledge;
 import com.ruoyi.domain.ChatProject;
-import com.ruoyi.searxng.SearXNGSearchParams;
-import com.ruoyi.searxng.SearXNGSearchResult;
-import com.ruoyi.searxng.SearXNGService;
-import com.ruoyi.service.IChatFileSegmentService;
-import com.ruoyi.service.IChatProjectService;
-import com.ruoyi.service.Neo4jService;
-import com.ruoyi.service.async.VectorStoreAsyncService;
-import com.ruoyi.sse.SSEMsgType;
-import com.ruoyi.sse.SSEServer;
-import com.ruoyi.utils.ChatModelUtil;
-import com.ruoyi.utils.MongoUtil;
-import com.ruoyi.vo.QueryVo;
 import com.ruoyi.enums.AiTypeEnum;
 import com.ruoyi.enums.LanguageEnum;
 import com.ruoyi.enums.SystemConstant;
+import com.ruoyi.searxng.SearXNGSearchResult;
+import com.ruoyi.searxng.SearXNGService;
+import com.ruoyi.service.IChatFileSegmentService;
+import com.ruoyi.service.async.VectorStoreAsyncService;
+import com.ruoyi.utils.ChatModelUtil;
+import com.ruoyi.utils.MongoUtil;
+import com.ruoyi.vo.QueryVo;
 import lombok.extern.slf4j.Slf4j;
 import net.sourceforge.tess4j.Tesseract;
 import net.sourceforge.tess4j.TesseractException;
@@ -30,13 +24,11 @@ import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.rendering.PDFRenderer;
 import org.apache.pdfbox.text.PDFTextStripper;
-import org.apache.pdfbox.tools.imageio.ImageIOUtil;
-import org.apache.poi.util.StringUtil;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
-import org.springframework.ai.chat.client.advisor.PromptChatMemoryAdvisor;
+import org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor;
+import org.springframework.ai.chat.client.advisor.vectorstore.QuestionAnswerAdvisor;
 import org.springframework.ai.chat.memory.ChatMemory;
-import org.springframework.ai.chat.memory.MessageWindowChatMemory;
 import org.springframework.ai.chat.messages.AssistantMessage;
 import org.springframework.ai.chat.messages.Message;
 import org.springframework.ai.chat.messages.SystemMessage;
@@ -46,14 +38,10 @@ import org.springframework.ai.chat.model.Generation;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.chat.prompt.PromptTemplate;
 import org.springframework.ai.document.Document;
-import org.springframework.ai.ollama.api.OllamaOptions;
 import org.springframework.ai.openai.OpenAiChatModel;
 import org.springframework.ai.openai.OpenAiChatOptions;
-import org.springframework.ai.reader.ExtractedTextFormatter;
 import org.springframework.ai.reader.JsonReader;
 import org.springframework.ai.reader.TextReader;
-import org.springframework.ai.reader.pdf.PagePdfDocumentReader;
-import org.springframework.ai.reader.pdf.config.PdfDocumentReaderConfig;
 import org.springframework.ai.reader.tika.TikaDocumentReader;
 import org.springframework.ai.tool.ToolCallbackProvider;
 import org.springframework.ai.transformer.splitter.TokenTextSplitter;
@@ -67,22 +55,25 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.io.PipedReader;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ *  OpenAI
+ */
 @BeanType(AiTypeEnum.OPENAI)
 @Slf4j
 public class OpenAiOperator implements AiOperator {
 
     @Autowired
     private OpenAiChatModel openAiChatModel;
+    @Autowired
+    private SimpleLoggerAdvisor simpleLoggerAdvisor;
 
     @Value("${spring.ai.openai.chat.options.temperature}")
     private double temperature;
@@ -100,8 +91,8 @@ public class OpenAiOperator implements AiOperator {
     @Autowired
     private SearXNGService searXNGService;
 
-    @Autowired
-    private Neo4jService neo4jService;
+//    @Autowired
+//    private Neo4jService neo4jService;
 
 
     @Autowired
@@ -211,35 +202,14 @@ public class OpenAiOperator implements AiOperator {
         String model = chatProject.getModel();
         String embeddingModel = chatProject.getEmbeddingModel();
         QdrantVectorStore openAiQdrantVectorStore = qdrantVectorStoreComponet.getOpenAiQdrantVectorStore(baseUrl, apiKey, embeddingModel);
-        List<Document> documentList = openAiQdrantVectorStore.similaritySearch(
-                SearchRequest.builder().query(queryVo.getMsg())
-                        .filterExpression(
-                                new FilterExpressionBuilder()
-                                        .eq("projectId", queryVo.getProjectId()) // 查询当前用户及管理员的本地知识库
-                                        .build())
-                        .topK(SystemConstant.TOPK).build()); // 取前10个
 
-        List<Message> msgList;
-        // 把本地知识库的内容作为系统提示放入
-        List<String> knoledgeIds = new ArrayList<>();
-        if (!CollectionUtils.isEmpty(documentList)) {
-            msgList = documentList.stream().map(result -> {
-                        Object o = result.getMetadata().get("knowledgeId");
-                        if (o != null) {
-                            knoledgeIds.add(o.toString());
-                        }
-                        return new SystemMessage(result.getText());
-            }
-            ).collect(Collectors.toList());
-        } else {
-            msgList = new ArrayList<>();
-        }
-
+        List<Message> msgList = new ArrayList<>();
+        // 暂时注释掉知识图谱功能
         // 添加 Neo4j 图数据库查询结果
-        String graphContext = neo4jService.getAllRelationshipsContext(queryVo.getProjectId(), knoledgeIds);
-        if (graphContext != null && !graphContext.isEmpty() && !graphContext.startsWith("未指定") && !graphContext.startsWith("指定的")) {
-            msgList.add(new SystemMessage("以下是从图数据库中查询到的相关信息：\n" + graphContext));
-        }
+//        String graphContext = neo4jService.getAllRelationshipsContext(queryVo.getProjectId(), knoledgeIds);
+//        if (graphContext != null && !graphContext.isEmpty() && !graphContext.startsWith("未指定") && !graphContext.startsWith("指定的")) {
+//            msgList.add(new SystemMessage("以下是从图数据库中查询到的相关信息：\n" + graphContext));
+//        }
         //是否开启联网搜索
         Boolean useWebSearch = queryVo.getUseWebSearch();
 
@@ -248,8 +218,7 @@ public class OpenAiOperator implements AiOperator {
             List<SearXNGSearchResult.Result> searchResultList = search.getResults();
             if (!CollectionUtils.isEmpty(searchResultList)) {
                 searchResultList.stream().forEach(result -> {
-                    msgList.add(new SystemMessage(result.getTitle()));
-                    msgList.add(new SystemMessage(result.getContent()));
+                    msgList.add(new UserMessage("以下是从搜索引擎中查询到的相关信息,请根据这些信息回答问题：\n" + result.getTitle() + "\n" + result.getContent()));
                 });
             }
 
@@ -267,10 +236,29 @@ public class OpenAiOperator implements AiOperator {
         // 提交到大模型获取最终结果
         ChatClient chatClient = ChatClient.builder(openAiChatModel)
                 .defaultToolCallbacks(tools)
-                .defaultAdvisors(MessageChatMemoryAdvisor.builder(chatMemory).build())
+                .defaultAdvisors(
+                        MessageChatMemoryAdvisor.builder(chatMemory).build(),
+                        simpleLoggerAdvisor)
                 .build();
 
-        Flux<ChatResponse> responseFlux =chatClient.prompt(new Prompt(msgList)).stream().chatResponse();
+        Flux<ChatResponse> responseFlux =chatClient
+                .prompt(new Prompt(msgList))
+                .advisors(memoryAdvisor -> memoryAdvisor
+                        .param(ChatMemory.CONVERSATION_ID, chatId))
+                .advisors(
+                        QuestionAnswerAdvisor
+                                .builder(openAiQdrantVectorStore)
+                                .searchRequest(
+                                        SearchRequest.builder()
+                                                .filterExpression(
+                                                        new FilterExpressionBuilder()
+                                                                .eq("projectId", queryVo.getProjectId()) // 查询当前项目本地知识库
+                                                                .build())
+                                                .topK(SystemConstant.TOPK).build()
+                                )
+                                .build()
+                )
+                .stream().chatResponse();
 
         Flux<String> flux = responseFlux.map(response -> {
                    String result =  response.getResult() != null
@@ -280,61 +268,10 @@ public class OpenAiOperator implements AiOperator {
                     return result;
                  }
         );
-
-
-        // flux.collectList().subscribe(list -> {
-        //     此处获取的信息和最终返回的信息 是两个结果
-        //     System.out.println(StringUtils.join(list, ""));
-        // });
         return flux;
     }
 
 
-    @Override
-    public void chatStreamV2(ChatProject chatProject, QueryVo queryVo) throws Exception {
-        // 把问题记录到mongodb
-        com.ruoyi.pojo.Message msg = new com.ruoyi.pojo.Message();
-        msg.setChatId(queryVo.getChatId());
-        msg.setType(0);
-        msg.setContent(queryVo.getMsg());
-        msg.setCreateTime(new Date());
-        msg.setId(IdUtil.getSnowflake().nextId());
-        this.mongoTemplate.insert(msg, MongoUtil.getMessageCollection(queryVo.getChatId()));
-
-        String baseUrl = chatProject.getBaseUrl();
-        String apiKey = chatProject.getApiKey();
-        String model = chatProject.getModel();
-        String embeddingModel = chatProject.getEmbeddingModel();
-        QdrantVectorStore openAiQdrantVectorStore = qdrantVectorStoreComponet.getOpenAiQdrantVectorStore(baseUrl, apiKey, embeddingModel);
-        // 查询本地知识库
-        List<Document> results = openAiQdrantVectorStore.similaritySearch(
-                SearchRequest.builder().query(queryVo.getMsg())
-                        .filterExpression(
-                                new FilterExpressionBuilder()
-                                        .eq("projectId", queryVo.getProjectId()) // 查询当前用户及管理员的本地知识库
-                                        .build())
-                        .topK(SystemConstant.TOPK).build()); // 取前10个
-
-        // 把本地知识库的内容作为系统提示放入
-        List<Message> msgList = results.stream().map(result ->
-                new SystemMessage(result.getText())).collect(Collectors.toList());
-        // 中英文切换
-        msgList.add(new SystemMessage(LanguageEnum.getMsg(queryVo.getLanguage())));
-        // 加入当前用户的提问
-        msgList.add(new UserMessage(queryVo.getMsg()));
-
-        // 提交到大模型获取最终结果
-        OpenAiChatModel openAiChatModel = ChatModelUtil.getOpenAiChatModel(baseUrl, apiKey, model);
-        Flux<ChatResponse> streamResponse = openAiChatModel.stream(new Prompt(msgList));
-        List<String> list = streamResponse.toStream().map(chatResponse -> {
-            String content = chatResponse.getResult().getOutput().getText();
-            log.info(content);
-            SSEServer.sendMessage(queryVo.getUserId().toString(), content, SSEMsgType.ADD);
-
-
-            return content;
-        }).collect(Collectors.toList());
-    }
 
     @Override
     public String imageUrl(QueryVo queryVo) {
@@ -442,11 +379,12 @@ public class OpenAiOperator implements AiOperator {
                     chatFileSegment.setCreateTime(new Date());
                     iChatFileSegmentService.insertChatFileSegment(chatFileSegment);
                 }
+                // 暂时注释掉知识图谱功能
                 //判断是否开启知识图谱
-                Integer isKnowledgeGraph = chatKnowledge.getIsKnowledgeGraph();
-                if (isKnowledgeGraph == 1) {
-                    neo4jService.processCsvFile(file,projectId,knowledgeId);
-                }
+//                Integer isKnowledgeGraph = chatKnowledge.getIsKnowledgeGraph();
+//                if (isKnowledgeGraph == 1) {
+//                    neo4jService.processCsvFile(file,projectId,knowledgeId);
+//                }
 
                 String baseUrl = chatProject.getBaseUrl();
                 String apiKey = chatProject.getApiKey();

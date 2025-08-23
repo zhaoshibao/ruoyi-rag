@@ -95,6 +95,7 @@ RuoYi-RAG 是一个基于 Spring AI 框架开发的 AI 知识库检索增强生�
 - **OpenAI**：支持 GPT-3.5-turbo 等模型
 - **Ollama**：支持 Qwen2:7b 等开源模型
 - **智谱AI**：支持 智谱AI 等模型
+- **阿里百炼**：支持 阿里百炼 等模型
 
 ## 安装部署
 

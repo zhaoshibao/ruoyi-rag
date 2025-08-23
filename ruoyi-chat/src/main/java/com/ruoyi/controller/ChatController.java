@@ -43,11 +43,6 @@ public class ChatController extends BaseController {
     }
 
 
-    @Operation(summary = "文本问答V2")
-    @PostMapping(value = "chat-stream-v2", produces = "text/plain;charset=UTF-8")
-    public void chatStreamv2(@RequestBody @Valid QueryVo queryVo) {
-        aiService.chatStreamv2(queryVo);
-    }
 
     @Operation(summary = "创建新的会话")
     @PostMapping("create-chat")

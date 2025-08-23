@@ -78,7 +78,8 @@ public class ChatKnowledgeController extends BaseController
         chatKnowledge.setUserId(getUserId());
         chatKnowledge.setCreateBy(getUsername());
         try {
-            return success(aiService.upload(chatKnowledge, file));
+            aiService.upload(chatKnowledge, file);
+            return success("上传成功");
         } catch (Exception e) {
             log.error("知识库上传接口异常：", e);
             throw new RuntimeException(e);

@@ -1,5 +1,8 @@
 package com.ruoyi.utils;
 
+import com.alibaba.cloud.ai.dashscope.api.DashScopeApi;
+import com.alibaba.cloud.ai.dashscope.chat.DashScopeChatModel;
+import com.alibaba.cloud.ai.dashscope.chat.DashScopeChatOptions;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.ollama.OllamaChatModel;
 import org.springframework.ai.ollama.api.OllamaApi;
@@ -80,6 +83,31 @@ public class ChatModelUtil {
                 .build();
 
         return  new ZhiPuAiChatModel(zhiPuAiApi, openAiChatOptions);
+    }
+
+    /**
+     * 获取DashScope聊天模型
+     * @param baseUrl
+     * @param apiKey
+     * @param model
+     * @return
+     */
+    public static DashScopeChatModel getDashScopeChatModel(String baseUrl, String apiKey, String model, List<ToolCallback> toolCallbacks) {
+        var dashScopeApi = DashScopeApi.builder()
+                .baseUrl(baseUrl)
+                .apiKey(apiKey)
+                .build();
+        var openAiChatOptions = DashScopeChatOptions.builder()
+                .withModel(model)
+                .withTemperature(0.4)
+                //.maxTokens(200)
+                .withToolCallbacks(toolCallbacks)
+                .build();
+
+        return DashScopeChatModel.builder()
+                .dashScopeApi(dashScopeApi)
+                .defaultOptions(openAiChatOptions)
+                .build();
     }
 
 

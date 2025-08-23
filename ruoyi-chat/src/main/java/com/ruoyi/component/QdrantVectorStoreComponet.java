@@ -130,4 +130,26 @@ public class QdrantVectorStoreComponet {
                 .build();
     }
 
+    /**
+     * 获取阿里百炼 向量存储组件
+     * @param baseUrl
+     * @param embeddingmodel
+     * @return
+     * @throws Exception
+     */
+    public QdrantVectorStore getDashScopeQdrantVectorStore (String baseUrl, String apiKey, String embeddingmodel) throws Exception {
+        if (!qdrantClient.collectionExistsAsync(SystemConstant.DASHSCOPE_QDRANT).get()) {
+            qdrantClient.createCollectionAsync(SystemConstant.DASHSCOPE_QDRANT,
+                    Collections.VectorParams.newBuilder()
+                            .setDistance(Collections.Distance.Cosine)
+                            .setSize(512)
+                            .build()).get();
+        }
+        TransformersEmbeddingModel localEmbeddingModel = EmbeddingModelUtil.getLocalEmbeddingModel();
+        return QdrantVectorStore.builder(qdrantClient,localEmbeddingModel)
+                .collectionName(SystemConstant.DASHSCOPE_QDRANT)
+                .initializeSchema(properties.isInitializeSchema())
+                .build();
+    }
+
 }

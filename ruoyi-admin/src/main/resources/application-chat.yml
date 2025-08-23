@@ -1,10 +1,10 @@
 spring:
-  neo4j:
-    uri: bolt://localhost:7687
-    authentication:
-      username: neo4j
-      password: ruoyiRag123456
-    database: ruoyiRag
+#  neo4j:
+#    uri: bolt://localhost:7687
+#    authentication:
+#      username: neo4j
+#      password: ruoyiRag123456
+#    database: ruoyiRag
   data:
     mongodb:
       uri: mongodb://localhost:27017/ruoyi_rag

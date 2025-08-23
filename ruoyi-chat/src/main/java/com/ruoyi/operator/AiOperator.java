@@ -9,6 +9,9 @@ import reactor.core.publisher.Flux;
 
 import java.util.List;
 
+/**
+ * AI 操作接口
+ */
 public interface AiOperator {
 
     /**
@@ -58,7 +61,6 @@ public interface AiOperator {
     }
 
 
-    void chatStreamV2(ChatProject chatProject, QueryVo queryVo) throws Exception;
 
     /**
      * 图像生成，返回url
