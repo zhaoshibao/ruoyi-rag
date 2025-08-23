@@ -20,6 +20,8 @@ RuoYi-RAG 是一个基于 Spring AI 框架开发的 AI 知识库检索增强生�
 ## 功能特性
 
 ### 项目管理
+<img width="1873" height="930" alt="image" src="https://github.com/user-attachments/assets/bc3db152-5db2-4b26-aff5-9f1dd0a4a5a2" />
+
 
 - 创建、修改、删除项目
 - 项目列表展示与搜索
@@ -30,6 +32,8 @@ RuoYi-RAG 是一个基于 Spring AI 框架开发的 AI 知识库检索增强生�
 
 
 ### 知识库管理
+<img width="1913" height="923" alt="image" src="https://github.com/user-attachments/assets/bbd50ee0-687f-4274-a85e-66fb06ab2b2f" />
+
 
 - 知识库列表展示与搜索
 - 知识库文件删除
@@ -37,6 +41,8 @@ RuoYi-RAG 是一个基于 Spring AI 框架开发的 AI 知识库检索增强生�
 
 
 ### AI 对话功能
+<img width="1882" height="923" alt="image" src="https://github.com/user-attachments/assets/c7f5eec5-1da3-44d3-8f91-a268fa427988" />
+
 
 - 多会话管理：支持创建和管理多个聊天会话
 - 消息历史记录：保存和显示聊天历史记录
@@ -46,9 +52,13 @@ RuoYi-RAG 是一个基于 Spring AI 框架开发的 AI 知识库检索增强生�
 
 
 ### 图片生成
+<img width="1895" height="899" alt="图片生成功能" src="https://github.com/user-attachments/assets/c955659a-712a-42d8-aa81-7fe5883edfdf" />
+
 - 支持 AI 生成图片
 
 ### 文档总结
+<img width="1860" height="918" alt="文档总结功能" src="https://github.com/user-attachments/assets/c7e2ae9c-a459-4774-8477-983ed6a35d1b" />
+
 - 支持 AI 对文档内容进行总结
 
 ### MCP 服务
