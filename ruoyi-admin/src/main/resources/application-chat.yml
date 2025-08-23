@@ -58,21 +58,22 @@ spring:
         port: 6334
         initialize-schema: true
         collection-name: rag
-    mcp:
-      client:
-        enabled: true
-        name: spring-ai-mcp-client
-        type: ASYNC
-        sse:
-          connections:
+# 如果需要使用 MCP 服务，取消注释以下配置
+#    mcp:
+#      client:
+#        enabled: true
+#        name: spring-ai-mcp-client
+#        type: ASYNC
+#        sse:
+#          connections:
 #            server1:
-#              url: https://mcp.amap.com
-#              sse-endpoint: /sse?key=${GAODE_API_KEY}
-            server2:
-              url: http://localhost:9055
-              sse-endpoint: /sse
-        stdio:
-          servers-configuration: classpath:mcp-server.json
+#             url: https://mcp.amap.com
+#             sse-endpoint: /sse?key=${GAODE_API_KEY}
+#            server2:
+#              url: http://localhost:9055
+#              sse-endpoint: /sse
+#        stdio:
+#          servers-configuration: classpath:mcp-server.json
 
 
 
