@@ -16,8 +16,8 @@ public class ChatFileSegment extends BaseEntity {
     /** 文件分片ID */
     private String segmentId;
 
-    /** 知识库id */
-    private String knowledgeId;
+    /** 文件id */
+    private String fileId;
 
     /** 文件名 */
     private String fileName;
@@ -34,15 +34,7 @@ public class ChatFileSegment extends BaseEntity {
     {
         return segmentId;
     }
-    public void setKnowledgeId(String knowledgeId) 
-    {
-        this.knowledgeId = knowledgeId;
-    }
 
-    public String getKnowledgeId() 
-    {
-        return knowledgeId;
-    }
     public void setFileName(String fileName) 
     {
         this.fileName = fileName;
@@ -62,11 +54,19 @@ public class ChatFileSegment extends BaseEntity {
         return content;
     }
 
+    public String getFileId() {
+        return fileId;
+    }
+
+    public void setFileId(String fileId) {
+        this.fileId = fileId;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
             .append("segmentId", getSegmentId())
-            .append("knowledgeId", getKnowledgeId())
+            .append("fileId",getFileId())
             .append("fileName", getFileName())
             .append("content", getContent())
             .append("createBy", getCreateBy())

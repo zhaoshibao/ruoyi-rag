@@ -1,6 +1,9 @@
 package com.ruoyi.domain;
 
 import com.ruoyi.common.annotation.Excel;
+import com.ruoyi.common.core.domain.BaseEntity;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 /**
  * 应用和知识库关联对象 chat_app_knowledge
@@ -53,7 +56,7 @@ public class ChatAppKnowledge extends BaseEntity
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
+        return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
             .append("id", getId())
             .append("appId", getAppId())
             .append("knowledgeId", getKnowledgeId())

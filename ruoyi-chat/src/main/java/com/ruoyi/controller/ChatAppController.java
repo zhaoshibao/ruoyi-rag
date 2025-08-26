@@ -19,82 +19,76 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * 项目配置Controller
+ * 应用配置Controller
  * 
- * @author lixianfeng
- * @date 2024-06-27
+ * @author zhaoshibao
+ * @date 2025-08-24
  */
 @RestController
-@Tag(name = "项目后台管理", description = "该智能聊天可以同时供多个项目进行对接")
-@RequestMapping("/chat/project")
-public class ChatProjectController extends BaseController
+@Tag(name = "应用管理", description = "应用管理")
+@RequestMapping("/chat/app")
+public class ChatAppController extends BaseController
 {
     @Autowired
-    private IChatAppService chatProjectService;
+    private IChatAppService chatAppService;
 
-    @Operation(summary = "不分页查询项目列表")
-//    @PreAuthorize("@ss.hasPermi('chat:project:list')")
+    @Operation(summary = "不分页查询应用列表")
     @GetMapping
     public TableDataInfo listAll()
     {
-        List<ChatApp> list = chatProjectService.selectChatProjectList(null);
+        List<ChatApp> list = chatAppService.selectChatAppList(null);
         return getDataTable(list);
     }
 
-    @Operation(summary = "分页查询项目列表")
-//    @PreAuthorize("@ss.hasPermi('chat:project:list')")
+    @Operation(summary = "分页查询应用列表")
     @GetMapping("/list")
-    public TableDataInfo list(ChatApp chatProject) {
+    public TableDataInfo list(ChatApp chatApp) {
         Long userId = SecurityUtils.getUserId();
         startPage();
-        chatProject.setUserId(userId);
-        List<ChatApp> list = chatProjectService.selectChatProjectList(chatProject);
+        chatApp.setUserId(userId);
+        List<ChatApp> list = chatAppService.selectChatAppList(chatApp);
         return getDataTable(list);
     }
 
-    @Operation(summary = "导出项目配置列表")
-    //@PreAuthorize("@ss.hasPermi('chat:project:export')")
-    @Log(title = "项目配置", businessType = BusinessType.EXPORT)
+    @Operation(summary = "导出应用列表")
+    @Log(title = "应用", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
-    public void export(HttpServletResponse response, ChatApp chatProject)
+    public void export(HttpServletResponse response, ChatApp chatApp)
     {
-        List<ChatApp> list = chatProjectService.selectChatProjectList(chatProject);
+        List<ChatApp> list = chatAppService.selectChatAppList(chatApp);
         ExcelUtil<ChatApp> util = new ExcelUtil<ChatApp>(ChatApp.class);
-        util.exportExcel(response, list, "项目配置数据");
+        util.exportExcel(response, list, "应用数据");
     }
 
-    @Operation(summary = "获取一个项目的详细信息")
-    //@PreAuthorize("@ss.hasPermi('chat:project:query')")
-    @GetMapping(value = "/{projectId}")
-    public AjaxResult getInfo(@PathVariable("projectId") String projectId)
+    @Operation(summary = "获取一个应用的详细信息")
+    @GetMapping(value = "/{appId}")
+    public AjaxResult getInfo(@PathVariable("appId") String appId)
     {
-        return success(chatProjectService.selectChatProjectByProjectId(projectId));
+        return success(chatAppService.selectChatAppByAppId(appId));
     }
 
-    @Operation(summary = "新增项目配置")
-    //@PreAuthorize("@ss.hasPermi('chat:project:add')")
-    @Log(title = "项目配置", businessType = BusinessType.INSERT)
+    @Operation(summary = "新增应用")
+    @Log(title = "应用", businessType = BusinessType.INSERT)
     @PostMapping
-    public AjaxResult add(@RequestBody ChatApp chatProject) {
+    public AjaxResult add(@RequestBody ChatApp chatApp) {
         Long userId = SecurityUtils.getUserId();
-        chatProject.setUserId(userId);
-        return toAjax(chatProjectService.insertChatProject(chatProject));
+        chatApp.setUserId(userId);
+        return toAjax(chatAppService.insertChatApp(chatApp));
     }
 
-    @Operation(summary = "修改项目")
-    //@PreAuthorize("@ss.hasPermi('chat:project:edit')")
-    @Log(title = "项目配置", businessType = BusinessType.UPDATE)
+    @Operation(summary = "修改应用")
+    @Log(title = "应用", businessType = BusinessType.UPDATE)
     @PostMapping(value = "/edit")
-    public AjaxResult edit(@RequestBody ChatApp chatProject) {
-        return toAjax(chatProjectService.updateChatProject(chatProject));
+    public AjaxResult edit(@RequestBody ChatApp chatApp) {
+        return toAjax(chatAppService.updateChatApp(chatApp));
     }
 
-    @Operation(summary = "删除项目")
-    @PreAuthorize("@ss.hasPermi('chat:project:remove')")
-    @Log(title = "项目配置", businessType = BusinessType.DELETE)
-	@DeleteMapping("/{projectIds}")
-    public AjaxResult remove(@PathVariable String[] projectIds)
+    @Operation(summary = "删除应用")
+    @PreAuthorize("@ss.hasPermi('chat:app:remove')")
+    @Log(title = "应用", businessType = BusinessType.DELETE)
+	@DeleteMapping("/{appIds}")
+    public AjaxResult remove(@PathVariable String[] appIds)
     {
-        return toAjax(chatProjectService.deleteChatProjectByProjectIds(projectIds));
+        return toAjax(chatAppService.deleteChatAppByAppIds(appIds));
     }
 }

@@ -84,14 +84,14 @@ export const constantRoutes = [
   ]
 },
 {
-  path: '/project',
+  path: '/app',
   component: Layout,
   children: [
     {
       path: 'index',
-      component: () => import('@/views/project/index.vue'),
-      name: 'Project',
-      meta: { title: '项目管理', icon: 'folder' }
+      component: () => import('@/views/app/index.vue'),
+      name: 'App',
+      meta: { title: '应用管理', icon: 'folder' }
     }
   ]
 },
@@ -104,6 +104,31 @@ export const constantRoutes = [
       component: () => import('@/views/knowledge/index.vue'),
       name: 'Knowledge',
       meta: { title: '知识库管理', icon: 'education' }
+    }
+  ]
+},
+{
+  path: '/knowledge/chunk',
+  component: Layout,
+  hidden: true,
+  children: [
+    {
+      path: 'index',
+      component: () => import('@/views/knowledge/chunk.vue'),
+      name: 'KnowledgeChunk',
+      meta: { title: '文件分片', icon: 'file' }
+    }
+  ]
+},
+{
+  path: '/knowledge/file',
+  component: Layout,
+  children: [
+    {
+      path: 'index',
+      component: () => import('@/views/knowledge/file.vue'),
+      name: 'KnowledgeFile',
+      meta: { title: '文件管理', icon: 'file' }
     }
   ]
 },

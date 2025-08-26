@@ -1,9 +1,9 @@
 import request from '@/utils/request'
 
-// 查询项目列表
-export function listProject(query) {
+// 查询应用列表
+export function listApp(query) {
   return request({
-    url: '/chat/project/list',
+    url: '/chat/app/list',
     method: 'get',
     params: query
   })
@@ -11,40 +11,48 @@ export function listProject(query) {
 
 
 
-// 查询项目详细
-export function getProject(projectId) {
+// 查询应用详细
+export function getApp(appId) {
   return request({
-    url: '/chat/project/' + projectId,
+    url: '/chat/app/' + appId,
     method: 'get'
   })
 }
 
-// 新增项目
-export function addProject(data) {
+// 新增应用
+export function addApp(data) {
   return request({
-    url: '/chat/project',
+    url: '/chat/app',
     method: 'post',
     data: data
   })
 }
 
-// 修改项目
-export function updateProject(data) {
+// 修改应用
+export function updateApp(data) {
   return request({
-    url: '/chat/project/edit',
+    url: '/chat/app/edit',
     method: 'post',
     data: data
   })
 }
 
-// 删除项目
-export function delProject(projectIds) {
+// 删除应用
+export function delApp(appIds) {
   return request({
-    url: '/chat/project/' + projectIds,
+    url: '/chat/app/' + appIds,
     method: 'delete'
   })
 }
 
+// 导出应用
+export function exportApp(query) {
+  return request({
+    url: '/chat/app/export',
+    method: 'get',
+    params: query
+  })
+}
 
 export function listAcknowledges(query) {
   return request({
@@ -54,7 +62,7 @@ export function listAcknowledges(query) {
   })
 }
 
-export function removeFile(removeFileData) {
+export function removeFile(removeFileData) {    
   return request({
     url: '/chat/knowledge/remove',
     method: 'delete',

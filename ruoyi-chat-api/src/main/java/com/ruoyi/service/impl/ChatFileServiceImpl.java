@@ -1,17 +1,14 @@
 package com.ruoyi.service.impl;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.*;
 
 import com.ruoyi.common.utils.DateUtils;
-import com.ruoyi.domain.ChatKnowledge;
-import com.ruoyi.domain.ChatProject;
+import com.ruoyi.domain.ChatFile;
 import com.ruoyi.mapper.ChatFileMapper;
-import com.ruoyi.mapper.ChatProjectMapper;
+import com.ruoyi.mapper.ChatAppMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.ruoyi.service.IChatKnowledgeService;
-import org.springframework.util.CollectionUtils;
+import com.ruoyi.service.IChatFileService;
 
 /**
  * 知识库管理Service业务层处理
@@ -20,95 +17,101 @@ import org.springframework.util.CollectionUtils;
  * @date 2024-06-27
  */
 @Service
-public class ChatKnowledgeServiceImpl implements IChatKnowledgeService {
+public class ChatFileServiceImpl implements IChatFileService {
 
     @Autowired
-    private ChatProjectMapper chatProjectMapper;
+    private ChatAppMapper chatProjectMapper;
     @Autowired
     private ChatFileMapper chatFileMapper;
 
     /**
-     * 查询知识库管理
-     * 
-     * @param knowledgeId 知识库管理主键
-     * @return 知识库管理
+     * 查询文件
+     *
+     * @param fileId 文件主键
+     * @return 文件
      */
     @Override
-    public ChatKnowledge selectChatKnowledgeByKnowledgeId(String knowledgeId)
+    public ChatFile selectChatFileByFileId(String fileId)
     {
-        return chatFileMapper.selectChatKnowledgeByKnowledgeId(knowledgeId);
+        return chatFileMapper.selectChatFileByFileId(fileId);
     }
 
-
     /**
-     * 查询知识库管理列表
-     * 
-     * @param chatKnowledge 知识库管理
-     * @return 知识库管理
+     * 查询文件列表(知识库id)
+     *
+     * @param knowledgeId 知识库id
+     * @return 文件集合
      */
     @Override
-    public List<ChatKnowledge> selectChatKnowledgeList(ChatKnowledge chatKnowledge) {
-        List<ChatKnowledge> chatKnowledgeList = chatFileMapper.selectChatKnowledgeList(chatKnowledge);
-        if (CollectionUtils.isEmpty(chatKnowledgeList)) {
-            return chatKnowledgeList;
-        }
-        chatKnowledgeList = chatKnowledgeList.stream().map(chatKnowledge1 -> {
-            String projectId = chatKnowledge1.getProjectId();
-            ChatProject chatProject = chatProjectMapper.selectChatProjectByProjectId(projectId);
-            chatKnowledge1.setProjectName(chatProject.getProjectName());
-            return chatKnowledge1;
-        }).collect(Collectors.toList());
-
-        return chatKnowledgeList;
+    public List<ChatFile> selectChatFileByKnowledgeId(String knowledgeId)
+    {
+        return chatFileMapper.selectChatFileByKnowledgeId(knowledgeId);
     }
 
     /**
-     * 新增知识库管理
-     * 
-     * @param chatKnowledge 知识库管理
+     * 查询文件列表
+     *
+     * @param chatFile 文件
+     * @return 文件
+     */
+    @Override
+    public List<ChatFile> selectChatFileList(ChatFile chatFile)
+    {
+        return chatFileMapper.selectChatFileList(chatFile);
+    }
+
+
+
+    /**
+     * 新增文件
+     *
+     * @param chatFile 文件
      * @return 结果
      */
     @Override
-    public int insertChatKnowledge(ChatKnowledge chatKnowledge)
+    public int insertChatFile(ChatFile chatFile)
     {
-        chatKnowledge.setCreateTime(DateUtils.getNowDate());
-        return chatFileMapper.insertChatKnowledge(chatKnowledge);
+        chatFile.setCreateTime(DateUtils.getNowDate());
+        return chatFileMapper.insertChatFile(chatFile);
     }
 
     /**
-     * 修改知识库管理
-     * 
-     * @param chatKnowledge 知识库管理
+     * 修改文件
+     *
+     * @param chatFile 文件
      * @return 结果
      */
     @Override
-    public int updateChatKnowledge(ChatKnowledge chatKnowledge)
+    public int updateChatFile(ChatFile chatFile)
     {
-        chatKnowledge.setUpdateTime(DateUtils.getNowDate());
-        return chatFileMapper.updateChatKnowledge(chatKnowledge);
+        chatFile.setUpdateTime(DateUtils.getNowDate());
+        return chatFileMapper.updateChatFile(chatFile);
     }
 
     /**
-     * 批量删除知识库管理
+     * 批量删除文件
      * 
-     * @param knowledgeIds 需要删除的知识库管理主键
+     * @param fileIds 需要删除的文件主键
      * @return 结果
      */
     @Override
-    public int deleteChatKnowledgeByKnowledgeIds(Long[] knowledgeIds)
+    public int deleteChatFileByFileIds(String[] fileIds)
     {
-        return chatFileMapper.deleteChatKnowledgeByKnowledgeIds(knowledgeIds);
+        return chatFileMapper.deleteChatFileByFileIds(fileIds);
     }
 
+
+
     /**
-     * 删除知识库管理信息
+     * 删除文件信息
      * 
-     * @param knowledgeId 知识库管理主键
+     * @param fileId 文件主键
      * @return 结果
      */
     @Override
-    public int deleteChatKnowledgeByKnowledgeId(String knowledgeId)
+    public int deleteChatFileByFileId(String fileId)
     {
-        return chatFileMapper.deleteChatKnowledgeByKnowledgeId(knowledgeId);
+        return chatFileMapper.deleteChatFileByFileId(fileId);
     }
+
 }

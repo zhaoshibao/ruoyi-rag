@@ -16,9 +16,9 @@
           <el-icon><ChatLineRound /></el-icon>
           <template #title>聊天记录</template>
         </el-menu-item>
-        <el-menu-item index="/project/index">
+        <el-menu-item index="/app/index">
           <el-icon><Folder /></el-icon>
-          <template #title>项目管理</template>
+          <template #title>应用管理</template>
         </el-menu-item>
         <el-menu-item index="/knowledge/index">
           <el-icon><Files /></el-icon>

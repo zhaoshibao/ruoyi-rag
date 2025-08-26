@@ -62,8 +62,8 @@ public interface ChatFileSegmentMapper
     /**
      * 删除文件分片
      *
-     * @param knowledgeId 知识库ID
+     * @param fileId 文件ID
      * @return 结果
      */
-    public int deleteChatFileSegmentByKnowledgeId(String knowledgeId);
+    public int deleteChatFileSegmentByFileId(String fileId);
 }

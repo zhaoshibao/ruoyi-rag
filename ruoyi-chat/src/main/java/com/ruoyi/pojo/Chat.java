@@ -13,8 +13,8 @@ public class Chat {
     @Id
     private Long chatId;
 
-    @Schema(description = "项目id")
-    private String projectId;
+    @Schema(description = "应用ID")
+    private String appId;
 
     @Schema(description = "用户在该项目中的唯一标识")
     private Long userId;

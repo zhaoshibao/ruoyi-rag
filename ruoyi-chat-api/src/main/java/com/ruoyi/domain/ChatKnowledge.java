@@ -1,6 +1,9 @@
 package com.ruoyi.domain;
 
 import com.ruoyi.common.annotation.Excel;
+import com.ruoyi.common.core.domain.BaseEntity;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 /**
  * 知识库对象 chat_knowledge
@@ -21,7 +24,7 @@ public class ChatKnowledge extends BaseEntity
 
     /** 知识库描述 */
     @Excel(name = "知识库描述")
-    private String desc;
+    private String knowledgeDesc;
 
     /** 用户id */
     @Excel(name = "用户id")
@@ -45,14 +48,14 @@ public class ChatKnowledge extends BaseEntity
     {
         return knowledgeName;
     }
-    public void setDesc(String desc) 
+    public void setKnowledgeDesc(String knowledgeDesc)
     {
-        this.desc = desc;
+        this.knowledgeDesc = knowledgeDesc;
     }
 
-    public String getDesc() 
+    public String getKnowledgeDesc()
     {
-        return desc;
+        return knowledgeDesc;
     }
     public void setUserId(Long userId) 
     {
@@ -66,10 +69,10 @@ public class ChatKnowledge extends BaseEntity
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
+        return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
             .append("knowledgeId", getKnowledgeId())
             .append("knowledgeName", getKnowledgeName())
-            .append("desc", getDesc())
+            .append("knowledgeDesc", getKnowledgeDesc())
             .append("userId", getUserId())
             .append("createBy", getCreateBy())
             .append("createTime", getCreateTime())

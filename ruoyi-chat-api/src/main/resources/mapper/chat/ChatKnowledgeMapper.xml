@@ -4,10 +4,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ruoyi.mapper.ChatKnowledgeMapper">
     
-    <resultMap type="ChatKnowledge" id="ChatKnowledgeResult">
+    <resultMap type="com.ruoyi.domain.ChatKnowledge" id="ChatKnowledgeResult">
         <result property="knowledgeId"    column="knowledge_id"    />
         <result property="knowledgeName"    column="knowledge_name"    />
-        <result property="desc"    column="desc"    />
+        <result property="knowledgeDesc"    column="knowledge_desc"    />
         <result property="userId"    column="user_id"    />
         <result property="createBy"    column="create_by"    />
         <result property="createTime"    column="create_time"    />
@@ -17,12 +17,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectChatKnowledgeVo">
-        select knowledge_id, knowledge_name, desc, user_id, create_by, create_time, update_by, update_time, remark from chat_knowledge
+        select knowledge_id, knowledge_name, knowledge_desc, user_id, create_by, create_time, update_by, update_time, remark from chat_knowledge
     </sql>
 
-    <select id="selectChatKnowledgeList" parameterType="ChatKnowledge" resultMap="ChatKnowledgeResult">
+    <select id="selectChatKnowledgeList" parameterType="com.ruoyi.domain.ChatKnowledge" resultMap="ChatKnowledgeResult">
         <include refid="selectChatKnowledgeVo"/>
-        <where>  
+        <where>
+            <if test="userId != null">user_id = #{userId}</if>
+            <if test="knowledgeName != null"> and knowledge_name like concat('%', #{knowledgeName}, '%')</if>
         </where>
     </select>
     
@@ -31,12 +33,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where knowledge_id = #{knowledgeId}
     </select>
 
-    <insert id="insertChatKnowledge" parameterType="ChatKnowledge">
+    <insert id="insertChatKnowledge" parameterType="com.ruoyi.domain.ChatKnowledge">
         insert into chat_knowledge
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="knowledgeId != null">knowledge_id,</if>
             <if test="knowledgeName != null">knowledge_name,</if>
-            <if test="desc != null">desc,</if>
+            <if test="knowledgeDesc != null">knowledge_desc,</if>
             <if test="userId != null">user_id,</if>
             <if test="createBy != null">create_by,</if>
             <if test="createTime != null">create_time,</if>
@@ -47,7 +49,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="knowledgeId != null">#{knowledgeId},</if>
             <if test="knowledgeName != null">#{knowledgeName},</if>
-            <if test="desc != null">#{desc},</if>
+            <if test="knowledgeDesc != null">#{knowledgeDesc},</if>
             <if test="userId != null">#{userId},</if>
             <if test="createBy != null">#{createBy},</if>
             <if test="createTime != null">#{createTime},</if>
@@ -57,11 +59,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
          </trim>
     </insert>
 
-    <update id="updateChatKnowledge" parameterType="ChatKnowledge">
+    <update id="updateChatKnowledge" parameterType="com.ruoyi.domain.ChatKnowledge">
         update chat_knowledge
         <trim prefix="SET" suffixOverrides=",">
             <if test="knowledgeName != null">knowledge_name = #{knowledgeName},</if>
-            <if test="desc != null">desc = #{desc},</if>
+            <if test="knowledgeDesc != null">knowledge_desc = #{knowledgeDesc},</if>
             <if test="userId != null">user_id = #{userId},</if>
             <if test="createBy != null">create_by = #{createBy},</if>
             <if test="createTime != null">create_time = #{createTime},</if>

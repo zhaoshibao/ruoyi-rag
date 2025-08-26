@@ -5,89 +5,76 @@ import com.ruoyi.common.core.domain.BaseEntity;
 /**
  * 文件
  * 
- * @author lixianfeng
- * @date 2024-06-27
+ * @author zhaoshibao
+ * @date 2025-08-24
  */
 public class ChatFile extends BaseEntity {
 
 
     private static final long serialVersionUID = 1L;
 
-    /** $column.columnComment */
+    /** 知识库id */
     private String  knowledgeId;
 
+    /** 文件id */
+    private String fileId;
 
-
-    /** 用户id */
-    private Long userId;
-
-    /** 项目id */
-    private String projectId;
-
-
-    /** 项目名称 */
-    private String projectName;
     /** 文件名 */
     private String fileName;
+
+    /**
+     * 文件格式
+     */
+    private String fileFormat;
+
+
+    /**
+     * 文件大小
+     */
+    private Long fileSize;
 
     /** 文件内容 */
     private String content;
 
-
-
     /** 是否向量化完成（0 否 1是） */
     private Integer isVector;
 
+    /**
+     * 是否需要分析
+     */
+    private Integer isPdfAnalysis;
 
-    /** 是否开启知识图谱（0 否 1是） */
-    private Integer isKnowledgeGraph;
+    public String getKnowledgeId() {
+        return knowledgeId;
+    }
 
-    public void setKnowledgeId(String knowledgeId)
-    {
+    public void setKnowledgeId(String knowledgeId) {
         this.knowledgeId = knowledgeId;
     }
 
-    public String getKnowledgeId()
-    {
-        return knowledgeId;
-    }
-    public void setUserId(Long userId) 
-    {
-        this.userId = userId;
+    public String getFileId() {
+        return fileId;
     }
 
-    public Long getUserId() 
-    {
-        return userId;
-    }
-    public void setProjectId(String projectId)
-    {
-        this.projectId = projectId;
+    public void setFileId(String fileId) {
+        this.fileId = fileId;
     }
 
-    public String getProjectId()
-    {
-        return projectId;
+    public String getFileName() {
+        return fileName;
     }
-    public void setFileName(String fileName) 
-    {
+
+    public void setFileName(String fileName) {
         this.fileName = fileName;
     }
 
-    public String getFileName() 
-    {
-        return fileName;
-    }
-    public void setContent(String content) 
-    {
-        this.content = content;
-    }
-
-    public String getContent() 
-    {
+    public String getContent() {
         return content;
     }
 
+    public void setContent(String content) {
+        this.content = content;
+    }
 
     public Integer getIsVector() {
         return isVector;
@@ -97,35 +84,40 @@ public class ChatFile extends BaseEntity {
         this.isVector = isVector;
     }
 
-    public Integer getIsKnowledgeGraph() {
-        return isKnowledgeGraph;
+    public String getFileFormat() {
+        return fileFormat;
     }
 
-    public void setIsKnowledgeGraph(Integer isKnowledgeGraph) {
-        this.isKnowledgeGraph = isKnowledgeGraph;
+    public void setFileFormat(String fileFormat) {
+        this.fileFormat = fileFormat;
     }
 
-
-
-    public String getProjectName() {
-        return projectName;
+    public Long getFileSize() {
+        return fileSize;
     }
 
-    public void setProjectName(String projectName) {
-        this.projectName = projectName;
+    public void setFileSize(Long fileSize) {
+        this.fileSize = fileSize;
+    }
+
+    public Integer getIsPdfAnalysis() {
+        return isPdfAnalysis;
+    }
+    public void setIsPdfAnalysis(Integer isPdfAnalysis) {
+        this.isPdfAnalysis = isPdfAnalysis;
     }
 
     @Override
     public String toString() {
-        return "ChatKnowledge{" +
+        return "ChatFile{" +
                 "knowledgeId='" + knowledgeId + '\'' +
-                ", userId=" + userId +
-                ", projectId='" + projectId + '\'' +
-                ", projectName='" + projectName + '\'' +
+                ", fileId='" + fileId + '\'' +
                 ", fileName='" + fileName + '\'' +
+                ", fileFormat='" + fileFormat + '\'' +
+                ", fileSize=" + fileSize +
                 ", content='" + content + '\'' +
                 ", isVector=" + isVector +
-                ", isKnowledgeGraph=" + isKnowledgeGraph +
+                ", isPdfAnalysis=" + isPdfAnalysis +
                 '}';
     }
 }

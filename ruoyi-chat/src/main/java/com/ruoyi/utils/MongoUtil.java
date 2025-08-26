@@ -11,11 +11,11 @@ public class MongoUtil {
 
     /**
      * 聊天集合
-     * @param projectId 项目id
+     * @param appId 应用id
      * @return
      */
-    public static String getChatCollection(String projectId) {
-        return "ruoyi_chat_" + projectId;
+    public static String getChatCollection(String appId) {
+        return "ruoyi_chat_" + appId;
     }
 
     /**
@@ -24,7 +24,7 @@ public class MongoUtil {
      * @return
      */
     public static String getMessageCollection(Long chatId) {
-        return "ruoyi_msg_" + chatId % partition;
+        return "ruoyi_msg_" + chatId.toString();
     }
 }
 

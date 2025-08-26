@@ -2,8 +2,8 @@
   <div class="app-container">
     <!-- 搜索表单 -->
     <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="项目名称" prop="projectName">
-        <el-input v-model="queryParams.projectName" placeholder="请输入项目名称" clearable style="width: 240px" @keyup.enter="handleQuery" />
+      <el-form-item label="应用名称" prop="appName">
+        <el-input v-model="queryParams.appName" placeholder="请输入应用名称" clearable style="width: 240px" @keyup.enter="handleQuery" />
       </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
@@ -25,10 +25,10 @@
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList" :columns="columns"></right-toolbar>
     </el-row>
 
-    <!-- 项目列表 -->
-    <el-table v-loading="loading" :data="projectList" @selection-change="handleSelectionChange">
+    <!-- 应用列表 -->
+    <el-table v-loading="loading" :data="appList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="50" align="center" />
-      <el-table-column label="项目名称" align="center" prop="projectName" width="150" />
+      <el-table-column label="应用名称" align="center" prop="appName" width="150" />
       <el-table-column label="模型类型" align="center" prop="type" width="150" />
       <el-table-column label="具体模型" align="center" prop="model" width="180" />
       <!-- <el-table-column label="嵌入模型" align="center" prop="embeddingModel" width="150" /> -->
@@ -53,22 +53,16 @@
           </el-tooltip>
         </template>
       </el-table-column> -->
-       <el-table-column label="PDF增强解析" align="center" prop="pdfAnalysis" width="120">
-        <template #default="scope">
-            <span v-if="scope.row.pdfAnalysis == 1">是</span>
-            <span v-else>否</span>
-        </template>
-      </el-table-column>
        <el-table-column label="知识库" align="center" prop="isKnowledgeSearch" width="120">
         <template #default="scope">
-            <span v-if="scope.row.isKnowledgeSearch == 1">是</span>
-            <span v-else>否</span>
+            <span v-if="scope.row.isKnowledgeSearch == 1">开启</span>
+            <span v-else>关闭</span>
         </template>
       </el-table-column>
         <el-table-column label="联网搜索" align="center" prop="isWebSearch" width="120">
         <template #default="scope">
-            <span v-if="scope.row.isWebSearch == 1">是</span>
-            <span v-else>否</span>
+            <span v-if="scope.row.isWebSearch == 1">开启</span>
+            <span v-else>关闭</span>
         </template>
       </el-table-column>
       <el-table-column label="创建时间" align="center" prop="createTime" width="180">
@@ -81,20 +75,17 @@
         <template #default="scope">
           <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)">修改</el-button>
           <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" >删除</el-button>
-           <el-button link type="primary" icon="Upload" @click="handleUpload(scope.row)">上传知识库</el-button>
-           
-          <!-- <el-button link type="primary" icon="Share" @click="handleKnowledgeGraph(scope.row)">查看知识图谱</el-button> -->
         </template>
       </el-table-column>
     </el-table>
     
     <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum" v-model:limit="queryParams.pageSize" @pagination="getList" />
 
-    <!-- 添加或修改项目对话框 -->
+    <!-- 添加或修改应用对话框 -->
     <el-dialog :title="title" v-model="open" width="800px" append-to-body>
-      <el-form ref="projectRef" :model="form" :rules="rules" label-width="180px">
-        <el-form-item label="项目名称" prop="projectName">
-          <el-input v-model="form.projectName" placeholder="请输入项目名称" />
+      <el-form ref="appRef" :model="form" :rules="rules" label-width="180px">
+        <el-form-item label="应用名称" prop="appName">
+          <el-input v-model="form.appName" placeholder="请输入应用名称" />
         </el-form-item>
         <el-form-item label="模型类型" prop="type">
             <el-select
@@ -126,12 +117,27 @@
            <el-input type="textarea" 
             :autosize="{ minRows: 10, maxRows: 10}" v-model="form.systemPrompt" placeholder="请输入系统提示词" />
         </el-form-item>
-         <el-form-item label="是否开启pdf增强解析" prop="pdfAnalysis">
-           <el-switch v-model="form.pdfAnalysis" :active-value="1" :inactive-value="0" />
-        </el-form-item>
          <el-form-item label="知识库" prop="isKnowledgeSearch">
            <el-switch v-model="form.isKnowledgeSearch" :active-value="1" :inactive-value="0" />
         </el-form-item>
+         <!-- 添加知识库多选组件 -->
+         <el-form-item label="选择知识库" prop="knowledgeIds" v-if="form.isKnowledgeSearch == 1">
+           <el-select
+             v-model="form.knowledgeIds"
+             multiple
+             collapse-tags
+             collapse-tags-tooltip
+             placeholder="请选择知识库"
+             style="width: 100%"
+           >
+             <el-option
+               v-for="item in knowledgeList"
+               :key="item.knowledgeId"
+               :label="item.knowledgeName"
+               :value="item.knowledgeId"
+             />
+           </el-select>
+         </el-form-item>
          <el-form-item label="联网搜索" prop="isWebSearch">
            <el-switch v-model="form.isWebSearch" :active-value="1" :inactive-value="0" />
         </el-form-item>
@@ -144,49 +150,14 @@
       </template>
     </el-dialog>
 
-    <!-- 上传知识库 -->
-    <el-dialog title="上传知识库" v-model="acknowledgeOpen" width="550px" append-to-body>
-      <el-form ref="uploadForm" :model="fileData" :rules="rules" label-width="120px">
-      
-        <el-form-item label="文件上传" prop="fileUpload">
-          <el-upload
-            ref="upload"
-            class="upload-demo"
-            :action="fileUploadUrl"
-            :headers="fileUploadHeaders"
-            :data="fileData"
-            :on-success="handleSuccess"
-            :before-remove="handleRemoveFile"
-            :before-upload="beforeUpload"
-            :on-remove="handleRemove"
-            name="file"
-            multiple
-            :file-list="fileList">
-            <el-button size="small" type="primary">点击上传</el-button>
-            <div style="margin-left:10px;font-size: 12px; color:red;"> 如果需要查看文件详情，请移步知识库管理</div>
-          </el-upload>
-        </el-form-item>
-        <!-- <el-form-item label="开启知识图谱" prop="isKnowledgeGraph">
-          <el-switch v-model="fileData.isKnowledgeGraph" :active-value="1" :inactive-value="0" />
-        </el-form-item> -->
-      </el-form>
-      <template #footer>
-        <div class="dialog-footer">
-          <el-button type="primary" @click="closeForm">确 定</el-button>
-        </div>
-      </template>
-    </el-dialog>
-
-      <!-- 知识图谱对话框 -->
-      <el-dialog :title="'知识图谱 - ' + graphTitle" v-model="graphVisible" width="90%" append-to-body>
-          <knowledge-graph ref="knowledgeGraph" :projectId="currentProjectId"/>
-      </el-dialog>
+   
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { listProject, getProject, addProject, updateProject, delProject ,removeFile} from '@/api/project/project'
+import { listApp, getApp, addApp, updateApp, delApp ,removeFile} from '@/api/app/app'
+import { listKnowledge} from '@/api/knowledge/knowledge'
 import { parseTime } from '@/utils/ruoyi'
 import { getToken } from "@/utils/auth";
 import KnowledgeGraph from '@/components/project/KnowledgeGraph.vue'
@@ -226,8 +197,8 @@ const multiple = ref(true)
 const showSearch = ref(true)
 // 总条数
 const total = ref(0)
-// 项目表格数据
-const projectList = ref([])
+// 应用表格数据
+const appList = ref([])
 // 弹出层标题
 const title = ref("")
 // 是否显示弹出层
@@ -241,7 +212,7 @@ const form = ref({
 const queryParams = ref({
   pageNum: 1,
   pageSize: 10,
-  projectName: undefined
+  appName: undefined
 })
 
 // 列显示控制
@@ -251,8 +222,8 @@ const columns = ref([
 
 // 表单校验
 const rules = ref({
-      projectName: [
-        { required: true, message: "项目名称不能为空", trigger: "blur" }
+      appName: [
+        { required: true, message: "应用名称不能为空", trigger: "blur" }
       ],
       type: [
         { required: true, message: "请选择模型类型", trigger: "blur" }
@@ -277,24 +248,38 @@ const fileData = ref({
 
 const fileList = ref([])
 
-// 知识图谱对话框
-const graphVisible = ref(false)
-const graphTitle = ref("")
 const currentProjectId = ref(null)
 
 onMounted(() => {
-  getList()
+  getAppList()
 })
 
-/** 查询项目列表 */
-function getList() {
+/** 查询应用列表 */
+function getAppList() {
   loading.value = true
-  listProject(queryParams.value).then(response => {
-    projectList.value = response.rows
+  listApp(queryParams.value).then(response => {
+    appList.value = response.rows
     total.value = response.total
     loading.value = false
   })
 }
+
+/** 知识库列表数据**/
+const knowledgeList = ref([])
+// 知识库查询参数
+const knowledgeQueryParams = ref({
+  pageNum: 1,
+  pageSize: 100  // 设置较大的值以获取更多知识库
+})
+
+
+
+
+// 在onMounted中添加获取知识库列表的调用
+onMounted(() => {
+  getAppList()
+  getKnowledgeList() // 添加获取知识库列表
+})
 
 /** 取消按钮 */
 function cancel() {
@@ -303,18 +288,27 @@ function cancel() {
 }
 
 /** 表单重置 */
+/** 表单重置 */
 function reset() {
   form.value = {
     id: undefined,
     name: undefined,
-    description: undefined
+    description: undefined,
+    type: undefined,
+    model: undefined,
+    baseUrl: undefined,
+    apiKey: undefined,
+    systemPrompt: undefined,
+    isKnowledgeSearch: 0,
+    isWebSearch: 0,
+    knowledgeIds: [] // 添加知识库ID数组
   }
 }
 
 /** 搜索按钮操作 */
 function handleQuery() {
   queryParams.value.pageNum = 1
-  getList()
+  getAppList()
 }
 
 /** 重置按钮操作 */
@@ -326,8 +320,8 @@ function resetQuery() {
 /** 多选框选中数据 */
 function handleSelectionChange(selection) {
   console.log('selection',selection)
-  ids.value = selection.map(item => item.projectId)
-  names.value = selection.map(item => item.projectName)
+  ids.value = selection.map(item => item.appId)
+  names.value = selection.map(item => item.appName)
   single.value = selection.length != 1
   multiple.value = !selection.length
 }
@@ -337,35 +331,37 @@ function handleAdd() {
   reset()
   form.value.type = "openai"
   open.value = true
-  title.value = "添加项目"
+  title.value = "添加应用"
 }
 
 /** 修改按钮操作 */
 function handleUpdate(row) {
   reset()
-  const projectId = row.projectId || ids.value
-  getProject(projectId).then(response => {
+  const appId = row.appId || ids.value
+  const knowledgeIds = row.knowledgeIds || []
+  form.value.knowledgeIds = knowledgeIds
+  getApp(appId).then(response => {
     form.value = response.data
     open.value = true
-    title.value = "修改项目"
+    title.value = "修改应用"
   })
 }
 
 /** 提交按钮 */
 function submitForm() {
-  proxy.$refs["projectRef"].validate(valid => {
+  proxy.$refs["appRef"].validate(valid => {
     if (valid) {
-      if (form.value.projectId != undefined) {
-        updateProject(form.value).then(response => {
+      if (form.value.appId != undefined) {
+        updateApp(form.value).then(response => {
           proxy.$modal.msgSuccess("修改成功")
           open.value = false
-          getList()
+          getAppList()
         })
       } else {
-        addProject(form.value).then(response => {
+        addApp(form.value).then(response => {
           proxy.$modal.msgSuccess("新增成功")
           open.value = false
-          getList()
+          getAppList()
         })
       }
     }
@@ -374,80 +370,28 @@ function submitForm() {
 
 /** 删除按钮操作 */
 function handleDelete(row) {
-  const projectIds = row.projectId || ids.value;
-  const projectNames = row.projectName || names.value;
-  proxy.$modal.confirm('是否确认删除项目名称为"' + projectNames + '"的数据项？').then(function() {
-    return delProject(projectIds)
+  const appIds = row.appId || ids.value;
+  const appNames = row.appName || names.value;
+  proxy.$modal.confirm('是否确认删除应用名称为"' + appNames + '"的数据项？').then(function() {
+    return delApp(appIds)
   }).then(() => {
-    getList()
+    getAppList()
     proxy.$modal.msgSuccess("删除成功")
   }).catch(() => {
     proxy.$modal.msgSuccess("删除失败")
   })
 }
 
-/** 上传知识库 */
-function handleUpload(row) {
-  fileData.value = {
-    projectId: row.projectId || ids.value,
-    isKnowledgeGraph: 0 // 默认关闭知识图谱
-  };
-  fileList.value = []; // 打开弹窗前清空文件列表
-  acknowledgeOpen.value = true
-}
-
-function beforeUpload(file) {
-    // 在上传前确保isKnowledgeGraph有值
-    return true;
-}
-
-function handleSuccess(res, file){
-    if (res.code === 200) {
-      fileList.value.push({ id: res.data, name: file.name});
-      proxy.$modal.msgSuccess("文件上传成功");
-    } else {
-      proxy.$modal.msgError("文件上传失败");
-    }
-}
-
-function handleRemoveFile(file) {
-  let removeFileData = {knowledgeId: file.id, projectId: fileData.value.projectId};
-  return removeFile(removeFileData).then(response => {
-    if (response.code === 200) {
-      proxy.$modal.msgSuccess('文件删除成功');
-      return true;
-    }
-    proxy.$modal.msgError('文件删除失败');
-    return false;
-  });
-}
-
-function handleRemove(file, fileList) {
-  fileList.value = fileList;
-}
-function closeForm() {
-  proxy.$refs.uploadForm.resetFields(); // 重置表单
-  fileList.value = []; // 清空文件列表
-  // 创建新的对象来重置状态
-  fileData.value = {
-    projectId: fileData.value.projectId,
-    isKnowledgeGraph: 0
-  };
-  acknowledgeOpen.value = false;
-}
-
- /** 查看知识图谱按钮操作 */
-function handleKnowledgeGraph(row) {
-  graphTitle.value = row.projectName;
-  currentProjectId.value = row.projectId;
-  graphVisible.value = true;
-  // 等待对话框打开后再初始化图谱
-  proxy.$nextTick(() => {
-    proxy.$refs.knowledgeGraph.loadGraphData();
-  });
-}
 
 
+
+
+/** 获取知识库列表 */
+function getKnowledgeList() {
+  listKnowledge(knowledgeQueryParams.value).then(response => {
+    knowledgeList.value = response.rows
+  })
+}
 
 </script>
 

@@ -4,58 +4,65 @@ import java.util.List;
 import com.ruoyi.domain.ChatApp;
 
 /**
- * 项目配置Service接口
+ * 应用配置Service接口
  * 
- * @author lixianfeng
- * @date 2024-06-27
+ * @author zhaoshibao
+ * @date 2025-08-24
  */
-public interface IChatProjectService 
+public interface IChatAppService
 {
     /**
-     * 查询项目配置
+     * 查询应用配置
      * 
-     * @param projectId 项目配置主键
-     * @return 项目配置
+     * @param appId 应用配置主键
+     * @return 应用配置
      */
-    public ChatApp selectChatProjectByProjectId(String projectId);
+    public ChatApp selectChatAppByAppId(String appId);
 
     /**
-     * 查询项目配置列表
-     * 
-     * @param chatProject 项目配置
-     * @return 项目配置集合
+     * 查询应用配置列表
+     *
+     * @param chatApp 应用配置
+     * @return 应用配置集合
      */
-    public List<ChatApp> selectChatProjectList(ChatApp chatProject);
+    public List<ChatApp> selectChatAppList(ChatApp chatApp);
 
     /**
-     * 新增项目配置
-     * 
-     * @param chatProject 项目配置
+     * 新增应用配置
+     *
+     * @param chatApp 应用配置
      * @return 结果
      */
-    public int insertChatProject(ChatApp chatProject);
+    public int insertChatApp(ChatApp chatApp);
 
     /**
-     * 修改项目配置
+     * 修改应用配置
      * 
-     * @param chatProject 项目配置
+     * @param chatApp 应用配置
      * @return 结果
      */
-    public int updateChatProject(ChatApp chatProject);
+    public int updateChatApp(ChatApp chatApp);
 
     /**
-     * 批量删除项目配置
+     * 批量删除应用配置
      * 
-     * @param projectIds 需要删除的项目配置主键集合
+     * @param appIds 需要删除的应用配置主键集合
      * @return 结果
      */
-    public int deleteChatProjectByProjectIds(String[] projectIds);
+    public int deleteChatAppByAppIds(String[] appIds);
 
     /**
-     * 删除项目配置信息
+     * 删除应用配置信息
      * 
-     * @param projectId 项目配置主键
+     * @param appId 应用配置主键
      * @return 结果
      */
-    public int deleteChatProjectByProjectId(String projectId);
+    public int deleteChatAppByAppId(String appId);
+
+    /**
+     * 根据应用id查询知识库id列表
+     * @param appId 应用id
+     * @return 知识库id列表
+     */
+    public List<String> selectKnowledgeIdListByAppId(String appId);
 }

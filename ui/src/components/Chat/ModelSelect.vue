@@ -21,8 +21,8 @@
     </div>
     <div class="model-box" v-if="showModelBox">
       <ul>
-        <li v-for="model in models" :key="model.projectId" @click="selectModel(model)">
-          <h2>{{ model.projectName }}</h2>
+        <li v-for="model in models" :key="model.appId" @click="selectModel(model)">
+          <h2>{{ model.appName }}</h2>
           <div class="model-info">{{ model.model }} ({{ model.type }})</div>
         </li>
       </ul>
@@ -33,7 +33,7 @@
 <script setup>
 import { useChatStore } from '@/store/chat';
 import { ref, onMounted } from 'vue';
-import { fetchProjects } from '@/api/chat/chat'; // 导入获取项目的函数
+import { fetchApps } from '@/api/chat/chat'; // 导入获取应用的函数
 
   const chatStore = useChatStore(); // 获取 chatStore
   const showModelBox = ref(false);
@@ -45,35 +45,35 @@ import { fetchProjects } from '@/api/chat/chat'; // 导入获取项目的函数
     showModelBox.value = !showModelBox.value;
   };
 
-  // 选择模型
+  // 选择应用
   const selectModel = (model) => {
-    selectedModel.value = model.projectName;
-    chatStore.projectId = model.projectId; // 设置 projectId
+    selectedModel.value = model.appName;
+    chatStore.appId = model.appId; // 设置 appId  
     showModelBox.value = false; // 选择后隐藏模型框
-    console.log(`Selected model: ${selectedModel.value}, Project ID: ${chatStore.projectId}`);
+    console.log(`Selected model: ${selectedModel.value}, Project ID: ${chatStore.appId}`);
   };
 
-  // 获取模型列表
-  const getModels = async () => {
+  // 获取应用列表
+  const getApps = async () => {
     try {
-      const response = await fetchProjects(); // 获取项目数据
+      const response = await fetchApps(); // 获取应用数据
       if (response.code === 200) {
-        models.value = response.rows; // 从返回数据中获取模型数组
+        models.value = response.rows; // 从返回数据中获取应用数组
         if (models.value.length > 0) {
-          selectedModel.value = models.value[0].projectName;
-          chatStore.projectId = models.value[0].projectId;
+          selectedModel.value = models.value[0].appName;
+          chatStore.appId = models.value[0].appId;
         }
       } else {
-        console.error('获取模型失败:', response.msg);
+        console.error('获取应用失败:', response.msg);
       }
     } catch (error) {
-      console.error('获取模型失败:', error);
+      console.error('获取应用失败:', error);
     }
   };
 
-  // 组件挂载后获取模型列表
+  // 组件挂载后获取应用列表
   onMounted(() => {
-    getModels();
+    getApps();
   });
 
 </script>

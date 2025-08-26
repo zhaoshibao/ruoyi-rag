@@ -2,13 +2,17 @@ package com.ruoyi.service.impl;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import com.ruoyi.common.utils.DateUtils;
+import com.ruoyi.domain.ChatAppKnowledge;
+import com.ruoyi.mapper.ChatAppKnowledgeMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ruoyi.mapper.ChatAppMapper;
 import com.ruoyi.domain.ChatApp;
-import com.ruoyi.service.IChatProjectService;
+import com.ruoyi.service.IChatAppService;
+import org.springframework.util.CollectionUtils;
 
 /**
  * 项目配置Service业务层处理
@@ -17,83 +21,127 @@ import com.ruoyi.service.IChatProjectService;
  * @date 2024-06-27
  */
 @Service
-public class ChatProjectServiceImpl implements IChatProjectService 
+public class ChatAppServiceImpl implements IChatAppService
 {
     @Autowired
-    private ChatAppMapper chatProjectMapper;
+    private ChatAppMapper chatAppMapper;
+    @Autowired
+    private ChatAppKnowledgeMapper chatAppKnowledgeMapper;
 
     /**
-     * 查询项目配置
-     * 
-     * @param projectId 项目配置主键
-     * @return 项目配置
+     * 查询应用配置
+     *
+     * @param appId 应用配置主键
+     * @return 应用配置
      */
     @Override
-    public ChatApp selectChatProjectByProjectId(String projectId)
+    public ChatApp selectChatAppByAppId(String appId)
     {
-        return chatProjectMapper.selectChatProjectByProjectId(projectId);
+        ChatApp chatApp = chatAppMapper.selectChatAppByAppId(appId);
+        List<ChatAppKnowledge> chatAppKnowledgeList = chatAppKnowledgeMapper.selectChatAppKnowledgeByAppId(appId);
+        List<String> knowledgeIds = chatAppKnowledgeList.stream().map(ChatAppKnowledge::getKnowledgeId).collect(Collectors.toList());
+        chatApp.setKnowledgeIds(knowledgeIds);
+        return chatApp;
     }
 
     /**
-     * 查询项目配置列表
+     * 查询应用配置列表
      * 
-     * @param chatProject 项目配置
-     * @return 项目配置
+     * @param chatApp 应用配置
+     * @return 应用配置
      */
     @Override
-    public List<ChatApp> selectChatProjectList(ChatApp chatProject)
+    public List<ChatApp> selectChatAppList(ChatApp chatApp)
     {
-        return chatProjectMapper.selectChatProjectList(chatProject);
+        return chatAppMapper.selectChatAppList(chatApp);
     }
 
     /**
-     * 新增项目配置
+     * 新增应用配置
      * 
-     * @param chatProject 项目配置
+     * @param chatApp 应用配置
      * @return 结果
      */
     @Override
-    public int insertChatProject(ChatApp chatProject)
+    public int insertChatApp(ChatApp chatApp)
     {
-        chatProject.setCreateTime(DateUtils.getNowDate());
-        chatProject.setProjectId(UUID.randomUUID().toString());
-        return chatProjectMapper.insertChatProject(chatProject);
+        String appId = UUID.randomUUID().toString();
+        chatApp.setCreateTime(DateUtils.getNowDate());
+        chatApp.setAppId(appId);
+        int result = chatAppMapper.insertChatApp(chatApp);
+        List<String> knowledgeIds = chatApp.getKnowledgeIds();
+        if (!CollectionUtils.isEmpty(knowledgeIds)) {
+            for (String knowledgeId : knowledgeIds) {
+                 ChatAppKnowledge chatAppKnowledge = new ChatAppKnowledge();
+                 chatAppKnowledge.setAppId(appId);
+                 chatAppKnowledge.setKnowledgeId(knowledgeId);
+                 chatAppKnowledge.setId(UUID.randomUUID().toString());
+                chatAppKnowledgeMapper.insertChatAppKnowledge(chatAppKnowledge);
+            }
+        }
+
+        return result;
     }
 
     /**
-     * 修改项目配置
+     * 修改应用配置
      * 
-     * @param chatProject 项目配置
+     * @param chatApp 应用配置
      * @return 结果
      */
     @Override
-    public int updateChatProject(ChatApp chatProject)
+    public int updateChatApp(ChatApp chatApp)
     {
-        chatProject.setUpdateTime(DateUtils.getNowDate());
-        return chatProjectMapper.updateChatProject(chatProject);
+        String appId = chatApp.getAppId();
+        chatApp.setUpdateTime(DateUtils.getNowDate());
+        int result = chatAppMapper.updateChatApp(chatApp);
+        List<String> knowledgeIds = chatApp.getKnowledgeIds();
+        chatAppKnowledgeMapper.deleteChatAppKnowledgeByAppId(appId);
+        if (!CollectionUtils.isEmpty(knowledgeIds)) {
+            for (String knowledgeId : knowledgeIds) {
+                ChatAppKnowledge chatAppKnowledge = new ChatAppKnowledge();
+                chatAppKnowledge.setAppId(appId);
+                chatAppKnowledge.setKnowledgeId(knowledgeId);
+                chatAppKnowledge.setId(UUID.randomUUID().toString());
+                chatAppKnowledgeMapper.insertChatAppKnowledge(chatAppKnowledge);
+            }
+        }
+        return result;
     }
 
     /**
-     * 批量删除项目配置
+     * 批量删除应用配置
      * 
-     * @param projectIds 需要删除的项目配置主键
+     * @param appIds 需要删除的应用配置主键
      * @return 结果
      */
     @Override
-    public int deleteChatProjectByProjectIds(String[] projectIds)
+    public int deleteChatAppByAppIds(String[] appIds)
     {
-        return chatProjectMapper.deleteChatProjectByProjectIds(projectIds);
+        return chatAppMapper.deleteChatAppByAppIds(appIds);
     }
 
     /**
-     * 删除项目配置信息
+     * 删除应用配置信息
      * 
-     * @param projectId 项目配置主键
+     * @param appId 应用配置主键
      * @return 结果
      */
     @Override
-    public int deleteChatProjectByProjectId(String projectId)
+    public int deleteChatAppByAppId(String appId)
     {
-        return chatProjectMapper.deleteChatProjectByProjectId(projectId);
+        return chatAppMapper.deleteChatAppByAppId(appId);
+    }
+
+    /**
+     * 根据应用id查询知识库id列表
+     * @param appId 应用id
+     * @return 知识库id列表
+     */
+    @Override
+    public List<String> selectKnowledgeIdListByAppId(String appId) {
+        List<ChatAppKnowledge> chatAppKnowledgeList = chatAppKnowledgeMapper.selectChatAppKnowledgeByAppId(appId);
+        List<String> knowledgeIds = chatAppKnowledgeList.stream().map(ChatAppKnowledge::getKnowledgeId).collect(Collectors.toList());
+        return knowledgeIds;
     }
 }

@@ -34,6 +34,29 @@ public class QdrantVectorStoreComponet {
 
     @Autowired
     private QdrantVectorStoreProperties properties;
+
+    /**
+     * 获取Qdrant向量存储组件
+     * @param collectionName 集合名称
+     * @return
+     * @throws Exception
+     */
+    public QdrantVectorStore getVectorStore (String collectionName ) throws Exception {
+        if (!qdrantClient.collectionExistsAsync(collectionName).get()) {
+            qdrantClient.createCollectionAsync(collectionName,
+                    Collections.VectorParams.newBuilder()
+                            .setDistance(Collections.Distance.Cosine)
+                            .setSize(512)
+                            .build()).get();
+        }
+
+        TransformersEmbeddingModel localEmbeddingModel = EmbeddingModelUtil.getLocalEmbeddingModel();
+        return QdrantVectorStore.builder(qdrantClient,localEmbeddingModel)
+                .collectionName(collectionName)
+                .initializeSchema(properties.isInitializeSchema())
+                .build();
+    }
+
     /**
      * 获取Ollama Qdrant向量存储组件
      * @param baseUrl

@@ -354,12 +354,12 @@ export const saveMessage = (messageVo, abortController = null) => {
   });
 };
 // 查询会话列表
-export const listChats = (projectId) => {
+export const listChats = (appId) => {
   return request({
-     url: '/ai/list-chat',
-     method: 'get',
-     params: { projectId }
-   })
+    url: '/ai/list-chat',
+    method: 'get',
+    params: { appId }
+  })
 };
 
 // 查询会话中的消息
@@ -372,18 +372,18 @@ export const listMessages = (chatId) => {
 };
 
 // 删除会话
-export const deleteChat = (projectId, chatId) => {
+export const deleteChat = (appId, chatId) => {
   return request({
     url: '/ai/delete-chat',
     method: 'get',
-    params: { projectId, chatId }
+    params: { appId, chatId }
   });
 };
 
-// 模型列表
-export const fetchProjects = async () => {
+// 应用列表
+export const fetchApps = async () => {
   return request({
-    url: '/chat/project/list',
+    url: '/chat/app/list',
     method: 'get'
   });
 };

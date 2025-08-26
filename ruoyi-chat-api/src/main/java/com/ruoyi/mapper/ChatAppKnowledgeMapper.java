@@ -21,6 +21,14 @@ public interface ChatAppKnowledgeMapper
 
     /**
      * 查询应用和知识库关联列表
+     *
+     * @param appId 应用ID
+     * @return 应用和知识库关联集合
+     */
+    public List<ChatAppKnowledge> selectChatAppKnowledgeByAppId(String appId);
+
+    /**
+     * 查询应用和知识库关联列表
      * 
      * @param chatAppKnowledge 应用和知识库关联
      * @return 应用和知识库关联集合
@@ -50,6 +58,14 @@ public interface ChatAppKnowledgeMapper
      * @return 结果
      */
     public int deleteChatAppKnowledgeById(String id);
+
+    /**
+     * 根据应用ID删除
+     *
+     * @param appId 应用ID
+     * @return 结果
+     */
+    public int deleteChatAppKnowledgeByAppId(String appId);
 
     /**
      * 批量删除应用和知识库关联

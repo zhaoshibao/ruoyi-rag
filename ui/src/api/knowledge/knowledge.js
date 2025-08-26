@@ -1,44 +1,80 @@
 import request from '@/utils/request'
 
-// 查询项目列表
-export function listProject() {
-  return request({
-    url: '/chat/project',
-    method: 'get'
-  })
-}
-
 // 查询知识库列表
-export function listKnowledge(query) {
+export function listKnowledge(queryVo) {
   return request({
-    url: '/chat/knowledge/list',
+    url: '/ruoyi/knowledge/list',
     method: 'get',
-    params: query
+    params: queryVo
   })
 }
 
-// 查询知识库详细
-export function getKnowledge(projectId, knowledgeId) {
-  return request({
-    url: '/chat/knowledge/' + projectId + "/" + knowledgeId,
-    method: 'get'
-  })
-}
 
 // 新增知识库
 export function addKnowledge(data) {
   return request({
-    url: '/chat/knowledge',
+    url: '/ruoyi/knowledge',
     method: 'post',
     data: data
   })
 }
 
-// 删除知识库
-export function delKnowledge(data) {
+// 修改知识库
+export function updateKnowledge(data) {
   return request({
-    url: '/chat/knowledge',
-    method: 'delete',
+    url: '/ruoyi/knowledge',
+    method: 'put',
     data: data
+  })
+}
+
+// 删除知识库
+export function delKnowledge(knowledgeData) {
+  return request({
+    url: '/ruoyi/knowledge/' + knowledgeData.knowledgeId,
+    method: 'delete'
+  })
+}
+
+// 获取知识库详细信息
+export function getKnowledge(knowledgeId) {
+  return request({
+    url: '/ruoyi/knowledge/' + knowledgeId,
+    method: 'get'
+  })
+}
+
+//根据知识库ID查询文件列表
+export function getFileListByKnowledgeId(knowledgeId) {
+  return request({
+    url: '/chat/file/getFileListByKnowledgeId',
+    method: 'get',
+    params: {
+      knowledgeId: knowledgeId
+    }
+  })
+}
+
+//文件上传
+export function upload(data) {
+  return request({
+    url: '/chat/file/upload',
+    method: 'post',
+    params: {
+      knowledgeId: data.knowledgeId,
+      file: data.file
+    }
+  })
+}
+
+
+//根据文件ID查询文件分片列表
+export function getFileChunkListByKnowledgeId(fileId) {
+  return request({
+    url: '/ruoyi/segment/list',
+    method: 'get',
+    params: {
+      fileId: fileId
+    }
   })
 }

@@ -61,17 +61,17 @@ public class ChatController extends BaseController {
 
     @Operation(summary = "查询会话列表")
     @GetMapping("list-chat")
-    public AjaxResult listChat(String projectId){
+    public AjaxResult listChat(String appId){
         Long userId = getUserId();
-        AjaxResult ajaxResult = this.aiService.listChat(projectId, userId);
+        AjaxResult ajaxResult = this.aiService.listChat(appId, userId);
         log.info("查询会话列表:{}", JSON.toJSONString(ajaxResult.get("data")));
         return ajaxResult;
     }
 
     @Operation(summary = "删除一个会话")
     @GetMapping("delete-chat")
-    public AjaxResult deleteChat(String projectId, Long chatId){
-        this.aiService.deleteChat(projectId, chatId);
+    public AjaxResult deleteChat(String appId, Long chatId){
+        this.aiService.deleteChat(appId, chatId);
         return success();
     }
 

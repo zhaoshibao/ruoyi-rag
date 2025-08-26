@@ -2,18 +2,17 @@
 <!DOCTYPE mapper
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.ruoyi.mapper.ChatProjectMapper">
+<mapper namespace="com.ruoyi.mapper.ChatAppMapper">
     
     <resultMap type="com.ruoyi.domain.ChatApp" id="ChatProjectResult">
-        <result property="projectId"    column="project_id"    />
-        <result property="projectName"    column="project_name"    />
+        <result property="appId"    column="app_id"    />
+        <result property="appName"    column="app_name"    />
         <result property="type"    column="type"    />
         <result property="model"    column="model"    />
         <result property="embeddingModel"    column="embedding_model"    />
         <result property="baseUrl"    column="base_url"    />
         <result property="apiKey"    column="api_key"    />
         <result property="systemPrompt"    column="system_prompt"    />
-        <result property="isPdfAnalysis"    column="is_pdf_analysis"    />
         <result property="isKnowledgeSearch"    column="is_knowledge_search"    />
         <result property="isWebSearch"    column="is_web_search"    />
         <result property="userId"    column="user_id"    />
@@ -25,39 +24,38 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     </resultMap>
 
-    <sql id="selectChatProjectVo">
-        select project_id, project_name, type, model,embedding_model, base_url,api_key,system_prompt,is_pdf_analysis,
+    <sql id="selectChatAppVo">
+        select app_id, app_name, type, model,embedding_model, base_url,api_key,system_prompt,
                 is_knowledge_search, is_web_search,
-               create_by, create_time, update_by, update_time, remark from chat_project
+               create_by, create_time, update_by, update_time, remark from chat_app
     </sql>
 
-    <select id="selectChatProjectList" parameterType="ChatProject" resultMap="ChatProjectResult">
-        <include refid="selectChatProjectVo"/>
+    <select id="selectChatAppList" parameterType="com.ruoyi.domain.ChatApp" resultMap="ChatProjectResult">
+        <include refid="selectChatAppVo"/>
         <where>  
-            <if test="projectName != null  and projectName != ''"> and project_name like concat('%', #{projectName}, '%')</if>
+            <if test="appName != null  and appName != ''"> and app_name like concat('%', #{appName}, '%')</if>
             <if test="type != null  and type != ''"> and type = #{type}</if>
             <if test="model != null  and model != ''"> and model = #{model}</if>
             <if test="userId != null  and userId != ''"> and user_id = #{userId}</if>
         </where>
     </select>
     
-    <select id="selectChatProjectByProjectId" parameterType="String" resultMap="ChatProjectResult">
-        <include refid="selectChatProjectVo"/>
-        where project_id = #{projectId}
+    <select id="selectChatAppByAppId" parameterType="String" resultMap="ChatProjectResult">
+        <include refid="selectChatAppVo"/>
+        where app_id = #{appId}
     </select>
 
-    <insert id="insertChatProject" parameterType="ChatProject" useGeneratedKeys="true" keyProperty="projectId">
-        insert into chat_project
+    <insert id="insertChatApp" parameterType="com.ruoyi.domain.ChatApp" useGeneratedKeys="true" keyProperty="appId">
+        insert into chat_app
         <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="projectId != null">project_id,</if>
-            <if test="projectName != null">project_name,</if>
+            <if test="appId != null">app_id,</if>
+            <if test="appName != null">app_name,</if>
             <if test="type != null">type,</if>
             <if test="model != null">model,</if>
             <if test="embeddingModel != null">embedding_model,</if>
             <if test="baseUrl != null">base_url,</if>
             <if test="apiKey != null">api_key,</if>
             <if test="systemPrompt != null">system_prompt,</if>
-            <if test="isPdfAnalysis != null">is_pdf_analysis,</if>
             <if test="isKnowledgeSearch != null">is_knowledge_search,</if>
             <if test="isWebSearch != null">is_web_search,</if>
             <if test="userId != null">user_id,</if>
@@ -68,15 +66,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="remark != null">remark,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
-            <if test="projectId != null">#{projectId},</if>
-            <if test="projectName != null">#{projectName},</if>
+            <if test="appId != null">#{appId},</if>
+            <if test="appName != null">#{appName},</if>
             <if test="type != null">#{type},</if>
             <if test="model != null">#{model},</if>
             <if test="embeddingModel != null">#{embeddingModel},</if>
             <if test="baseUrl != null">#{baseUrl},</if>
             <if test="apiKey != null">#{apiKey},</if>
             <if test="systemPrompt != null">#{systemPrompt},</if>
-            <if test="isPdfAnalysis != null">#{isPdfAnalysis},</if>
             <if test="isKnowledgeSearch != null">#{isKnowledgeSearch},</if>
             <if test="isWebSearch != null">#{isWebSearch},</if>
             <if test="userId != null">#{userId},</if>
@@ -88,17 +85,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
          </trim>
     </insert>
 
-    <update id="updateChatProject" parameterType="ChatProject">
-        update chat_project
+    <update id="updateChatApp" parameterType="com.ruoyi.domain.ChatApp">
+        update chat_app
         <trim prefix="SET" suffixOverrides=",">
-            <if test="projectName != null">project_name = #{projectName},</if>
+            <if test="appName != null">app_name = #{appName},</if>
             <if test="type != null">type = #{type},</if>
             <if test="model != null">model = #{model},</if>
             <if test="embeddingModel != null">embedding_model = #{embeddingModel},</if>
             <if test="baseUrl != null">base_url = #{baseUrl},</if>
             <if test="apiKey != null">api_key = #{apiKey},</if>
             <if test="systemPrompt != null">system_prompt = #{systemPrompt},</if>
-            <if test="isPdfAnalysis != null">is_pdf_analysis = #{isPdfAnalysis},</if>
             <if test="isKnowledgeSearch != null">is_knowledge_search = #{isKnowledgeSearch},</if>
             <if test="isWebSearch != null">is_web_search = #{isWebSearch},</if>
             <if test="userId != null">user_id = #{userId},</if>
@@ -108,17 +104,17 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateTime != null">update_time = #{updateTime},</if>
             <if test="remark != null">remark = #{remark},</if>
         </trim>
-        where project_id = #{projectId}
+        where app_id = #{appId}
     </update>
 
-    <delete id="deleteChatProjectByProjectId" parameterType="Long">
-        delete from chat_project where project_id = #{projectId}
+    <delete id="deleteChatAppByAppId" parameterType="Long">
+        delete from chat_app where app_id = #{appId}
     </delete>
 
-    <delete id="deleteChatProjectByProjectIds" parameterType="String">
-        delete from chat_project where project_id in 
-        <foreach item="projectId" collection="array" open="(" separator="," close=")">
-            #{projectId}
+    <delete id="deleteChatAppByAppIds" parameterType="String">
+        delete from chat_app where app_id in
+        <foreach item="appId" collection="array" open="(" separator="," close=")">
+            #{appId}
         </foreach>
     </delete>
 </mapper>

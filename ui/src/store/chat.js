@@ -6,8 +6,8 @@ import { v4 as uuidv4 } from 'uuid';
 export const useChatStore = defineStore('chat', {
   state: () => ({
     messages: [],
-    projectId: '',
-    chatId: 5,
+    appId: '',  
+    chatId: '',
     chatList: [],
     isSending: false,
     uuid: '',
@@ -44,9 +44,9 @@ export const useChatStore = defineStore('chat', {
     },
 
     // 获取会话列表
-    async fetchChatList(projectId) {
+    async fetchChatList(appId) {
       try {
-        const response = await listChats(projectId);
+        const response = await listChats(appId);
         console.log('获取会话列表:', response.data);
         
         // 处理大数值ID，将其转换为字符串
@@ -166,7 +166,7 @@ export const useChatStore = defineStore('chat', {
         this.addMessage(thinkingMessage);
         
         const messagePayload = {
-          projectId: this.projectId,
+          appId: this.appId,
           language: 0,
           chatId: this.chatId,
           ...userMessage,
@@ -359,7 +359,7 @@ export const useChatStore = defineStore('chat', {
       try {
         const response = await createChat({
           userId:this.uuid,
-          projectId: this.projectId,
+          appId: this.appId,
           title: '新会话' + Math.random().toString(36).substring(2, 7),
         });
         this.messages = [];
@@ -368,7 +368,7 @@ export const useChatStore = defineStore('chat', {
         //this.chatId = BigInt(response.data).toString()
         
         
-        await this.fetchChatList(this.projectId); // 创建新会话后更新会话列表
+        await this.fetchChatList(this.appId); // 创建新会话后更新会话列表
       } catch (error) {
         console.error('创建新聊天失败:', error);
       }

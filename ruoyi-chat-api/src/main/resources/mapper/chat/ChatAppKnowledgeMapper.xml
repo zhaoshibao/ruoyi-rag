@@ -4,7 +4,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ruoyi.mapper.ChatAppKnowledgeMapper">
     
-    <resultMap type="ChatAppKnowledge" id="ChatAppKnowledgeResult">
+    <resultMap type="com.ruoyi.domain.ChatAppKnowledge" id="ChatAppKnowledgeResult">
         <result property="id"    column="id"    />
         <result property="appId"    column="app_id"    />
         <result property="knowledgeId"    column="knowledge_id"    />
@@ -19,7 +19,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         select id, app_id, knowledge_id, create_by, create_time, update_by, update_time, remark from chat_app_knowledge
     </sql>
 
-    <select id="selectChatAppKnowledgeList" parameterType="ChatAppKnowledge" resultMap="ChatAppKnowledgeResult">
+    <select id="selectChatAppKnowledgeList" parameterType="com.ruoyi.domain.ChatAppKnowledge" resultMap="ChatAppKnowledgeResult">
         <include refid="selectChatAppKnowledgeVo"/>
         <where>  
         </where>
@@ -29,8 +29,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectChatAppKnowledgeVo"/>
         where id = #{id}
     </select>
+    <select id="selectChatAppKnowledgeByAppId" parameterType="String" resultMap="ChatAppKnowledgeResult">
+        <include refid="selectChatAppKnowledgeVo"/>
+        where app_id = #{appId}
+    </select>
 
-    <insert id="insertChatAppKnowledge" parameterType="ChatAppKnowledge">
+    <insert id="insertChatAppKnowledge" parameterType="com.ruoyi.domain.ChatAppKnowledge">
         insert into chat_app_knowledge
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null">id,</if>
@@ -54,7 +58,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
          </trim>
     </insert>
 
-    <update id="updateChatAppKnowledge" parameterType="ChatAppKnowledge">
+    <update id="updateChatAppKnowledge" parameterType="com.ruoyi.domain.ChatAppKnowledge">
         update chat_app_knowledge
         <trim prefix="SET" suffixOverrides=",">
             <if test="appId != null">app_id = #{appId},</if>
@@ -70,6 +74,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <delete id="deleteChatAppKnowledgeById" parameterType="String">
         delete from chat_app_knowledge where id = #{id}
+    </delete>
+
+    <delete id="deleteChatAppKnowledgeByAppId" parameterType="String">
+        delete from chat_app_knowledge where app_id = #{appId}
     </delete>
 
     <delete id="deleteChatAppKnowledgeByIds" parameterType="String">

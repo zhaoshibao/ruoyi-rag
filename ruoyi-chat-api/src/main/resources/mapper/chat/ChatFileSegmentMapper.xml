@@ -4,9 +4,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ruoyi.mapper.ChatFileSegmentMapper">
     
-    <resultMap type="ChatFileSegment" id="ChatFileSegmentResult">
+    <resultMap type="com.ruoyi.domain.ChatFileSegment" id="ChatFileSegmentResult">
         <result property="segmentId"    column="segment_id"    />
-        <result property="knowledgeId"    column="knowledge_id"    />
+        <result property="fileId"    column="file_id"    />
         <result property="fileName"    column="file_name"    />
         <result property="content"    column="content"    />
         <result property="createBy"    column="create_by"    />
@@ -17,13 +17,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectChatFileSegmentVo">
-        select segment_id, knowledge_id, file_name, content, create_by, create_time, update_by, update_time, remark from chat_file_segment
+        select segment_id, file_id, file_name, content, create_by, create_time, update_by, update_time, remark from chat_file_segment
     </sql>
 
-    <select id="selectChatFileSegmentList" parameterType="ChatFileSegment" resultMap="ChatFileSegmentResult">
+    <select id="selectChatFileSegmentList" parameterType="com.ruoyi.domain.ChatFileSegment" resultMap="ChatFileSegmentResult">
         <include refid="selectChatFileSegmentVo"/>
         <where>
-            knowledge_id = #{knowledgeId}
+            file_id = #{fileId}
         </where>
     </select>
     
@@ -32,11 +32,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where segment_id = #{segmentId}
     </select>
 
-    <insert id="insertChatFileSegment" parameterType="ChatFileSegment">
+    <insert id="insertChatFileSegment" parameterType="com.ruoyi.domain.ChatFileSegment">
         insert into chat_file_segment
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="segmentId != null">segment_id,</if>
-            <if test="knowledgeId != null">knowledge_id,</if>
+            <if test="fileId != null">file_id,</if>
             <if test="fileName != null">file_name,</if>
             <if test="content != null">content,</if>
             <if test="createBy != null">create_by,</if>
@@ -47,7 +47,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="segmentId != null">#{segmentId},</if>
-            <if test="knowledgeId != null">#{knowledgeId},</if>
+            <if test="fileId != null">#{fileId},</if>
             <if test="fileName != null">#{fileName},</if>
             <if test="content != null">#{content},</if>
             <if test="createBy != null">#{createBy},</if>
@@ -58,10 +58,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
          </trim>
     </insert>
 
-    <update id="updateChatFileSegment" parameterType="ChatFileSegment">
+    <update id="updateChatFileSegment" parameterType="com.ruoyi.domain.ChatFileSegment">
         update chat_file_segment
         <trim prefix="SET" suffixOverrides=",">
-            <if test="knowledgeId != null">knowledge_id = #{knowledgeId},</if>
+            <if test="fileId != null">file_id = #{fileId},</if>
             <if test="fileName != null">file_name = #{fileName},</if>
             <if test="content != null">content = #{content},</if>
             <if test="createBy != null">create_by = #{createBy},</if>
@@ -83,7 +83,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{segmentId}
         </foreach>
     </delete>
-    <delete id="deleteChatFileSegmentByKnowledgeId">
-        delete from chat_file_segment where knowledge_id = #{knowledgeId}
+    <delete id="deleteChatFileSegmentByFileId">
+        delete from chat_file_segment where file_id = #{fileId}
     </delete>
 </mapper>

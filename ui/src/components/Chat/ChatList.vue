@@ -62,12 +62,12 @@ export default {
     const activeMenu = ref(null);
     const chatStore = useChatStore();
     const chats = ref(chatStore.chatList);
-    const projectId = ref(chatStore.projectId);
+    const appId = ref(chatStore.appId);
     const chatId = ref(chatStore.chatId);
 
     const fetchChats = async () => {
       try {
-        await chatStore.fetchChatList(projectId.value);
+        await chatStore.fetchChatList(appId.value);
         if (chats.value.length > 0) {
           activeMenu.value = chats.value[0].chatId; // 默认选择第一个会话
           chatStore.fetchMessages(activeMenu.value);
@@ -85,10 +85,10 @@ export default {
       }
     });
 
-    // 监听 projectId 的变化
-    watch(() => chatStore.projectId, (newProjectId) => {
-      if (newProjectId) {
-        projectId.value = newProjectId;
+    // 监听 appId 的变化
+    watch(() => chatStore.appId, (newAppId) => {
+      if (newAppId) {
+        appId.value = newAppId;
         fetchChats();
       }
     }, { immediate: true });
@@ -125,6 +125,7 @@ export default {
 
 
     const selectMenu = async (chatId) => {
+      console.log('selectMenu',chatId)
       activeMenu.value = chatId;
       chatStore.chatId = chatId;
       await chatStore.fetchMessages(chatId);
@@ -142,7 +143,7 @@ export default {
 
     const updateChatTitle = async (chat) => {
       try {
-        await updateChat({ projectId: projectId.value, chatId: chat.chatId, title: chat.title });
+        await updateChat({ appId: appId.value, chatId: chat.chatId, title: chat.title });
         chat.editing = false;
         activeMenu.value = chat.chatId;
       } catch (error) {
@@ -153,7 +154,7 @@ export default {
     const deleteChat = async (chat) => {
       try {
         console.log("删除会话:", chat.chatId);
-        await deleteChatApi(projectId.value, chat.chatId);
+        await deleteChatApi(appId.value, chat.chatId);
         chats.value = chats.value.filter((c) => c.chatId !== chat.chatId);
         if (chats.value.length > 0) {
           activeMenu.value = chats.value[0].chatId;

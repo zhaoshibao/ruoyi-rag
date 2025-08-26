@@ -1,7 +1,10 @@
 package com.ruoyi.controller;
 
 import java.util.List;
-import javax.servlet.http.HttpServletResponse;
+
+import com.ruoyi.common.utils.SecurityUtils;
+import com.ruoyi.common.utils.uuid.IdUtils;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -37,10 +40,11 @@ public class ChatKnowledgeController extends BaseController
     /**
      * 查询知识库列表
      */
-    @PreAuthorize("@ss.hasPermi('ruoyi:knowledge:list')")
     @GetMapping("/list")
     public TableDataInfo list(ChatKnowledge chatKnowledge)
     {
+        Long userId = SecurityUtils.getUserId();
+        chatKnowledge.setUserId(userId);
         startPage();
         List<ChatKnowledge> list = chatKnowledgeService.selectChatKnowledgeList(chatKnowledge);
         return getDataTable(list);
@@ -49,7 +53,6 @@ public class ChatKnowledgeController extends BaseController
     /**
      * 导出知识库列表
      */
-    @PreAuthorize("@ss.hasPermi('ruoyi:knowledge:export')")
     @Log(title = "知识库", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public void export(HttpServletResponse response, ChatKnowledge chatKnowledge)
@@ -62,7 +65,6 @@ public class ChatKnowledgeController extends BaseController
     /**
      * 获取知识库详细信息
      */
-    @PreAuthorize("@ss.hasPermi('ruoyi:knowledge:queryVo')")
     @GetMapping(value = "/{knowledgeId}")
     public AjaxResult getInfo(@PathVariable("knowledgeId") String knowledgeId)
     {
@@ -72,18 +74,19 @@ public class ChatKnowledgeController extends BaseController
     /**
      * 新增知识库
      */
-    @PreAuthorize("@ss.hasPermi('ruoyi:knowledge:add')")
     @Log(title = "知识库", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody ChatKnowledge chatKnowledge)
     {
+        Long userId = SecurityUtils.getUserId();
+        chatKnowledge.setUserId(userId);
+        chatKnowledge.setKnowledgeId(IdUtils.simpleUUID());
         return toAjax(chatKnowledgeService.insertChatKnowledge(chatKnowledge));
     }
 
     /**
      * 修改知识库
      */
-    @PreAuthorize("@ss.hasPermi('ruoyi:knowledge:edit')")
     @Log(title = "知识库", businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(@RequestBody ChatKnowledge chatKnowledge)
@@ -94,7 +97,6 @@ public class ChatKnowledgeController extends BaseController
     /**
      * 删除知识库
      */
-    @PreAuthorize("@ss.hasPermi('ruoyi:knowledge:remove')")
     @Log(title = "知识库", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{knowledgeIds}")
     public AjaxResult remove(@PathVariable String[] knowledgeIds)

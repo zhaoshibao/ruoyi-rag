@@ -1,61 +1,71 @@
 package com.ruoyi.mapper;
 
+import com.ruoyi.domain.ChatFile;
+
 import java.util.List;
-import com.ruoyi.domain.ChatKnowledge;
 
 /**
- * 知识库管理Mapper接口
+ * 文件Mapper接口
  * 
- * @author lixianfeng
- * @date 2024-06-27
+ * @author zhaoshibao
+ * @date 2025-08-24
  */
-public interface ChatKnowledgeMapper 
+public interface ChatFileMapper
 {
     /**
-     * 查询知识库管理
+     * 查询文件
      * 
-     * @param knowledgeId 知识库管理主键
-     * @return 知识库管理
+     * @param fileId 文件主键
+     * @return 文件
      */
-    public ChatKnowledge selectChatKnowledgeByKnowledgeId(String knowledgeId);
+    public ChatFile selectChatFileByFileId(String fileId);
 
     /**
-     * 查询知识库管理列表
-     * 
-     * @param chatKnowledge 知识库管理
-     * @return 知识库管理集合
+     * 查询文件列表
+     *
+     * @param knowledgeId 知识库id
+     * @return 文件集合
      */
-    public List<ChatKnowledge> selectChatKnowledgeList(ChatKnowledge chatKnowledge);
+    public List<ChatFile> selectChatFileByKnowledgeId(String knowledgeId);
 
     /**
-     * 新增知识库管理
+     * 查询文件列表
      * 
-     * @param chatKnowledge 知识库管理
+     * @param chatFile 文件
+     * @return 文件集合
+     */
+    public List<ChatFile> selectChatFileList(ChatFile chatFile);
+
+    /**
+     * 新增文件
+     *
+     * @param chatFile 文件
      * @return 结果
      */
-    public int insertChatKnowledge(ChatKnowledge chatKnowledge);
+    public int insertChatFile(ChatFile chatFile);
 
     /**
-     * 修改知识库管理
-     * 
-     * @param chatKnowledge 知识库管理
+     * 修改文件
+     *
+     * @param chatFile 文件
      * @return 结果
      */
-    public int updateChatKnowledge(ChatKnowledge chatKnowledge);
+    public int updateChatFile(ChatFile chatFile);
 
     /**
-     * 删除知识库管理
+     * 删除文件
      * 
-     * @param knowledgeId 知识库管理主键
+     * @param fileId 文件主键
      * @return 结果
      */
-    public int deleteChatKnowledgeByKnowledgeId(String knowledgeId);
+    public int deleteChatFileByFileId(String fileId);
 
     /**
-     * 批量删除知识库管理
+     * 批量删除文件
+     *
      * 
-     * @param knowledgeIds 需要删除的数据主键集合
+     * @param fileIds 需要删除的数据主键集合
      * @return 结果
      */
-    public int deleteChatKnowledgeByKnowledgeIds(Long[] knowledgeIds);
+    public int deleteChatFileByFileIds(String[] fileIds);
 }
