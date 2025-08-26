@@ -1,37 +1,30 @@
 package com.ruoyi.service.impl;
 
 import java.util.List;
-import java.util.stream.Collectors;
-
 import com.ruoyi.common.utils.DateUtils;
-import com.ruoyi.domain.ChatKnowledge;
-import com.ruoyi.domain.ChatProject;
-import com.ruoyi.mapper.ChatKnowledgeMapper;
-import com.ruoyi.mapper.ChatProjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import com.ruoyi.mapper.ChatKnowledgeMapper;
+import com.ruoyi.domain.ChatKnowledge;
 import com.ruoyi.service.IChatKnowledgeService;
-import org.springframework.util.CollectionUtils;
 
 /**
- * 知识库管理Service业务层处理
+ * 知识库Service业务层处理
  * 
- * @author lixianfeng
- * @date 2024-06-27
+ * @author zhaoshibao
+ * @date 2025-08-24
  */
 @Service
-public class ChatKnowledgeServiceImpl implements IChatKnowledgeService {
-
-    @Autowired
-    private ChatProjectMapper chatProjectMapper;
+public class ChatKnowledgeServiceImpl implements IChatKnowledgeService 
+{
     @Autowired
     private ChatKnowledgeMapper chatKnowledgeMapper;
 
     /**
-     * 查询知识库管理
+     * 查询知识库
      * 
-     * @param knowledgeId 知识库管理主键
-     * @return 知识库管理
+     * @param knowledgeId 知识库主键
+     * @return 知识库
      */
     @Override
     public ChatKnowledge selectChatKnowledgeByKnowledgeId(String knowledgeId)
@@ -39,33 +32,22 @@ public class ChatKnowledgeServiceImpl implements IChatKnowledgeService {
         return chatKnowledgeMapper.selectChatKnowledgeByKnowledgeId(knowledgeId);
     }
 
-
     /**
-     * 查询知识库管理列表
+     * 查询知识库列表
      * 
-     * @param chatKnowledge 知识库管理
-     * @return 知识库管理
+     * @param chatKnowledge 知识库
+     * @return 知识库
      */
     @Override
-    public List<ChatKnowledge> selectChatKnowledgeList(ChatKnowledge chatKnowledge) {
-        List<ChatKnowledge> chatKnowledgeList = chatKnowledgeMapper.selectChatKnowledgeList(chatKnowledge);
-        if (CollectionUtils.isEmpty(chatKnowledgeList)) {
-            return chatKnowledgeList;
-        }
-        chatKnowledgeList = chatKnowledgeList.stream().map(chatKnowledge1 -> {
-            String projectId = chatKnowledge1.getProjectId();
-            ChatProject chatProject = chatProjectMapper.selectChatProjectByProjectId(projectId);
-            chatKnowledge1.setProjectName(chatProject.getProjectName());
-            return chatKnowledge1;
-        }).collect(Collectors.toList());
-
-        return chatKnowledgeList;
+    public List<ChatKnowledge> selectChatKnowledgeList(ChatKnowledge chatKnowledge)
+    {
+        return chatKnowledgeMapper.selectChatKnowledgeList(chatKnowledge);
     }
 
     /**
-     * 新增知识库管理
+     * 新增知识库
      * 
-     * @param chatKnowledge 知识库管理
+     * @param chatKnowledge 知识库
      * @return 结果
      */
     @Override
@@ -76,9 +58,9 @@ public class ChatKnowledgeServiceImpl implements IChatKnowledgeService {
     }
 
     /**
-     * 修改知识库管理
+     * 修改知识库
      * 
-     * @param chatKnowledge 知识库管理
+     * @param chatKnowledge 知识库
      * @return 结果
      */
     @Override
@@ -89,21 +71,21 @@ public class ChatKnowledgeServiceImpl implements IChatKnowledgeService {
     }
 
     /**
-     * 批量删除知识库管理
+     * 批量删除知识库
      * 
-     * @param knowledgeIds 需要删除的知识库管理主键
+     * @param knowledgeIds 需要删除的知识库主键
      * @return 结果
      */
     @Override
-    public int deleteChatKnowledgeByKnowledgeIds(Long[] knowledgeIds)
+    public int deleteChatKnowledgeByKnowledgeIds(String[] knowledgeIds)
     {
         return chatKnowledgeMapper.deleteChatKnowledgeByKnowledgeIds(knowledgeIds);
     }
 
     /**
-     * 删除知识库管理信息
+     * 删除知识库信息
      * 
-     * @param knowledgeId 知识库管理主键
+     * @param knowledgeId 知识库主键
      * @return 结果
      */
     @Override

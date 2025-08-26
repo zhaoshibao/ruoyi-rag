@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.mapper.ChatAppKnowledgeMapper">
+    
+    <resultMap type="ChatAppKnowledge" id="ChatAppKnowledgeResult">
+        <result property="id"    column="id"    />
+        <result property="appId"    column="app_id"    />
+        <result property="knowledgeId"    column="knowledge_id"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectChatAppKnowledgeVo">
+        select id, app_id, knowledge_id, create_by, create_time, update_by, update_time, remark from chat_app_knowledge
+    </sql>
+
+    <select id="selectChatAppKnowledgeList" parameterType="ChatAppKnowledge" resultMap="ChatAppKnowledgeResult">
+        <include refid="selectChatAppKnowledgeVo"/>
+        <where>  
+        </where>
+    </select>
+    
+    <select id="selectChatAppKnowledgeById" parameterType="String" resultMap="ChatAppKnowledgeResult">
+        <include refid="selectChatAppKnowledgeVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertChatAppKnowledge" parameterType="ChatAppKnowledge">
+        insert into chat_app_knowledge
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="appId != null">app_id,</if>
+            <if test="knowledgeId != null">knowledge_id,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="remark != null">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="appId != null">#{appId},</if>
+            <if test="knowledgeId != null">#{knowledgeId},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="remark != null">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateChatAppKnowledge" parameterType="ChatAppKnowledge">
+        update chat_app_knowledge
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="appId != null">app_id = #{appId},</if>
+            <if test="knowledgeId != null">knowledge_id = #{knowledgeId},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteChatAppKnowledgeById" parameterType="String">
+        delete from chat_app_knowledge where id = #{id}
+    </delete>
+
+    <delete id="deleteChatAppKnowledgeByIds" parameterType="String">
+        delete from chat_app_knowledge where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

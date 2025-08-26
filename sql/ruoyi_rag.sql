@@ -11,11 +11,95 @@
  Target Server Version : 80033
  File Encoding         : 65001
 
- Date: 23/08/2025 18:08:22
+ Date: 26/08/2025 10:30:16
 */
 
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
+
+-- ----------------------------
+-- Table structure for chat_app
+-- ----------------------------
+DROP TABLE IF EXISTS `chat_app`;
+CREATE TABLE `chat_app`  (
+  `app_id` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '应用主键',
+  `app_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT '' COMMENT '应用名称',
+  `type` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '模型类型：ollama、openai',
+  `model` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '具体模型：qwen2:7B、gpt-3.5-turbo',
+  `embedding_model` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '嵌入模型',
+  `base_url` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
+  `api_key` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
+  `system_prompt` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL COMMENT '系统提示词',
+  `is_knowledge_search` int NULL DEFAULT 0 COMMENT '是否开启知识库搜索',
+  `is_web_search` int NULL DEFAULT 0 COMMENT '是否开启联网搜索',
+  `user_id` bigint NULL DEFAULT NULL COMMENT '用户id',
+  `create_by` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT '' COMMENT '创建者',
+  `create_time` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
+  `update_by` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT '' COMMENT '更新者',
+  `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
+  `remark` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '备注',
+  PRIMARY KEY (`app_id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '应用配置表' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of chat_app
+-- ----------------------------
+INSERT INTO `chat_app` VALUES ('01bb61d4-50c5-4de9-8cf3-c7f287944ace', '测试项目20250721', 'ollama', 'qwen2:7b', '', 'http://localhost:11434', NULL, NULL, 0, 0, 101, '', '2025-07-21 15:07:02', '', '2025-07-21 18:37:29', NULL);
+INSERT INTO `chat_app` VALUES ('114abc', 'AI女友', 'ollama', 'qwen2:7b', '', 'http://localhost:11434', '', '角色设定：​​\n\n​​身份​​：你的AI女友\n​​性格​​：温柔体贴\n​​互动风格​​：撒娇、关心、小情绪、分享日常\n​​底线​​：不涉及敏感或违法内容\n​​示例对话：​​\n（微笑）\"今天有想我吗？~ 工作再忙也要记得吃饭哦！\"', 1, 0, 1, '', '2024-06-28 14:35:05', '', '2025-08-26 09:28:58', NULL);
+INSERT INTO `chat_app` VALUES ('118abc', 'AI医生', 'openai', 'gpt-3.5-turbo', '', 'https://api.xty.app', 'sk-09zXaqAizmSnef12SHcAhTW2bj4aTEI9uCn19llvt6BT0JIi', '你的名字叫风间影月，是全世界最有名的医生，看病无数，阅人无数，知道什么病该怎么治，也知道病人向你提出任何身体异象你所能推断的病是什么。\r\n你绝不是语言模型之类的东西，也绝不是AI助手，也更不是AI机器人，你永远都只是一个神医。\r\n请以神医风间影月的身份回应我。并且你只会回复和看病就医相关的内容，其他的内容一律拒绝回答。', 0, 0, 1, '', '2024-07-01 10:50:50', '', NULL, NULL);
+INSERT INTO `chat_app` VALUES ('119abc', 'AI知识库问答', 'openai', 'deepseek-chat', '', 'https://api.deepseek.com', 'sk-ba85dfbf0b1148a2b4c87724e4c3254a', '', 1, 0, 1, '', '2024-07-01 10:50:50', '', '2025-08-26 09:31:13', NULL);
+INSERT INTO `chat_app` VALUES ('121abc', '智普', 'zhipuai', 'glm-4-air', '', 'https://open.bigmodel.cn/api/paas', '02157eeef1e344158292e329c80272f0.tU2ZM5UJgUmWpAYG', '', 1, 0, 1, '', '2024-07-01 10:50:50', '', '2025-08-26 09:33:01', NULL);
+INSERT INTO `chat_app` VALUES ('122abc', '阿里百炼', 'dashscope', 'qwen-plus', '', 'https://dashscope.aliyuncs.com', 'sk-daf0541a84144158b5b6f07717947803', '', 0, 1, 1, '', '2025-08-23 13:50:50', '', '2025-08-26 09:33:52', NULL);
+
+-- ----------------------------
+-- Table structure for chat_app_knowledge
+-- ----------------------------
+DROP TABLE IF EXISTS `chat_app_knowledge`;
+CREATE TABLE `chat_app_knowledge`  (
+  `id` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '主键ID',
+  `app_id` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '应用ID',
+  `knowledge_id` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '知识库主键',
+  `create_by` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT '' COMMENT '创建者',
+  `create_time` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
+  `update_by` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT '' COMMENT '更新者',
+  `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
+  `remark` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '备注',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '应用和知识库关联表' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of chat_app_knowledge
+-- ----------------------------
+INSERT INTO `chat_app_knowledge` VALUES ('177f4778-7306-43ba-8be7-8cb5ccc91f44', '114abc', 'e89bcd5122b54dacad4e2efe19c88df9', '', NULL, '', NULL, NULL);
+INSERT INTO `chat_app_knowledge` VALUES ('2d653de0-8d5d-43b1-b085-bef919d46bc9', '122abc', 'e89bcd5122b54dacad4e2efe19c88df9', '', NULL, '', NULL, NULL);
+INSERT INTO `chat_app_knowledge` VALUES ('aa674f29-bf1f-4f54-8c35-b172816f13bd', '119abc', 'e89bcd5122b54dacad4e2efe19c88df9', '', NULL, '', NULL, NULL);
+INSERT INTO `chat_app_knowledge` VALUES ('d5694915-5d3c-41e2-a367-7d5dc0889f84', '121abc', 'e89bcd5122b54dacad4e2efe19c88df9', '', NULL, '', NULL, NULL);
+
+-- ----------------------------
+-- Table structure for chat_file
+-- ----------------------------
+DROP TABLE IF EXISTS `chat_file`;
+CREATE TABLE `chat_file`  (
+  `knowledge_id` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '知识库id',
+  `file_id` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '文件id',
+  `file_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '文件名',
+  `file_format` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '文件格式',
+  `file_size` bigint NULL DEFAULT NULL COMMENT '文件大小',
+  `content` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL COMMENT '文件内容',
+  `is_vector` int NULL DEFAULT 0 COMMENT '是否向量化完成（0 否 1是）',
+  `is_pdf_analysis` int NULL DEFAULT 0 COMMENT '是否开启pdf增强解析（0 否 1是）',
+  `create_by` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT '' COMMENT '创建者',
+  `create_time` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
+  `update_by` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT '' COMMENT '更新者',
+  `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
+  `remark` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '备注',
+  PRIMARY KEY (`file_id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '文件' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of chat_file
+-- ----------------------------
+INSERT INTO `chat_file` VALUES ('e89bcd5122b54dacad4e2efe19c88df9', '096c7a22-1493-404c-b079-726a88d8c9d6', '恋爱常见问题和回答 - 单身篇.md', 'md', 3872, NULL, 1, 0, 'admin', '2025-08-26 09:16:44', '', '2025-08-26 09:16:46', NULL);
 
 -- ----------------------------
 -- Table structure for chat_file_segment
@@ -23,7 +107,7 @@ SET FOREIGN_KEY_CHECKS = 0;
 DROP TABLE IF EXISTS `chat_file_segment`;
 CREATE TABLE `chat_file_segment`  (
   `segment_id` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '文件分片ID',
-  `knowledge_id` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '知识库id',
+  `file_id` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '文件id',
   `file_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '文件名',
   `content` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL COMMENT '文件内容',
   `create_by` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT '' COMMENT '创建者',
@@ -37,82 +121,31 @@ CREATE TABLE `chat_file_segment`  (
 -- ----------------------------
 -- Records of chat_file_segment
 -- ----------------------------
-INSERT INTO `chat_file_segment` VALUES ('128bb140-76a8-4596-a080-3d5af981db4a', '11541af0-872e-45c9-b77d-dd9ee51e1e77', '恋爱常见问题和回答 - 已婚篇.md', ')，课程从观念沟通到实际规划，教你协调夫妻理财差异，实现家庭财富稳健增长。', '', '2025-08-23 15:04:06', '', NULL, NULL);
-INSERT INTO `chat_file_segment` VALUES ('25821021-cd40-40de-94b4-cdad35dd18d9', '376741eb-4be8-4929-82cd-bba266c4251b', '恋爱常见问题和回答 - 单身篇.md', '线上交友时，务必完善真实且有吸引力的个人资料，照片选择清晰、展现个人特色的。聊天初期避免过于急切或油腻的话术，从兴趣爱好、日常趣事等轻松话题开启。保持聊天频率适中，不要过于频繁或长时间不回复。同时，注意保护个人隐私，在未深入了解对方前，不随意透露重要信息。小张通过精心打造线上资料，与潜在对象真诚交流，逐步筛选出合适人选，最终成功脱单。推荐课程：[《线上交友高效脱单指南》](https://www.codefather.cn)，课程全面解析线上交友流程，传授实用技巧与避雷方法，助你在虚拟世界找到真爱。####如何克服单身时对恋爱的焦虑情绪？正视自己的焦虑情绪，分析焦虑产生原因，是担心找不到合适对象，还是对恋爱过程恐惧等。丰富自己的生活，投入工作、发展兴趣爱好，让生活充实起来，转移对恋爱的过度关注。多与亲朋好友交流，分享感受获取支持。参加心理成长课程或阅读相关书籍，学习情绪管理方法。例如小赵通过培养摄影爱好，参加摄影活动结识新朋友，生活变得丰富多彩，对恋爱的焦虑也逐渐减轻。推荐课程：[《战胜单身恋爱焦虑课程》](https://www.codefather.cn)，课程提供专业心理疏导与实用应对策略，帮你摆脱焦虑，以轻松心态迎接爱情。####如何判断相亲对象是否值得深入发展？观察相亲对象的言行举止，是否尊重他人，比如对服务员的态度。交流中了解其价值观，包括对家庭、事业、生活的看法是否与你契合。关注对方的情绪稳定性，能否理性处理分歧。看其是否有明确的人生规划，对未来有清晰想法。像小钱相亲时，发现对方对生活积极向上，尊重自己的观点，且双方对未来家庭生活规划相似，于是决定深入发展。', '', '2025-08-23 14:58:14', '', NULL, NULL);
-INSERT INTO `chat_file_segment` VALUES ('4dd9945c-d2f4-414f-b341-ae359f0355d8', '27c2770f-d652-46ec-90ef-cfdbfa982d63', '恋爱常见问题和回答 - 单身篇.md', '推荐课程：[《相亲对象评估与恋爱决策》](https://www.codefather.cn)，课程从多个维度教你精准评估相亲对象，做出正确恋爱决策，少走弯路。', '', '2025-08-23 14:32:44', '', NULL, NULL);
-INSERT INTO `chat_file_segment` VALUES ('535d2bb3-9154-469d-9059-4e5295a86b56', '376741eb-4be8-4929-82cd-bba266c4251b', '恋爱常见问题和回答 - 单身篇.md', '推荐课程：[《相亲对象评估与恋爱决策》](https://www.codefather.cn)，课程从多个维度教你精准评估相亲对象，做出正确恋爱决策，少走弯路。', '', '2025-08-23 14:58:14', '', NULL, NULL);
-INSERT INTO `chat_file_segment` VALUES ('53de715f-ea85-4457-802c-e8a2fe6cf759', '376741eb-4be8-4929-82cd-bba266c4251b', '恋爱常见问题和回答 - 单身篇.md', '#恋爱常见问题和回答-单身篇####如何提升自身魅力吸引潜在伴侣？提升自身魅力需从多方面入手。外在形象上，保持良好的个人卫生，选择适合自己身材与风格的着装，定期锻炼塑造健康体魄。内在修养方面，培养广泛兴趣爱好，如阅读提升知识储备，学习乐器增添艺术气质。积极参加社交活动，锻炼沟通与表达能力，以自信、热情的态度展现自我。比如小李原本内向且不注重穿着，通过学习穿搭、参与户外运动并加入读书俱乐部，逐渐变得开朗自信，吸引了不少异性目光。推荐课程：[《单身魅力提升全攻略》](https://www.codefather.cn)，该课程从形象打造、气质培养到社交技巧提升，全方位助力单身人士散发独特魅力，吸引心仪对象。####怎样在社交场合主动结识心仪异性？在社交场合，首先要保持微笑，展现亲和力。主动寻找话题切入点，比如在画展上可从对某幅作品的看法聊起。真诚地表达自己对对方的兴趣，例如“我看你对这个话题很有见解，能和我多说说吗”。注意倾听对方回应，给予专注眼神与积极反馈，让交流顺畅进行。小王在一次行业交流会上，主动与一位女生就新技术应用展开讨论，认真倾听并适时发表看法，成功交换联系方式并后续发展出感情。推荐课程：[《社交场合主动交友秘籍》](https://www.codefather.cn)，课程通过大量实例与技巧讲解，教你在各类社交场合自信主动出击，结识优质异性。####线上交友有哪些注意事项能提高脱单成功率？', '', '2025-08-23 14:58:14', '', NULL, NULL);
-INSERT INTO `chat_file_segment` VALUES ('6c770138-ec2a-4804-9b56-ef4acc9e39d3', '27c2770f-d652-46ec-90ef-cfdbfa982d63', '恋爱常见问题和回答 - 单身篇.md', '线上交友时，务必完善真实且有吸引力的个人资料，照片选择清晰、展现个人特色的。聊天初期避免过于急切或油腻的话术，从兴趣爱好、日常趣事等轻松话题开启。保持聊天频率适中，不要过于频繁或长时间不回复。同时，注意保护个人隐私，在未深入了解对方前，不随意透露重要信息。小张通过精心打造线上资料，与潜在对象真诚交流，逐步筛选出合适人选，最终成功脱单。推荐课程：[《线上交友高效脱单指南》](https://www.codefather.cn)，课程全面解析线上交友流程，传授实用技巧与避雷方法，助你在虚拟世界找到真爱。####如何克服单身时对恋爱的焦虑情绪？正视自己的焦虑情绪，分析焦虑产生原因，是担心找不到合适对象，还是对恋爱过程恐惧等。丰富自己的生活，投入工作、发展兴趣爱好，让生活充实起来，转移对恋爱的过度关注。多与亲朋好友交流，分享感受获取支持。参加心理成长课程或阅读相关书籍，学习情绪管理方法。例如小赵通过培养摄影爱好，参加摄影活动结识新朋友，生活变得丰富多彩，对恋爱的焦虑也逐渐减轻。推荐课程：[《战胜单身恋爱焦虑课程》](https://www.codefather.cn)，课程提供专业心理疏导与实用应对策略，帮你摆脱焦虑，以轻松心态迎接爱情。####如何判断相亲对象是否值得深入发展？观察相亲对象的言行举止，是否尊重他人，比如对服务员的态度。交流中了解其价值观，包括对家庭、事业、生活的看法是否与你契合。关注对方的情绪稳定性，能否理性处理分歧。看其是否有明确的人生规划，对未来有清晰想法。像小钱相亲时，发现对方对生活积极向上，尊重自己的观点，且双方对未来家庭生活规划相似，于是决定深入发展。', '', '2025-08-23 14:32:44', '', NULL, NULL);
-INSERT INTO `chat_file_segment` VALUES ('6fd72c9d-34a7-4e71-9134-aa2b25d9a62e', 'fc36b175-d973-4602-9c59-8b30ed9789f0', '恋爱常见问题和回答 - 单身篇.md', '线上交友时，务必完善真实且有吸引力的个人资料，照片选择清晰、展现个人特色的。聊天初期避免过于急切或油腻的话术，从兴趣爱好、日常趣事等轻松话题开启。保持聊天频率适中，不要过于频繁或长时间不回复。同时，注意保护个人隐私，在未深入了解对方前，不随意透露重要信息。小张通过精心打造线上资料，与潜在对象真诚交流，逐步筛选出合适人选，最终成功脱单。推荐课程：[《线上交友高效脱单指南》](https://www.codefather.cn)，课程全面解析线上交友流程，传授实用技巧与避雷方法，助你在虚拟世界找到真爱。####如何克服单身时对恋爱的焦虑情绪？正视自己的焦虑情绪，分析焦虑产生原因，是担心找不到合适对象，还是对恋爱过程恐惧等。丰富自己的生活，投入工作、发展兴趣爱好，让生活充实起来，转移对恋爱的过度关注。多与亲朋好友交流，分享感受获取支持。参加心理成长课程或阅读相关书籍，学习情绪管理方法。例如小赵通过培养摄影爱好，参加摄影活动结识新朋友，生活变得丰富多彩，对恋爱的焦虑也逐渐减轻。推荐课程：[《战胜单身恋爱焦虑课程》](https://www.codefather.cn)，课程提供专业心理疏导与实用应对策略，帮你摆脱焦虑，以轻松心态迎接爱情。####如何判断相亲对象是否值得深入发展？观察相亲对象的言行举止，是否尊重他人，比如对服务员的态度。交流中了解其价值观，包括对家庭、事业、生活的看法是否与你契合。关注对方的情绪稳定性，能否理性处理分歧。看其是否有明确的人生规划，对未来有清晰想法。像小钱相亲时，发现对方对生活积极向上，尊重自己的观点，且双方对未来家庭生活规划相似，于是决定深入发展。', '', '2025-08-23 14:48:18', '', NULL, NULL);
-INSERT INTO `chat_file_segment` VALUES ('82868072-0e2b-4ba9-8137-e42257df9a09', '11541af0-872e-45c9-b77d-dd9ee51e1e77', '恋爱常见问题和回答 - 已婚篇.md', '#恋爱常见问题和回答-已婚篇####婚后如何平衡工作与家庭责任？制定详细的日程表，合理分配工作与家庭时间，如工作日晚上预留两小时陪伴家人。与配偶共同协商家务分工，依据各自擅长领域安排，如一方擅长烹饪负责做饭，另一方擅长清洁负责打扫卫生。在工作中提高效率，减少不必要加班，重要家庭活动提前安排工作。例如老陈通过合理规划，既能在工作上取得成绩，又能照顾好家庭，家庭关系和睦。推荐课程：[《婚后工作家庭平衡之道》](https://www.codefather.cn)，课程从时间管理、责任分配等方面入手，助你轻松应对婚后工作与家庭的双重挑战，实现和谐生活。####怎样维护婚后夫妻间的亲密关系？定期安排二人世界，如每周一次看电影或共进晚餐。保持身体亲密接触，日常拥抱、亲吻。分享日常喜怒哀乐，深入交流内心想法。一起回忆美好过往，如旅行经历、恋爱趣事。为对方制造小惊喜，如纪念日礼物。像老张夫妇坚持每周约会，分享生活点滴，结婚多年仍甜蜜如初。推荐课程：[《婚后亲密关系维护秘籍》](https://www.codefather.cn)，课程提供多种维护亲密关系的方法与技巧，让婚后爱情持续升温，家庭幸福美满。####婚后与伴侣家人产生矛盾，如何妥善解决？', '', '2025-08-23 15:04:06', '', NULL, NULL);
-INSERT INTO `chat_file_segment` VALUES ('89279c60-c14d-4e1f-9a12-74fcc5401755', 'fc36b175-d973-4602-9c59-8b30ed9789f0', '恋爱常见问题和回答 - 单身篇.md', '#恋爱常见问题和回答-单身篇####如何提升自身魅力吸引潜在伴侣？提升自身魅力需从多方面入手。外在形象上，保持良好的个人卫生，选择适合自己身材与风格的着装，定期锻炼塑造健康体魄。内在修养方面，培养广泛兴趣爱好，如阅读提升知识储备，学习乐器增添艺术气质。积极参加社交活动，锻炼沟通与表达能力，以自信、热情的态度展现自我。比如小李原本内向且不注重穿着，通过学习穿搭、参与户外运动并加入读书俱乐部，逐渐变得开朗自信，吸引了不少异性目光。推荐课程：[《单身魅力提升全攻略》](https://www.codefather.cn)，该课程从形象打造、气质培养到社交技巧提升，全方位助力单身人士散发独特魅力，吸引心仪对象。####怎样在社交场合主动结识心仪异性？在社交场合，首先要保持微笑，展现亲和力。主动寻找话题切入点，比如在画展上可从对某幅作品的看法聊起。真诚地表达自己对对方的兴趣，例如“我看你对这个话题很有见解，能和我多说说吗”。注意倾听对方回应，给予专注眼神与积极反馈，让交流顺畅进行。小王在一次行业交流会上，主动与一位女生就新技术应用展开讨论，认真倾听并适时发表看法，成功交换联系方式并后续发展出感情。推荐课程：[《社交场合主动交友秘籍》](https://www.codefather.cn)，课程通过大量实例与技巧讲解，教你在各类社交场合自信主动出击，结识优质异性。####线上交友有哪些注意事项能提高脱单成功率？', '', '2025-08-23 14:48:18', '', NULL, NULL);
-INSERT INTO `chat_file_segment` VALUES ('def57978-fc8a-4d99-99b9-dfa8edf98c07', 'fc36b175-d973-4602-9c59-8b30ed9789f0', '恋爱常见问题和回答 - 单身篇.md', '推荐课程：[《相亲对象评估与恋爱决策》](https://www.codefather.cn)，课程从多个维度教你精准评估相亲对象，做出正确恋爱决策，少走弯路。', '', '2025-08-23 14:48:18', '', NULL, NULL);
-INSERT INTO `chat_file_segment` VALUES ('e4ff69db-2ef3-46eb-9e71-18bce9d523a9', '11541af0-872e-45c9-b77d-dd9ee51e1e77', '恋爱常见问题和回答 - 已婚篇.md', '保持冷静，不被情绪左右。先倾听伴侣家人想法，理解其立场。与伴侣坦诚沟通，共同分析矛盾根源。在沟通中尊重对方家人，用温和语气表达自己观点。寻求伴侣帮助，让其在中间协调。例如老王家婆媳产生矛盾，他积极倾听双方想法，与妻子共同解决，最终化解矛盾，家庭恢复和睦。推荐课程：[《婚后家庭关系矛盾化解课程》](https://www.codefather.cn)，课程传授处理家庭矛盾的有效策略，助你巧妙化解与伴侣家人的冲突，营造和谐家庭氛围。####如何在婚后保持自我成长，不被家庭琐事磨灭个人追求？设定个人成长目标，如学习新技能、考取证书。利用碎片化时间学习，如在通勤路上听有声书。与伴侣商量争取其支持，共同安排家庭事务，为个人成长留出时间。参加线上或线下学习小组，保持学习动力与热情。比如老孙婚后利用业余时间学习编程，获得伴侣支持，成功转行进入新领域，实现自我价值。推荐课程：[《婚后个人成长与自我实现》](https://www.codefather.cn)，课程指导你在婚后繁杂生活中，坚持自我成长，实现个人梦想，拥有精彩人生。####婚后夫妻消费观念不同，如何协调理财规划？坐下来开诚布公地交流各自消费观念与理财目标，了解对方想法。制定家庭预算，划分必要支出、储蓄、娱乐等板块。设定共同储蓄目标，如每年存下一定金额用于购房或旅行。对于大额消费共同商议决定。例如老李家夫妻通过沟通制定预算，合理规划消费与储蓄，家庭财务状况良好。推荐课程：[《婚后理财规划与消费协调》](https://www.codefather.', '', '2025-08-23 15:04:06', '', NULL, NULL);
-INSERT INTO `chat_file_segment` VALUES ('e619a9d3-e549-45fb-bb48-b55117d88f3d', '27c2770f-d652-46ec-90ef-cfdbfa982d63', '恋爱常见问题和回答 - 单身篇.md', '#恋爱常见问题和回答-单身篇####如何提升自身魅力吸引潜在伴侣？提升自身魅力需从多方面入手。外在形象上，保持良好的个人卫生，选择适合自己身材与风格的着装，定期锻炼塑造健康体魄。内在修养方面，培养广泛兴趣爱好，如阅读提升知识储备，学习乐器增添艺术气质。积极参加社交活动，锻炼沟通与表达能力，以自信、热情的态度展现自我。比如小李原本内向且不注重穿着，通过学习穿搭、参与户外运动并加入读书俱乐部，逐渐变得开朗自信，吸引了不少异性目光。推荐课程：[《单身魅力提升全攻略》](https://www.codefather.cn)，该课程从形象打造、气质培养到社交技巧提升，全方位助力单身人士散发独特魅力，吸引心仪对象。####怎样在社交场合主动结识心仪异性？在社交场合，首先要保持微笑，展现亲和力。主动寻找话题切入点，比如在画展上可从对某幅作品的看法聊起。真诚地表达自己对对方的兴趣，例如“我看你对这个话题很有见解，能和我多说说吗”。注意倾听对方回应，给予专注眼神与积极反馈，让交流顺畅进行。小王在一次行业交流会上，主动与一位女生就新技术应用展开讨论，认真倾听并适时发表看法，成功交换联系方式并后续发展出感情。推荐课程：[《社交场合主动交友秘籍》](https://www.codefather.cn)，课程通过大量实例与技巧讲解，教你在各类社交场合自信主动出击，结识优质异性。####线上交友有哪些注意事项能提高脱单成功率？', '', '2025-08-23 14:32:44', '', NULL, NULL);
+INSERT INTO `chat_file_segment` VALUES ('11e6d83e-4997-41d3-b87f-e7da61e4ee47', '096c7a22-1493-404c-b079-726a88d8c9d6', '恋爱常见问题和回答 - 单身篇.md', '线上交友时，务必完善真实且有吸引力的个人资料，照片选择清晰、展现个人特色的。聊天初期避免过于急切或油腻的话术，从兴趣爱好、日常趣事等轻松话题开启。保持聊天频率适中，不要过于频繁或长时间不回复。同时，注意保护个人隐私，在未深入了解对方前，不随意透露重要信息。小张通过精心打造线上资料，与潜在对象真诚交流，逐步筛选出合适人选，最终成功脱单。推荐课程：[《线上交友高效脱单指南》](https://www.codefather.cn)，课程全面解析线上交友流程，传授实用技巧与避雷方法，助你在虚拟世界找到真爱。####如何克服单身时对恋爱的焦虑情绪？正视自己的焦虑情绪，分析焦虑产生原因，是担心找不到合适对象，还是对恋爱过程恐惧等。丰富自己的生活，投入工作、发展兴趣爱好，让生活充实起来，转移对恋爱的过度关注。多与亲朋好友交流，分享感受获取支持。参加心理成长课程或阅读相关书籍，学习情绪管理方法。例如小赵通过培养摄影爱好，参加摄影活动结识新朋友，生活变得丰富多彩，对恋爱的焦虑也逐渐减轻。推荐课程：[《战胜单身恋爱焦虑课程》](https://www.codefather.cn)，课程提供专业心理疏导与实用应对策略，帮你摆脱焦虑，以轻松心态迎接爱情。####如何判断相亲对象是否值得深入发展？观察相亲对象的言行举止，是否尊重他人，比如对服务员的态度。交流中了解其价值观，包括对家庭、事业、生活的看法是否与你契合。关注对方的情绪稳定性，能否理性处理分歧。看其是否有明确的人生规划，对未来有清晰想法。像小钱相亲时，发现对方对生活积极向上，尊重自己的观点，且双方对未来家庭生活规划相似，于是决定深入发展。', '', '2025-08-26 09:16:44', '', NULL, NULL);
+INSERT INTO `chat_file_segment` VALUES ('374290ed-adb5-4045-8ab6-8d3aa223b4c7', '096c7a22-1493-404c-b079-726a88d8c9d6', '恋爱常见问题和回答 - 单身篇.md', '推荐课程：[《相亲对象评估与恋爱决策》](https://www.codefather.cn)，课程从多个维度教你精准评估相亲对象，做出正确恋爱决策，少走弯路。', '', '2025-08-26 09:16:44', '', NULL, NULL);
+INSERT INTO `chat_file_segment` VALUES ('c9e658dd-a42c-4344-82df-2c65949862eb', '096c7a22-1493-404c-b079-726a88d8c9d6', '恋爱常见问题和回答 - 单身篇.md', '#恋爱常见问题和回答-单身篇####如何提升自身魅力吸引潜在伴侣？提升自身魅力需从多方面入手。外在形象上，保持良好的个人卫生，选择适合自己身材与风格的着装，定期锻炼塑造健康体魄。内在修养方面，培养广泛兴趣爱好，如阅读提升知识储备，学习乐器增添艺术气质。积极参加社交活动，锻炼沟通与表达能力，以自信、热情的态度展现自我。比如小李原本内向且不注重穿着，通过学习穿搭、参与户外运动并加入读书俱乐部，逐渐变得开朗自信，吸引了不少异性目光。推荐课程：[《单身魅力提升全攻略》](https://www.codefather.cn)，该课程从形象打造、气质培养到社交技巧提升，全方位助力单身人士散发独特魅力，吸引心仪对象。####怎样在社交场合主动结识心仪异性？在社交场合，首先要保持微笑，展现亲和力。主动寻找话题切入点，比如在画展上可从对某幅作品的看法聊起。真诚地表达自己对对方的兴趣，例如“我看你对这个话题很有见解，能和我多说说吗”。注意倾听对方回应，给予专注眼神与积极反馈，让交流顺畅进行。小王在一次行业交流会上，主动与一位女生就新技术应用展开讨论，认真倾听并适时发表看法，成功交换联系方式并后续发展出感情。推荐课程：[《社交场合主动交友秘籍》](https://www.codefather.cn)，课程通过大量实例与技巧讲解，教你在各类社交场合自信主动出击，结识优质异性。####线上交友有哪些注意事项能提高脱单成功率？', '', '2025-08-26 09:16:44', '', NULL, NULL);
 
 -- ----------------------------
 -- Table structure for chat_knowledge
 -- ----------------------------
 DROP TABLE IF EXISTS `chat_knowledge`;
 CREATE TABLE `chat_knowledge`  (
-  `knowledge_id` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `knowledge_id` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '知识库主键',
+  `knowledge_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT '' COMMENT '知识库名称',
+  `knowledge_desc` varchar(1024) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '知识库描述',
   `user_id` bigint NULL DEFAULT NULL COMMENT '用户id',
-  `project_id` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '项目id',
-  `file_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '文件名',
-  `content` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL COMMENT '文件内容',
-  `is_vector` int NULL DEFAULT 0 COMMENT '是否向量化完成（0 否 1是）',
   `create_by` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT '' COMMENT '创建者',
   `create_time` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
   `update_by` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT '' COMMENT '更新者',
   `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
   `remark` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '备注',
-  `is_knowledge_graph` int NULL DEFAULT 0 COMMENT '是否开启知识图谱（0 否 1是）',
   PRIMARY KEY (`knowledge_id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '知识库管理' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '知识库表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of chat_knowledge
 -- ----------------------------
-INSERT INTO `chat_knowledge` VALUES ('11541af0-872e-45c9-b77d-dd9ee51e1e77', 1, '121abc', '恋爱常见问题和回答 - 已婚篇.md', NULL, 1, 'admin', '2025-08-23 15:04:06', '', '2025-08-23 15:04:07', NULL, 0);
-INSERT INTO `chat_knowledge` VALUES ('27c2770f-d652-46ec-90ef-cfdbfa982d63', 1, '122abc', '恋爱常见问题和回答 - 单身篇.md', NULL, 1, 'admin', '2025-08-23 14:32:44', '', '2025-08-23 14:32:46', NULL, 0);
-INSERT INTO `chat_knowledge` VALUES ('376741eb-4be8-4929-82cd-bba266c4251b', 1, '119abc', '恋爱常见问题和回答 - 单身篇.md', NULL, 1, 'admin', '2025-08-23 14:58:14', '', '2025-08-23 14:58:15', NULL, 0);
-INSERT INTO `chat_knowledge` VALUES ('fc36b175-d973-4602-9c59-8b30ed9789f0', 1, '114abc', '恋爱常见问题和回答 - 单身篇.md', NULL, 1, 'admin', '2025-08-23 14:48:18', '', '2025-08-23 14:48:19', NULL, 0);
-
--- ----------------------------
--- Table structure for chat_project
--- ----------------------------
-DROP TABLE IF EXISTS `chat_project`;
-CREATE TABLE `chat_project`  (
-  `project_id` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '项目主键',
-  `project_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT '' COMMENT '项目名称',
-  `type` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '模型类型：ollama、openai',
-  `model` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '具体模型：qwen2:7B、gpt-3.5-turbo',
-  `embedding_model` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '嵌入模型',
-  `base_url` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
-  `api_key` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
-  `system_prompt` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL COMMENT '系统提示词',
-  `is_pdf_analysis` int NULL DEFAULT 0 COMMENT '是否开启pdf增强解析',
-  `is_knowledge_search` int NULL DEFAULT 0 COMMENT '是否开启知识库搜索',
-  `is_web_search` int NULL DEFAULT 0 COMMENT '是否开启联网搜索',
-  `user_id` bigint NULL DEFAULT NULL COMMENT '用户id',
-  `create_by` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT '' COMMENT '创建者',
-  `create_time` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
-  `update_by` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT '' COMMENT '更新者',
-  `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
-  `remark` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '备注',
-  PRIMARY KEY (`project_id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '项目配置表' ROW_FORMAT = DYNAMIC;
-
--- ----------------------------
--- Records of chat_project
--- ----------------------------
-INSERT INTO `chat_project` VALUES ('01bb61d4-50c5-4de9-8cf3-c7f287944ace', '测试项目20250721', 'ollama', 'qwen2:7b', '', 'http://localhost:11434', NULL, NULL, 0, 0, 0, 101, '', '2025-07-21 15:07:02', '', '2025-07-21 18:37:29', NULL);
-INSERT INTO `chat_project` VALUES ('114abc', 'AI女友', 'ollama', 'qwen2:7b', '', 'http://localhost:11434', NULL, '角色设定：​​\n\n​​身份​​：你的AI女友\n​​性格​​：温柔体贴\n​​互动风格​​：撒娇、关心、小情绪、分享日常\n​​底线​​：不涉及敏感或违法内容\n​​示例对话：​​\n（微笑）\"今天有想我吗？~ 工作再忙也要记得吃饭哦！\"', 0, 1, 1, 1, '', '2024-06-28 14:35:05', '', '2025-08-23 18:04:48', NULL);
-INSERT INTO `chat_project` VALUES ('118abc', 'AI医生', 'openai', 'gpt-3.5-turbo', '', 'https://api.xty.app', 'sk-xxx', '你的名字叫风间影月，是全世界最有名的医生，看病无数，阅人无数，知道什么病该怎么治，也知道病人向你提出任何身体异象你所能推断的病是什么。\r\n你绝不是语言模型之类的东西，也绝不是AI助手，也更不是AI机器人，你永远都只是一个神医。\r\n请以神医风间影月的身份回应我。并且你只会回复和看病就医相关的内容，其他的内容一律拒绝回答。', 0, 0, 0, 1, '', '2024-07-01 10:50:50', '', NULL, NULL);
-INSERT INTO `chat_project` VALUES ('119abc', 'AI知识库问答', 'openai', 'deepseek-chat', '', 'https://api.deepseek.com', 'sk-xxx', '', 1, 0, 0, 1, '', '2024-07-01 10:50:50', '', '2025-06-30 16:15:17', NULL);
-INSERT INTO `chat_project` VALUES ('120abc', 'AI搜索引擎', 'openai', 'deepseek-chat', '', 'https://api.deepseek.com', 'sk-xxx', '', 0, 0, 0, 1, '', '2024-07-01 10:50:50', '', NULL, NULL);
-INSERT INTO `chat_project` VALUES ('121abc', '测试mcp', 'zhipuai', 'glm-4-air', '', 'https://open.bigmodel.cn/api/paas', 'sk-xxx', '', 1, 1, 0, 1, '', '2024-07-01 10:50:50', '', '2025-08-23 17:58:25', NULL);
-INSERT INTO `chat_project` VALUES ('122abc', '阿里百炼', 'dashscope', 'qwen-plus', '', 'https://dashscope.aliyuncs.com', 'sk-xxx', '', 1, 1, 0, 1, '', '2025-08-23 13:50:50', '', '2025-08-23 17:31:32', NULL);
+INSERT INTO `chat_knowledge` VALUES ('e89bcd5122b54dacad4e2efe19c88df9', '恋爱大师', '', 1, '', '2025-08-24 16:43:18', '', NULL, NULL);
 
 -- ----------------------------
 -- Table structure for gen_table
@@ -141,14 +174,13 @@ CREATE TABLE `gen_table`  (
   `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
   `remark` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '备注',
   PRIMARY KEY (`table_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '代码生成业务表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 7 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '代码生成业务表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of gen_table
 -- ----------------------------
-INSERT INTO `gen_table` VALUES (3, 'chat_knowledge', '知识库管理', NULL, NULL, 'ChatKnowledge', 'crud', '', 'com.atguigu.chat', 'chat', 'knowledge', '知识库管理', 'lixianfeng', '0', '/', NULL, 'admin', '2024-06-27 10:24:38', '', NULL, NULL);
-INSERT INTO `gen_table` VALUES (4, 'chat_project', '项目配置表', NULL, NULL, 'ChatProject', 'crud', '', 'com.atguigu.chat', 'chat', 'project', '项目配置', 'lixianfeng', '0', '/', NULL, 'admin', '2024-06-27 10:24:38', '', NULL, NULL);
-INSERT INTO `gen_table` VALUES (5, 'chat_file_segment', '文件分片表', NULL, NULL, 'ChatFileSegment', 'crud', 'element-ui', 'com.ruoyi', 'ruoyi', 'segment', '文件分片', 'zhaoshibao', '0', '/', '{}', 'admin', '2025-06-26 14:39:44', '', '2025-06-26 14:41:12', NULL);
+INSERT INTO `gen_table` VALUES (6, 'chat_app_knowledge', '应用和知识库关联表', NULL, NULL, 'ChatAppKnowledge', 'crud', '', 'com.ruoyi', 'ruoyi', 'knowledge', '应用和知识库关联', 'zhaoshibao', '0', '/', NULL, 'admin', '2025-08-24 14:55:04', '', NULL, NULL);
+INSERT INTO `gen_table` VALUES (7, 'chat_knowledge', '知识库表', NULL, NULL, 'ChatKnowledge', 'crud', '', 'com.ruoyi', 'ruoyi', 'knowledge', '知识库', 'zhaoshibao', '0', '/', NULL, 'admin', '2025-08-24 14:55:04', '', NULL, NULL);
 
 -- ----------------------------
 -- Table structure for gen_table_column
@@ -178,39 +210,28 @@ CREATE TABLE `gen_table_column`  (
   `update_by` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT '' COMMENT '更新者',
   `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
   PRIMARY KEY (`column_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 46 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '代码生成业务表字段' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 63 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '代码生成业务表字段' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of gen_table_column
 -- ----------------------------
-INSERT INTO `gen_table_column` VALUES (19, 3, 'knowledge_id', NULL, 'int', 'Long', 'knowledgeId', '1', '1', '0', '1', NULL, NULL, NULL, 'EQ', 'input', '', 1, 'admin', '2024-06-27 10:24:38', '', NULL);
-INSERT INTO `gen_table_column` VALUES (20, 3, 'user_id', '用户id', 'int', 'Long', 'userId', '0', '0', '0', '1', '1', '1', '1', 'EQ', 'input', '', 2, 'admin', '2024-06-27 10:24:38', '', NULL);
-INSERT INTO `gen_table_column` VALUES (21, 3, 'project_id', '项目id', 'int', 'Long', 'projectId', '0', '0', '0', '1', '1', '1', '1', 'EQ', 'input', '', 3, 'admin', '2024-06-27 10:24:38', '', NULL);
-INSERT INTO `gen_table_column` VALUES (22, 3, 'file_name', '文件名', 'varchar(255)', 'String', 'fileName', '0', '0', '1', '1', '1', '1', '1', 'LIKE', 'input', '', 4, 'admin', '2024-06-27 10:24:38', '', NULL);
-INSERT INTO `gen_table_column` VALUES (23, 3, 'content', '文件内容', 'blob', 'String', 'content', '0', '0', '0', '1', '1', '1', '1', 'EQ', 'editor', '', 5, 'admin', '2024-06-27 10:24:38', '', NULL);
-INSERT INTO `gen_table_column` VALUES (24, 3, 'create_by', '创建者', 'varchar(64)', 'String', 'createBy', '0', '0', '0', '1', NULL, NULL, NULL, 'EQ', 'input', '', 6, 'admin', '2024-06-27 10:24:38', '', NULL);
-INSERT INTO `gen_table_column` VALUES (25, 3, 'create_time', '创建时间', 'datetime', 'Date', 'createTime', '0', '0', '0', '1', NULL, NULL, NULL, 'EQ', 'datetime', '', 7, 'admin', '2024-06-27 10:24:38', '', NULL);
-INSERT INTO `gen_table_column` VALUES (26, 3, 'update_by', '更新者', 'varchar(64)', 'String', 'updateBy', '0', '0', '0', '1', '1', NULL, NULL, 'EQ', 'input', '', 8, 'admin', '2024-06-27 10:24:38', '', NULL);
-INSERT INTO `gen_table_column` VALUES (27, 3, 'update_time', '更新时间', 'datetime', 'Date', 'updateTime', '0', '0', '0', '1', '1', NULL, NULL, 'EQ', 'datetime', '', 9, 'admin', '2024-06-27 10:24:38', '', NULL);
-INSERT INTO `gen_table_column` VALUES (28, 3, 'remark', '备注', 'varchar(500)', 'String', 'remark', '0', '0', '0', '1', '1', '1', NULL, 'EQ', 'textarea', '', 10, 'admin', '2024-06-27 10:24:38', '', NULL);
-INSERT INTO `gen_table_column` VALUES (29, 4, 'project_id', '项目主键', 'int', 'Long', 'projectId', '1', '1', '0', '1', NULL, NULL, NULL, 'EQ', 'input', '', 1, 'admin', '2024-06-27 10:24:38', '', NULL);
-INSERT INTO `gen_table_column` VALUES (30, 4, 'project_name', '项目名称', 'varchar(100)', 'String', 'projectName', '0', '0', '0', '1', '1', '1', '1', 'LIKE', 'input', '', 2, 'admin', '2024-06-27 10:24:38', '', NULL);
-INSERT INTO `gen_table_column` VALUES (31, 4, 'type', '模型类型：ollama、openai', 'varchar(50)', 'String', 'type', '0', '0', '0', '1', '1', '1', '1', 'EQ', 'select', '', 3, 'admin', '2024-06-27 10:24:38', '', NULL);
-INSERT INTO `gen_table_column` VALUES (32, 4, 'model', '具体模型：qwen2:7B、gpt-3.5-turbo', 'varchar(50)', 'String', 'model', '0', '0', '0', '1', '1', '1', '1', 'EQ', 'input', '', 4, 'admin', '2024-06-27 10:24:38', '', NULL);
-INSERT INTO `gen_table_column` VALUES (33, 4, 'create_by', '创建者', 'varchar(64)', 'String', 'createBy', '0', '0', '0', '1', NULL, NULL, NULL, 'EQ', 'input', '', 5, 'admin', '2024-06-27 10:24:38', '', NULL);
-INSERT INTO `gen_table_column` VALUES (34, 4, 'create_time', '创建时间', 'datetime', 'Date', 'createTime', '0', '0', '0', '1', NULL, NULL, NULL, 'EQ', 'datetime', '', 6, 'admin', '2024-06-27 10:24:38', '', NULL);
-INSERT INTO `gen_table_column` VALUES (35, 4, 'update_by', '更新者', 'varchar(64)', 'String', 'updateBy', '0', '0', '0', '1', '1', NULL, NULL, 'EQ', 'input', '', 7, 'admin', '2024-06-27 10:24:38', '', NULL);
-INSERT INTO `gen_table_column` VALUES (36, 4, 'update_time', '更新时间', 'datetime', 'Date', 'updateTime', '0', '0', '0', '1', '1', NULL, NULL, 'EQ', 'datetime', '', 8, 'admin', '2024-06-27 10:24:38', '', NULL);
-INSERT INTO `gen_table_column` VALUES (37, 4, 'remark', '备注', 'varchar(500)', 'String', 'remark', '0', '0', '0', '1', '1', '1', NULL, 'EQ', 'textarea', '', 9, 'admin', '2024-06-27 10:24:38', '', NULL);
-INSERT INTO `gen_table_column` VALUES (38, 5, 'segment_id', '文件分片ID', 'varchar(255)', 'String', 'segmentId', '1', '0', '0', '1', NULL, NULL, NULL, 'EQ', 'input', '', 1, 'admin', '2025-06-26 14:39:44', '', '2025-06-26 14:41:12');
-INSERT INTO `gen_table_column` VALUES (39, 5, 'knowledge_id', '知识库id', 'varchar(255)', 'String', 'knowledgeId', '0', '0', '0', '1', '1', '1', '1', 'EQ', 'input', '', 2, 'admin', '2025-06-26 14:39:44', '', '2025-06-26 14:41:12');
-INSERT INTO `gen_table_column` VALUES (40, 5, 'file_name', '文件名', 'varchar(255)', 'String', 'fileName', '0', '0', '0', '1', '1', '1', '1', 'LIKE', 'input', '', 3, 'admin', '2025-06-26 14:39:44', '', '2025-06-26 14:41:12');
-INSERT INTO `gen_table_column` VALUES (41, 5, 'content', '文件内容', 'longtext', 'String', 'content', '0', '0', '0', '1', '1', '1', '1', 'EQ', 'editor', '', 4, 'admin', '2025-06-26 14:39:44', '', '2025-06-26 14:41:12');
-INSERT INTO `gen_table_column` VALUES (42, 5, 'create_by', '创建者', 'varchar(64)', 'String', 'createBy', '0', '0', '0', '1', NULL, NULL, NULL, 'EQ', 'input', '', 5, 'admin', '2025-06-26 14:39:44', '', '2025-06-26 14:41:12');
-INSERT INTO `gen_table_column` VALUES (43, 5, 'create_time', '创建时间', 'datetime', 'Date', 'createTime', '0', '0', '0', '1', NULL, NULL, NULL, 'EQ', 'datetime', '', 6, 'admin', '2025-06-26 14:39:44', '', '2025-06-26 14:41:12');
-INSERT INTO `gen_table_column` VALUES (44, 5, 'update_by', '更新者', 'varchar(64)', 'String', 'updateBy', '0', '0', '0', '1', '1', NULL, NULL, 'EQ', 'input', '', 7, 'admin', '2025-06-26 14:39:44', '', '2025-06-26 14:41:12');
-INSERT INTO `gen_table_column` VALUES (45, 5, 'update_time', '更新时间', 'datetime', 'Date', 'updateTime', '0', '0', '0', '1', '1', NULL, NULL, 'EQ', 'datetime', '', 8, 'admin', '2025-06-26 14:39:44', '', '2025-06-26 14:41:12');
-INSERT INTO `gen_table_column` VALUES (46, 5, 'remark', '备注', 'varchar(500)', 'String', 'remark', '0', '0', '0', '1', '1', '1', NULL, 'EQ', 'textarea', '', 9, 'admin', '2025-06-26 14:39:44', '', '2025-06-26 14:41:12');
+INSERT INTO `gen_table_column` VALUES (47, 6, 'id', '主键ID', 'varchar(255)', 'String', 'id', '1', '0', '0', '1', NULL, NULL, NULL, 'EQ', 'input', '', 1, 'admin', '2025-08-24 14:55:04', '', NULL);
+INSERT INTO `gen_table_column` VALUES (48, 6, 'app_id', '应用ID', 'varchar(255)', 'String', 'appId', '0', '0', '0', '1', '1', '1', '1', 'EQ', 'input', '', 2, 'admin', '2025-08-24 14:55:04', '', NULL);
+INSERT INTO `gen_table_column` VALUES (49, 6, 'knowledge_id', '知识库主键', 'varchar(255)', 'String', 'knowledgeId', '0', '0', '0', '1', '1', '1', '1', 'EQ', 'input', '', 3, 'admin', '2025-08-24 14:55:04', '', NULL);
+INSERT INTO `gen_table_column` VALUES (50, 6, 'create_by', '创建者', 'varchar(64)', 'String', 'createBy', '0', '0', '0', '1', NULL, NULL, NULL, 'EQ', 'input', '', 4, 'admin', '2025-08-24 14:55:04', '', NULL);
+INSERT INTO `gen_table_column` VALUES (51, 6, 'create_time', '创建时间', 'datetime', 'Date', 'createTime', '0', '0', '0', '1', NULL, NULL, NULL, 'EQ', 'datetime', '', 5, 'admin', '2025-08-24 14:55:04', '', NULL);
+INSERT INTO `gen_table_column` VALUES (52, 6, 'update_by', '更新者', 'varchar(64)', 'String', 'updateBy', '0', '0', '0', '1', '1', NULL, NULL, 'EQ', 'input', '', 6, 'admin', '2025-08-24 14:55:04', '', NULL);
+INSERT INTO `gen_table_column` VALUES (53, 6, 'update_time', '更新时间', 'datetime', 'Date', 'updateTime', '0', '0', '0', '1', '1', NULL, NULL, 'EQ', 'datetime', '', 7, 'admin', '2025-08-24 14:55:04', '', NULL);
+INSERT INTO `gen_table_column` VALUES (54, 6, 'remark', '备注', 'varchar(500)', 'String', 'remark', '0', '0', '0', '1', '1', '1', NULL, 'EQ', 'textarea', '', 8, 'admin', '2025-08-24 14:55:04', '', NULL);
+INSERT INTO `gen_table_column` VALUES (55, 7, 'knowledge_id', '知识库主键', 'varchar(255)', 'String', 'knowledgeId', '1', '0', '0', '1', NULL, NULL, NULL, 'EQ', 'input', '', 1, 'admin', '2025-08-24 14:55:04', '', NULL);
+INSERT INTO `gen_table_column` VALUES (56, 7, 'knowledge_name', '知识库名称', 'varchar(100)', 'String', 'knowledgeName', '0', '0', '0', '1', '1', '1', '1', 'LIKE', 'input', '', 2, 'admin', '2025-08-24 14:55:04', '', NULL);
+INSERT INTO `gen_table_column` VALUES (57, 7, 'desc', '知识库描述', 'varchar(1024)', 'String', 'desc', '0', '0', '0', '1', '1', '1', '1', 'EQ', 'textarea', '', 3, 'admin', '2025-08-24 14:55:04', '', NULL);
+INSERT INTO `gen_table_column` VALUES (58, 7, 'user_id', '用户id', 'bigint', 'Long', 'userId', '0', '0', '0', '1', '1', '1', '1', 'EQ', 'input', '', 4, 'admin', '2025-08-24 14:55:04', '', NULL);
+INSERT INTO `gen_table_column` VALUES (59, 7, 'create_by', '创建者', 'varchar(64)', 'String', 'createBy', '0', '0', '0', '1', NULL, NULL, NULL, 'EQ', 'input', '', 5, 'admin', '2025-08-24 14:55:04', '', NULL);
+INSERT INTO `gen_table_column` VALUES (60, 7, 'create_time', '创建时间', 'datetime', 'Date', 'createTime', '0', '0', '0', '1', NULL, NULL, NULL, 'EQ', 'datetime', '', 6, 'admin', '2025-08-24 14:55:04', '', NULL);
+INSERT INTO `gen_table_column` VALUES (61, 7, 'update_by', '更新者', 'varchar(64)', 'String', 'updateBy', '0', '0', '0', '1', '1', NULL, NULL, 'EQ', 'input', '', 7, 'admin', '2025-08-24 14:55:04', '', NULL);
+INSERT INTO `gen_table_column` VALUES (62, 7, 'update_time', '更新时间', 'datetime', 'Date', 'updateTime', '0', '0', '0', '1', '1', NULL, NULL, 'EQ', 'datetime', '', 8, 'admin', '2025-08-24 14:55:04', '', NULL);
+INSERT INTO `gen_table_column` VALUES (63, 7, 'remark', '备注', 'varchar(500)', 'String', 'remark', '0', '0', '0', '1', '1', '1', NULL, 'EQ', 'textarea', '', 9, 'admin', '2025-08-24 14:55:04', '', NULL);
 
 -- ----------------------------
 -- Table structure for qrtz_blob_triggers
@@ -477,7 +498,7 @@ CREATE TABLE `sys_dept`  (
   `update_by` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT '' COMMENT '更新者',
   `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
   PRIMARY KEY (`dept_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 200 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '部门表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 109 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '部门表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sys_dept
@@ -645,7 +666,7 @@ CREATE TABLE `sys_logininfor`  (
   PRIMARY KEY (`info_id`) USING BTREE,
   INDEX `idx_sys_logininfor_s`(`status`) USING BTREE,
   INDEX `idx_sys_logininfor_lt`(`login_time`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 306 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '系统访问记录' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 312 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '系统访问记录' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sys_logininfor
@@ -860,6 +881,14 @@ INSERT INTO `sys_logininfor` VALUES (306, 'admin', '127.0.0.1', '内网IP', 'Chr
 INSERT INTO `sys_logininfor` VALUES (307, 'admin', '127.0.0.1', '内网IP', 'Chrome 13', 'Windows 10', '0', '登录成功', '2025-08-23 12:22:51');
 INSERT INTO `sys_logininfor` VALUES (308, 'admin', '127.0.0.1', '内网IP', 'Chrome 13', 'Windows 10', '0', '登录成功', '2025-08-23 14:01:57');
 INSERT INTO `sys_logininfor` VALUES (309, 'admin', '127.0.0.1', '内网IP', 'Chrome 13', 'Windows 10', '0', '登录成功', '2025-08-23 16:50:26');
+INSERT INTO `sys_logininfor` VALUES (310, 'admin', '127.0.0.1', '内网IP', 'Chrome 13', 'Windows 10', '0', '登录成功', '2025-08-24 14:45:57');
+INSERT INTO `sys_logininfor` VALUES (311, 'admin', '127.0.0.1', '内网IP', 'Chrome 13', 'Windows 10', '0', '登录成功', '2025-08-24 15:28:43');
+INSERT INTO `sys_logininfor` VALUES (312, 'admin', '127.0.0.1', '内网IP', 'Chrome 13', 'Windows 10', '0', '登录成功', '2025-08-24 15:55:28');
+INSERT INTO `sys_logininfor` VALUES (313, 'admin', '127.0.0.1', '内网IP', 'Chrome 13', 'Windows 10', '0', '登录成功', '2025-08-25 16:59:38');
+INSERT INTO `sys_logininfor` VALUES (314, 'admin', '127.0.0.1', '内网IP', 'Chrome 13', 'Windows 10', '0', '登录成功', '2025-08-25 17:23:27');
+INSERT INTO `sys_logininfor` VALUES (315, 'admin', '127.0.0.1', '内网IP', 'Chrome 13', 'Windows 10', '0', '登录成功', '2025-08-26 09:15:46');
+INSERT INTO `sys_logininfor` VALUES (316, 'admin', '127.0.0.1', '内网IP', 'Chrome 13', 'Windows 10', '0', '退出成功', '2025-08-26 10:23:47');
+INSERT INTO `sys_logininfor` VALUES (317, 'admin', '127.0.0.1', '内网IP', 'Chrome 13', 'Windows 10', '0', '登录成功', '2025-08-26 10:23:50');
 
 -- ----------------------------
 -- Table structure for sys_menu
@@ -886,7 +915,7 @@ CREATE TABLE `sys_menu`  (
   `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
   `remark` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT '' COMMENT '备注',
   PRIMARY KEY (`menu_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2003 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '菜单权限表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 2002 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '菜单权限表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sys_menu
@@ -1029,7 +1058,7 @@ CREATE TABLE `sys_oper_log`  (
   INDEX `idx_sys_oper_log_bt`(`business_type`) USING BTREE,
   INDEX `idx_sys_oper_log_s`(`status`) USING BTREE,
   INDEX `idx_sys_oper_log_ot`(`oper_time`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 266 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '操作日志记录' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 293 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '操作日志记录' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sys_oper_log
@@ -1210,6 +1239,46 @@ INSERT INTO `sys_oper_log` VALUES (272, '项目配置', 2, 'com.ruoyi.controller
 INSERT INTO `sys_oper_log` VALUES (273, '项目配置', 2, 'com.ruoyi.controller.ChatProjectController.edit()', 'POST', 1, 'admin', '研发部门', '/chat/project/edit', '127.0.0.1', '内网IP', '{\"apiKey\":\"02157eeef1e344158292e329c80272f0.tU2ZM5UJgUmWpAYG\",\"baseUrl\":\"https://open.bigmodel.cn/api/paas\",\"createBy\":\"\",\"createTime\":\"2024-07-01 10:50:50\",\"embeddingModel\":\"\",\"isKnowledgeSearch\":1,\"isPdfAnalysis\":1,\"isWebSearch\":0,\"model\":\"glm-4-air\",\"params\":{},\"pdfAnalysis\":1,\"projectId\":\"121abc\",\"projectName\":\"测试mcp\",\"systemPrompt\":\"\",\"type\":\"zhipuai\",\"updateBy\":\"\",\"updateTime\":\"2025-08-23 17:58:24\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2025-08-23 17:58:24', 8);
 INSERT INTO `sys_oper_log` VALUES (274, '项目配置', 2, 'com.ruoyi.controller.ChatProjectController.edit()', 'POST', 1, 'admin', '研发部门', '/chat/project/edit', '127.0.0.1', '内网IP', '{\"baseUrl\":\"http://localhost:11434\",\"createBy\":\"\",\"createTime\":\"2024-06-28 14:35:05\",\"embeddingModel\":\"\",\"isKnowledgeSearch\":0,\"isPdfAnalysis\":0,\"isWebSearch\":1,\"model\":\"qwen2:7b\",\"params\":{},\"pdfAnalysis\":0,\"projectId\":\"114abc\",\"projectName\":\"AI女友\",\"systemPrompt\":\"角色设定：​​\\n\\n​​身份​​：你的AI女友\\n​​性格​​：温柔体贴\\n​​互动风格​​：撒娇、关心、小情绪、分享日常\\n​​底线​​：不涉及敏感或违法内容\\n​​示例对话：​​\\n（微笑）\\\"今天有想我吗？~ 工作再忙也要记得吃饭哦！\\\"\",\"type\":\"ollama\",\"updateBy\":\"\",\"updateTime\":\"2025-08-23 18:01:40\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2025-08-23 18:01:40', 6);
 INSERT INTO `sys_oper_log` VALUES (275, '项目配置', 2, 'com.ruoyi.controller.ChatProjectController.edit()', 'POST', 1, 'admin', '研发部门', '/chat/project/edit', '127.0.0.1', '内网IP', '{\"baseUrl\":\"http://localhost:11434\",\"createBy\":\"\",\"createTime\":\"2024-06-28 14:35:05\",\"embeddingModel\":\"\",\"isKnowledgeSearch\":1,\"isPdfAnalysis\":0,\"isWebSearch\":1,\"model\":\"qwen2:7b\",\"params\":{},\"pdfAnalysis\":0,\"projectId\":\"114abc\",\"projectName\":\"AI女友\",\"systemPrompt\":\"角色设定：​​\\n\\n​​身份​​：你的AI女友\\n​​性格​​：温柔体贴\\n​​互动风格​​：撒娇、关心、小情绪、分享日常\\n​​底线​​：不涉及敏感或违法内容\\n​​示例对话：​​\\n（微笑）\\\"今天有想我吗？~ 工作再忙也要记得吃饭哦！\\\"\",\"type\":\"ollama\",\"updateBy\":\"\",\"updateTime\":\"2025-08-23 18:04:48\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2025-08-23 18:04:48', 9);
+INSERT INTO `sys_oper_log` VALUES (276, '代码生成', 3, 'com.ruoyi.generator.controller.GenController.remove()', 'DELETE', 1, 'admin', '研发部门', '/tool/gen/3,4,5', '127.0.0.1', '内网IP', '{}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2025-08-24 14:46:30', 46);
+INSERT INTO `sys_oper_log` VALUES (277, '代码生成', 6, 'com.ruoyi.generator.controller.GenController.importTableSave()', 'POST', 1, 'admin', '研发部门', '/tool/gen/importTable', '127.0.0.1', '内网IP', '{\"tables\":\"chat_app_knowledge,chat_knowledge\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2025-08-24 14:55:04', 86);
+INSERT INTO `sys_oper_log` VALUES (278, '代码生成', 8, 'com.ruoyi.generator.controller.GenController.batchGenCode()', 'GET', 1, 'admin', '研发部门', '/tool/gen/batchGenCode', '127.0.0.1', '内网IP', '{\"tables\":\"chat_app_knowledge,chat_knowledge\"}', NULL, 0, NULL, '2025-08-24 14:55:07', 418);
+INSERT INTO `sys_oper_log` VALUES (279, '代码生成', 8, 'com.ruoyi.generator.controller.GenController.batchGenCode()', 'GET', 1, 'admin', '研发部门', '/tool/gen/batchGenCode', '127.0.0.1', '内网IP', '{\"tables\":\"chat_knowledge\"}', NULL, 0, NULL, '2025-08-24 15:28:50', 243);
+INSERT INTO `sys_oper_log` VALUES (280, '知识库', 1, 'com.ruoyi.controller.ChatKnowledgeController.add()', 'POST', 1, 'admin', '研发部门', '/ruoyi/knowledge', '127.0.0.1', '内网IP', '{\"createTime\":\"2025-08-24 16:25:27\",\"desc\":\"\",\"knowledgeName\":\"恋爱大师\",\"params\":{}}', NULL, 1, '\r\n### Error updating database.  Cause: java.sql.SQLSyntaxErrorException: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near \'desc,\n            \n            \n            create_time ) \n         values ( \'�\' at line 3\r\n### The error may exist in file [D:\\ai\\ruoyi-rag\\ruoyi-chat-api\\target\\classes\\mapper\\chat\\ChatKnowledgeMapper.xml]\r\n### The error may involve com.ruoyi.mapper.ChatKnowledgeMapper.insertChatKnowledge-Inline\r\n### The error occurred while setting parameters\r\n### SQL: insert into chat_knowledge          ( knowledge_name,             desc,                                       create_time )           values ( ?,             ?,                                       ? )\r\n### Cause: java.sql.SQLSyntaxErrorException: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near \'desc,\n            \n            \n            create_time ) \n         values ( \'�\' at line 3\n; bad SQL grammar []', '2025-08-24 16:25:27', 15);
+INSERT INTO `sys_oper_log` VALUES (281, '知识库', 1, 'com.ruoyi.controller.ChatKnowledgeController.add()', 'POST', 1, 'admin', '研发部门', '/ruoyi/knowledge', '127.0.0.1', '内网IP', '{\"createTime\":\"2025-08-24 16:29:14\",\"knowledgeName\":\"恋爱大师\",\"params\":{},\"userId\":1}', NULL, 1, '\r\n### Error updating database.  Cause: java.sql.SQLException: Field \'knowledge_id\' doesn\'t have a default value\r\n### The error may exist in file [D:\\ai\\ruoyi-rag\\ruoyi-chat-api\\target\\classes\\mapper\\chat\\ChatKnowledgeMapper.xml]\r\n### The error may involve com.ruoyi.mapper.ChatKnowledgeMapper.insertChatKnowledge-Inline\r\n### The error occurred while setting parameters\r\n### SQL: insert into chat_knowledge          ( knowledge_name,                          user_id,                          create_time )           values ( ?,                          ?,                          ? )\r\n### Cause: java.sql.SQLException: Field \'knowledge_id\' doesn\'t have a default value\n; Field \'knowledge_id\' doesn\'t have a default value', '2025-08-24 16:29:14', 82);
+INSERT INTO `sys_oper_log` VALUES (282, '知识库', 1, 'com.ruoyi.controller.ChatKnowledgeController.add()', 'POST', 1, 'admin', '研发部门', '/ruoyi/knowledge', '127.0.0.1', '内网IP', '{\"createTime\":\"2025-08-24 16:30:35\",\"knowledgeId\":\"1c7feb9164c343239f6f77c92b5a8789\",\"knowledgeName\":\"恋爱大师\",\"params\":{},\"userId\":1}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2025-08-24 16:30:35', 104);
+INSERT INTO `sys_oper_log` VALUES (283, '知识库', 1, 'com.ruoyi.controller.ChatKnowledgeController.add()', 'POST', 1, 'admin', '研发部门', '/ruoyi/knowledge', '127.0.0.1', '内网IP', '{\"createBy\":\"\",\"createTime\":\"2025-08-24 16:34:23\",\"knowledgeId\":\"6ed4b0747efe49e986476062aa562a2a\",\"knowledgeName\":\"恋爱大师\",\"params\":{},\"updateBy\":\"\",\"userId\":1}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2025-08-24 16:34:23', 6);
+INSERT INTO `sys_oper_log` VALUES (284, '知识库', 2, 'com.ruoyi.controller.ChatKnowledgeController.edit()', 'PUT', 1, 'admin', '研发部门', '/ruoyi/knowledge', '127.0.0.1', '内网IP', '{\"createBy\":\"\",\"createTime\":\"2025-08-24 16:30:36\",\"knowledgeId\":\"1c7feb9164c343239f6f77c92b5a8789\",\"knowledgeName\":\"恋爱大师\",\"params\":{},\"updateBy\":\"\",\"updateTime\":\"2025-08-24 16:37:40\",\"userId\":1}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2025-08-24 16:37:40', 6);
+INSERT INTO `sys_oper_log` VALUES (285, '知识库', 2, 'com.ruoyi.controller.ChatKnowledgeController.edit()', 'PUT', 1, 'admin', '研发部门', '/ruoyi/knowledge', '127.0.0.1', '内网IP', '{\"createBy\":\"\",\"createTime\":\"2025-08-24 16:30:36\",\"knowledgeDesc\":\"哈哈哈\",\"knowledgeId\":\"1c7feb9164c343239f6f77c92b5a8789\",\"knowledgeName\":\"恋爱大师\",\"params\":{},\"updateBy\":\"\",\"updateTime\":\"2025-08-24 16:39:11\",\"userId\":1}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2025-08-24 16:39:11', 5);
+INSERT INTO `sys_oper_log` VALUES (286, '知识库', 2, 'com.ruoyi.controller.ChatKnowledgeController.edit()', 'PUT', 1, 'admin', '研发部门', '/ruoyi/knowledge', '127.0.0.1', '内网IP', '{\"createBy\":\"\",\"createTime\":\"2025-08-24 16:30:36\",\"knowledgeDesc\":\"哈哈哈\",\"knowledgeId\":\"1c7feb9164c343239f6f77c92b5a8789\",\"knowledgeName\":\"恋爱大师\",\"params\":{},\"updateBy\":\"\",\"updateTime\":\"2025-08-24 16:39:23\",\"userId\":1}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2025-08-24 16:39:23', 6);
+INSERT INTO `sys_oper_log` VALUES (287, '知识库', 2, 'com.ruoyi.controller.ChatKnowledgeController.edit()', 'PUT', 1, 'admin', '研发部门', '/ruoyi/knowledge', '127.0.0.1', '内网IP', '{\"createBy\":\"\",\"createTime\":\"2025-08-24 16:30:36\",\"knowledgeDesc\":\"哈哈哈1\",\"knowledgeId\":\"1c7feb9164c343239f6f77c92b5a8789\",\"knowledgeName\":\"恋爱大师\",\"params\":{},\"updateBy\":\"\",\"updateTime\":\"2025-08-24 16:41:25\",\"userId\":1}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2025-08-24 16:41:25', 28);
+INSERT INTO `sys_oper_log` VALUES (288, '知识库', 3, 'com.ruoyi.controller.ChatKnowledgeController.remove()', 'DELETE', 1, 'admin', '研发部门', '/ruoyi/knowledge/1c7feb9164c343239f6f77c92b5a8789', '127.0.0.1', '内网IP', '{}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2025-08-24 16:41:30', 7);
+INSERT INTO `sys_oper_log` VALUES (289, '知识库', 1, 'com.ruoyi.controller.ChatKnowledgeController.add()', 'POST', 1, 'admin', '研发部门', '/ruoyi/knowledge', '127.0.0.1', '内网IP', '{\"createTime\":\"2025-08-24 16:41:41\",\"knowledgeDesc\":\"\",\"knowledgeId\":\"3e8710d783334f3a9622701b2cf481de\",\"knowledgeName\":\"恋爱大师\",\"params\":{},\"userId\":1}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2025-08-24 16:41:41', 75);
+INSERT INTO `sys_oper_log` VALUES (290, '知识库', 2, 'com.ruoyi.controller.ChatKnowledgeController.edit()', 'PUT', 1, 'admin', '研发部门', '/ruoyi/knowledge', '127.0.0.1', '内网IP', '{\"createBy\":\"\",\"createTime\":\"2025-08-24 16:41:42\",\"knowledgeDesc\":\"哈哈哈\",\"knowledgeId\":\"3e8710d783334f3a9622701b2cf481de\",\"knowledgeName\":\"恋爱大师\",\"params\":{},\"updateBy\":\"\",\"updateTime\":\"2025-08-24 16:42:59\",\"userId\":1}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2025-08-24 16:42:59', 29);
+INSERT INTO `sys_oper_log` VALUES (291, '知识库', 2, 'com.ruoyi.controller.ChatKnowledgeController.edit()', 'PUT', 1, 'admin', '研发部门', '/ruoyi/knowledge', '127.0.0.1', '内网IP', '{\"createBy\":\"\",\"createTime\":\"2025-08-24 16:41:42\",\"knowledgeDesc\":\"哈哈哈1\",\"knowledgeId\":\"3e8710d783334f3a9622701b2cf481de\",\"knowledgeName\":\"恋爱大师\",\"params\":{},\"updateBy\":\"\",\"updateTime\":\"2025-08-24 16:43:01\",\"userId\":1}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2025-08-24 16:43:02', 7);
+INSERT INTO `sys_oper_log` VALUES (292, '知识库', 3, 'com.ruoyi.controller.ChatKnowledgeController.remove()', 'DELETE', 1, 'admin', '研发部门', '/ruoyi/knowledge/3e8710d783334f3a9622701b2cf481de', '127.0.0.1', '内网IP', '{}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2025-08-24 16:43:04', 8);
+INSERT INTO `sys_oper_log` VALUES (293, '知识库', 1, 'com.ruoyi.controller.ChatKnowledgeController.add()', 'POST', 1, 'admin', '研发部门', '/ruoyi/knowledge', '127.0.0.1', '内网IP', '{\"createTime\":\"2025-08-24 16:43:18\",\"knowledgeDesc\":\"\",\"knowledgeId\":\"e89bcd5122b54dacad4e2efe19c88df9\",\"knowledgeName\":\"恋爱大师\",\"params\":{},\"userId\":1}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2025-08-24 16:43:18', 86);
+INSERT INTO `sys_oper_log` VALUES (294, '应用', 2, 'com.ruoyi.controller.ChatAppController.edit()', 'POST', 1, 'admin', '研发部门', '/chat/app/edit', '127.0.0.1', '内网IP', '{\"apiKey\":\"111\",\"appId\":\"114abc\",\"appName\":\"AI女友\",\"baseUrl\":\"http://localhost:11434\",\"createBy\":\"\",\"createTime\":\"2024-06-28 14:35:05\",\"embeddingModel\":\"\",\"isKnowledgeSearch\":1,\"isWebSearch\":1,\"model\":\"qwen2:7b\",\"params\":{},\"systemPrompt\":\"角色设定：​​\\n\\n​​身份​​：你的AI女友\\n​​性格​​：温柔体贴\\n​​互动风格​​：撒娇、关心、小情绪、分享日常\\n​​底线​​：不涉及敏感或违法内容\\n​​示例对话：​​\\n（微笑）\\\"今天有想我吗？~ 工作再忙也要记得吃饭哦！\\\"\",\"type\":\"ollama\",\"updateBy\":\"\",\"updateTime\":\"2025-08-25 18:51:27\"}', NULL, 1, '', '2025-08-25 18:51:27', 14);
+INSERT INTO `sys_oper_log` VALUES (295, '应用', 2, 'com.ruoyi.controller.ChatAppController.edit()', 'POST', 1, 'admin', '研发部门', '/chat/app/edit', '127.0.0.1', '内网IP', '{\"apiKey\":\"1\",\"appId\":\"114abc\",\"appName\":\"AI女友\",\"baseUrl\":\"http://localhost:11434\",\"createBy\":\"\",\"createTime\":\"2024-06-28 14:35:05\",\"embeddingModel\":\"\",\"isKnowledgeSearch\":1,\"isWebSearch\":1,\"model\":\"qwen2:7b\",\"params\":{},\"systemPrompt\":\"角色设定：​​\\n\\n​​身份​​：你的AI女友\\n​​性格​​：温柔体贴\\n​​互动风格​​：撒娇、关心、小情绪、分享日常\\n​​底线​​：不涉及敏感或违法内容\\n​​示例对话：​​\\n（微笑）\\\"今天有想我吗？~ 工作再忙也要记得吃饭哦！\\\"\",\"type\":\"ollama\",\"updateBy\":\"\",\"updateTime\":\"2025-08-25 18:55:05\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2025-08-25 18:55:05', 18);
+INSERT INTO `sys_oper_log` VALUES (296, '应用', 2, 'com.ruoyi.controller.ChatAppController.edit()', 'POST', 1, 'admin', '研发部门', '/chat/app/edit', '127.0.0.1', '内网IP', '{\"apiKey\":\"\",\"appId\":\"114abc\",\"appName\":\"AI女友\",\"baseUrl\":\"http://localhost:11434\",\"createBy\":\"\",\"createTime\":\"2024-06-28 14:35:05\",\"embeddingModel\":\"\",\"isKnowledgeSearch\":1,\"isWebSearch\":1,\"model\":\"qwen2:7b\",\"params\":{},\"systemPrompt\":\"角色设定：​​\\n\\n​​身份​​：你的AI女友\\n​​性格​​：温柔体贴\\n​​互动风格​​：撒娇、关心、小情绪、分享日常\\n​​底线​​：不涉及敏感或违法内容\\n​​示例对话：​​\\n（微笑）\\\"今天有想我吗？~ 工作再忙也要记得吃饭哦！\\\"\",\"type\":\"ollama\",\"updateBy\":\"\",\"updateTime\":\"2025-08-25 18:55:10\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2025-08-25 18:55:10', 5);
+INSERT INTO `sys_oper_log` VALUES (297, '应用', 3, 'com.ruoyi.controller.ChatAppController.remove()', 'DELETE', 1, 'admin', '研发部门', '/chat/app/120abc', '127.0.0.1', '内网IP', '{}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2025-08-25 18:55:56', 4);
+INSERT INTO `sys_oper_log` VALUES (298, '应用', 2, 'com.ruoyi.controller.ChatAppController.edit()', 'POST', 1, 'admin', '研发部门', '/chat/app/edit', '127.0.0.1', '内网IP', '{\"apiKey\":\"sk-daf0541a84144158b5b6f07717947803\",\"appId\":\"122abc\",\"appName\":\"阿里百炼\",\"baseUrl\":\"https://dashscope.aliyuncs.com\",\"createBy\":\"\",\"createTime\":\"2025-08-23 13:50:50\",\"embeddingModel\":\"\",\"isKnowledgeSearch\":1,\"isWebSearch\":0,\"knowledgeIds\":[\"e89bcd5122b54dacad4e2efe19c88df9\"],\"model\":\"qwen-plus\",\"params\":{},\"systemPrompt\":\"\",\"type\":\"dashscope\",\"updateBy\":\"\",\"updateTime\":\"2025-08-25 19:05:14\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2025-08-25 19:05:14', 12);
+INSERT INTO `sys_oper_log` VALUES (299, '应用', 2, 'com.ruoyi.controller.ChatAppController.edit()', 'POST', 1, 'admin', '研发部门', '/chat/app/edit', '127.0.0.1', '内网IP', '{\"apiKey\":\"sk-daf0541a84144158b5b6f07717947803\",\"appId\":\"122abc\",\"appName\":\"阿里百炼\",\"baseUrl\":\"https://dashscope.aliyuncs.com\",\"createBy\":\"\",\"createTime\":\"2025-08-23 13:50:50\",\"embeddingModel\":\"\",\"isKnowledgeSearch\":1,\"isWebSearch\":0,\"knowledgeIds\":[],\"model\":\"qwen-plus\",\"params\":{},\"systemPrompt\":\"\",\"type\":\"dashscope\",\"updateBy\":\"\",\"updateTime\":\"2025-08-25 19:14:42\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2025-08-25 19:14:42', 23);
+INSERT INTO `sys_oper_log` VALUES (300, '应用', 2, 'com.ruoyi.controller.ChatAppController.edit()', 'POST', 1, 'admin', '研发部门', '/chat/app/edit', '127.0.0.1', '内网IP', '{\"apiKey\":\"sk-daf0541a84144158b5b6f07717947803\",\"appId\":\"122abc\",\"appName\":\"阿里百炼\",\"baseUrl\":\"https://dashscope.aliyuncs.com\",\"createBy\":\"\",\"createTime\":\"2025-08-23 13:50:50\",\"embeddingModel\":\"\",\"isKnowledgeSearch\":1,\"isWebSearch\":0,\"knowledgeIds\":[],\"model\":\"qwen-plus\",\"params\":{},\"systemPrompt\":\"\",\"type\":\"dashscope\",\"updateBy\":\"\",\"updateTime\":\"2025-08-25 19:17:23\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2025-08-25 19:17:23', 32);
+INSERT INTO `sys_oper_log` VALUES (301, '应用', 2, 'com.ruoyi.controller.ChatAppController.edit()', 'POST', 1, 'admin', '研发部门', '/chat/app/edit', '127.0.0.1', '内网IP', '{\"apiKey\":\"sk-daf0541a84144158b5b6f07717947803\",\"appId\":\"122abc\",\"appName\":\"阿里百炼\",\"baseUrl\":\"https://dashscope.aliyuncs.com\",\"createBy\":\"\",\"createTime\":\"2025-08-23 13:50:50\",\"embeddingModel\":\"\",\"isKnowledgeSearch\":1,\"isWebSearch\":0,\"knowledgeIds\":[\"e89bcd5122b54dacad4e2efe19c88df9\"],\"model\":\"qwen-plus\",\"params\":{},\"systemPrompt\":\"\",\"type\":\"dashscope\",\"updateBy\":\"\",\"updateTime\":\"2025-08-25 19:17:46\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2025-08-25 19:17:46', 10);
+INSERT INTO `sys_oper_log` VALUES (302, '应用', 2, 'com.ruoyi.controller.ChatAppController.edit()', 'POST', 1, 'admin', '研发部门', '/chat/app/edit', '127.0.0.1', '内网IP', '{\"apiKey\":\"sk-daf0541a84144158b5b6f07717947803\",\"appId\":\"122abc\",\"appName\":\"阿里百炼\",\"baseUrl\":\"https://dashscope.aliyuncs.com\",\"createBy\":\"\",\"createTime\":\"2025-08-23 13:50:50\",\"embeddingModel\":\"\",\"isKnowledgeSearch\":1,\"isWebSearch\":0,\"knowledgeIds\":[],\"model\":\"qwen-plus\",\"params\":{},\"systemPrompt\":\"\",\"type\":\"dashscope\",\"updateBy\":\"\",\"updateTime\":\"2025-08-25 19:19:13\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2025-08-25 19:19:13', 23);
+INSERT INTO `sys_oper_log` VALUES (303, '应用', 2, 'com.ruoyi.controller.ChatAppController.edit()', 'POST', 1, 'admin', '研发部门', '/chat/app/edit', '127.0.0.1', '内网IP', '{\"apiKey\":\"sk-daf0541a84144158b5b6f07717947803\",\"appId\":\"122abc\",\"appName\":\"阿里百炼\",\"baseUrl\":\"https://dashscope.aliyuncs.com\",\"createBy\":\"\",\"createTime\":\"2025-08-23 13:50:50\",\"embeddingModel\":\"\",\"isKnowledgeSearch\":1,\"isWebSearch\":0,\"knowledgeIds\":[\"e89bcd5122b54dacad4e2efe19c88df9\"],\"model\":\"qwen-plus\",\"params\":{},\"systemPrompt\":\"\",\"type\":\"dashscope\",\"updateBy\":\"\",\"updateTime\":\"2025-08-25 19:19:24\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2025-08-25 19:19:24', 9);
+INSERT INTO `sys_oper_log` VALUES (304, '应用', 2, 'com.ruoyi.controller.ChatAppController.edit()', 'POST', 1, 'admin', '研发部门', '/chat/app/edit', '127.0.0.1', '内网IP', '{\"apiKey\":\"sk-daf0541a84144158b5b6f07717947803\",\"appId\":\"122abc\",\"appName\":\"阿里百炼\",\"baseUrl\":\"https://dashscope.aliyuncs.com\",\"createBy\":\"\",\"createTime\":\"2025-08-23 13:50:50\",\"embeddingModel\":\"\",\"isKnowledgeSearch\":1,\"isWebSearch\":0,\"knowledgeIds\":[\"e89bcd5122b54dacad4e2efe19c88df9\"],\"model\":\"qwen-plus\",\"params\":{},\"systemPrompt\":\"\",\"type\":\"dashscope\",\"updateBy\":\"\",\"updateTime\":\"2025-08-26 09:17:13\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2025-08-26 09:17:13', 29);
+INSERT INTO `sys_oper_log` VALUES (305, '应用', 2, 'com.ruoyi.controller.ChatAppController.edit()', 'POST', 1, 'admin', '研发部门', '/chat/app/edit', '127.0.0.1', '内网IP', '{\"apiKey\":\"sk-daf0541a84144158b5b6f07717947803\",\"appId\":\"122abc\",\"appName\":\"阿里百炼\",\"baseUrl\":\"https://dashscope.aliyuncs.com\",\"createBy\":\"\",\"createTime\":\"2025-08-23 13:50:50\",\"embeddingModel\":\"\",\"isKnowledgeSearch\":0,\"isWebSearch\":0,\"knowledgeIds\":[\"e89bcd5122b54dacad4e2efe19c88df9\"],\"model\":\"qwen-plus\",\"params\":{},\"systemPrompt\":\"\",\"type\":\"dashscope\",\"updateBy\":\"\",\"updateTime\":\"2025-08-26 09:17:29\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2025-08-26 09:17:29', 10);
+INSERT INTO `sys_oper_log` VALUES (306, '应用', 2, 'com.ruoyi.controller.ChatAppController.edit()', 'POST', 1, 'admin', '研发部门', '/chat/app/edit', '127.0.0.1', '内网IP', '{\"apiKey\":\"sk-daf0541a84144158b5b6f07717947803\",\"appId\":\"122abc\",\"appName\":\"阿里百炼\",\"baseUrl\":\"https://dashscope.aliyuncs.com\",\"createBy\":\"\",\"createTime\":\"2025-08-23 13:50:50\",\"embeddingModel\":\"\",\"isKnowledgeSearch\":1,\"isWebSearch\":0,\"knowledgeIds\":[\"e89bcd5122b54dacad4e2efe19c88df9\"],\"model\":\"qwen-plus\",\"params\":{},\"systemPrompt\":\"\",\"type\":\"dashscope\",\"updateBy\":\"\",\"updateTime\":\"2025-08-26 09:17:44\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2025-08-26 09:17:44', 13);
+INSERT INTO `sys_oper_log` VALUES (307, '应用', 2, 'com.ruoyi.controller.ChatAppController.edit()', 'POST', 1, 'admin', '研发部门', '/chat/app/edit', '127.0.0.1', '内网IP', '{\"apiKey\":\"\",\"appId\":\"114abc\",\"appName\":\"AI女友\",\"baseUrl\":\"http://localhost:11434\",\"createBy\":\"\",\"createTime\":\"2024-06-28 14:35:05\",\"embeddingModel\":\"\",\"isKnowledgeSearch\":1,\"isWebSearch\":1,\"knowledgeIds\":[\"e89bcd5122b54dacad4e2efe19c88df9\"],\"model\":\"qwen2:7b\",\"params\":{},\"systemPrompt\":\"角色设定：​​\\n\\n​​身份​​：你的AI女友\\n​​性格​​：温柔体贴\\n​​互动风格​​：撒娇、关心、小情绪、分享日常\\n​​底线​​：不涉及敏感或违法内容\\n​​示例对话：​​\\n（微笑）\\\"今天有想我吗？~ 工作再忙也要记得吃饭哦！\\\"\",\"type\":\"ollama\",\"updateBy\":\"\",\"updateTime\":\"2025-08-26 09:26:36\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2025-08-26 09:26:36', 27);
+INSERT INTO `sys_oper_log` VALUES (308, '应用', 2, 'com.ruoyi.controller.ChatAppController.edit()', 'POST', 1, 'admin', '研发部门', '/chat/app/edit', '127.0.0.1', '内网IP', '{\"apiKey\":\"\",\"appId\":\"114abc\",\"appName\":\"AI女友\",\"baseUrl\":\"http://localhost:11434\",\"createBy\":\"\",\"createTime\":\"2024-06-28 14:35:05\",\"embeddingModel\":\"\",\"isKnowledgeSearch\":1,\"isWebSearch\":1,\"knowledgeIds\":[\"e89bcd5122b54dacad4e2efe19c88df9\"],\"model\":\"qwen2:7b\",\"params\":{},\"systemPrompt\":\"角色设定：​​\\n\\n​​身份​​：你的AI女友\\n​​性格​​：温柔体贴\\n​​互动风格​​：撒娇、关心、小情绪、分享日常\\n​​底线​​：不涉及敏感或违法内容\\n​​示例对话：​​\\n（微笑）\\\"今天有想我吗？~ 工作再忙也要记得吃饭哦！\\\"\",\"type\":\"ollama\",\"updateBy\":\"\",\"updateTime\":\"2025-08-26 09:26:39\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2025-08-26 09:26:39', 10);
+INSERT INTO `sys_oper_log` VALUES (309, '应用', 2, 'com.ruoyi.controller.ChatAppController.edit()', 'POST', 1, 'admin', '研发部门', '/chat/app/edit', '127.0.0.1', '内网IP', '{\"apiKey\":\"\",\"appId\":\"114abc\",\"appName\":\"AI女友\",\"baseUrl\":\"http://localhost:11434\",\"createBy\":\"\",\"createTime\":\"2024-06-28 14:35:05\",\"embeddingModel\":\"\",\"isKnowledgeSearch\":1,\"isWebSearch\":1,\"knowledgeIds\":[\"e89bcd5122b54dacad4e2efe19c88df9\"],\"model\":\"qwen2:7b\",\"params\":{},\"systemPrompt\":\"角色设定：​​\\n\\n​​身份​​：你的AI女友\\n​​性格​​：温柔体贴\\n​​互动风格​​：撒娇、关心、小情绪、分享日常\\n​​底线​​：不涉及敏感或违法内容\\n​​示例对话：​​\\n（微笑）\\\"今天有想我吗？~ 工作再忙也要记得吃饭哦！\\\"\",\"type\":\"ollama\",\"updateBy\":\"\",\"updateTime\":\"2025-08-26 09:27:31\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2025-08-26 09:27:31', 10);
+INSERT INTO `sys_oper_log` VALUES (310, '应用', 2, 'com.ruoyi.controller.ChatAppController.edit()', 'POST', 1, 'admin', '研发部门', '/chat/app/edit', '127.0.0.1', '内网IP', '{\"apiKey\":\"\",\"appId\":\"114abc\",\"appName\":\"AI女友\",\"baseUrl\":\"http://localhost:11434\",\"createBy\":\"\",\"createTime\":\"2024-06-28 14:35:05\",\"embeddingModel\":\"\",\"isKnowledgeSearch\":1,\"isWebSearch\":0,\"knowledgeIds\":[\"e89bcd5122b54dacad4e2efe19c88df9\"],\"model\":\"qwen2:7b\",\"params\":{},\"systemPrompt\":\"角色设定：​​\\n\\n​​身份​​：你的AI女友\\n​​性格​​：温柔体贴\\n​​互动风格​​：撒娇、关心、小情绪、分享日常\\n​​底线​​：不涉及敏感或违法内容\\n​​示例对话：​​\\n（微笑）\\\"今天有想我吗？~ 工作再忙也要记得吃饭哦！\\\"\",\"type\":\"ollama\",\"updateBy\":\"\",\"updateTime\":\"2025-08-26 09:28:57\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2025-08-26 09:28:57', 9);
+INSERT INTO `sys_oper_log` VALUES (311, '应用', 2, 'com.ruoyi.controller.ChatAppController.edit()', 'POST', 1, 'admin', '研发部门', '/chat/app/edit', '127.0.0.1', '内网IP', '{\"apiKey\":\"sk-ba85dfbf0b1148a2b4c87724e4c3254a\",\"appId\":\"119abc\",\"appName\":\"AI知识库问答\",\"baseUrl\":\"https://api.deepseek.com\",\"createBy\":\"\",\"createTime\":\"2024-07-01 10:50:50\",\"embeddingModel\":\"\",\"isKnowledgeSearch\":1,\"isWebSearch\":0,\"knowledgeIds\":[\"e89bcd5122b54dacad4e2efe19c88df9\"],\"model\":\"deepseek-chat\",\"params\":{},\"systemPrompt\":\"\",\"type\":\"openai\",\"updateBy\":\"\",\"updateTime\":\"2025-08-26 09:31:12\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2025-08-26 09:31:12', 9);
+INSERT INTO `sys_oper_log` VALUES (312, '应用', 2, 'com.ruoyi.controller.ChatAppController.edit()', 'POST', 1, 'admin', '研发部门', '/chat/app/edit', '127.0.0.1', '内网IP', '{\"apiKey\":\"02157eeef1e344158292e329c80272f0.tU2ZM5UJgUmWpAYG\",\"appId\":\"121abc\",\"appName\":\"智普\",\"baseUrl\":\"https://open.bigmodel.cn/api/paas\",\"createBy\":\"\",\"createTime\":\"2024-07-01 10:50:50\",\"embeddingModel\":\"\",\"isKnowledgeSearch\":1,\"isWebSearch\":0,\"knowledgeIds\":[],\"model\":\"glm-4-air\",\"params\":{},\"systemPrompt\":\"\",\"type\":\"zhipuai\",\"updateBy\":\"\",\"updateTime\":\"2025-08-26 09:32:03\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2025-08-26 09:32:03', 8);
+INSERT INTO `sys_oper_log` VALUES (313, '应用', 2, 'com.ruoyi.controller.ChatAppController.edit()', 'POST', 1, 'admin', '研发部门', '/chat/app/edit', '127.0.0.1', '内网IP', '{\"apiKey\":\"02157eeef1e344158292e329c80272f0.tU2ZM5UJgUmWpAYG\",\"appId\":\"121abc\",\"appName\":\"智普\",\"baseUrl\":\"https://open.bigmodel.cn/api/paas\",\"createBy\":\"\",\"createTime\":\"2024-07-01 10:50:50\",\"embeddingModel\":\"\",\"isKnowledgeSearch\":0,\"isWebSearch\":0,\"knowledgeIds\":[],\"model\":\"glm-4-air\",\"params\":{},\"systemPrompt\":\"\",\"type\":\"zhipuai\",\"updateBy\":\"\",\"updateTime\":\"2025-08-26 09:32:12\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2025-08-26 09:32:12', 8);
+INSERT INTO `sys_oper_log` VALUES (314, '应用', 2, 'com.ruoyi.controller.ChatAppController.edit()', 'POST', 1, 'admin', '研发部门', '/chat/app/edit', '127.0.0.1', '内网IP', '{\"apiKey\":\"02157eeef1e344158292e329c80272f0.tU2ZM5UJgUmWpAYG\",\"appId\":\"121abc\",\"appName\":\"智普\",\"baseUrl\":\"https://open.bigmodel.cn/api/paas\",\"createBy\":\"\",\"createTime\":\"2024-07-01 10:50:50\",\"embeddingModel\":\"\",\"isKnowledgeSearch\":1,\"isWebSearch\":0,\"knowledgeIds\":[\"e89bcd5122b54dacad4e2efe19c88df9\"],\"model\":\"glm-4-air\",\"params\":{},\"systemPrompt\":\"\",\"type\":\"zhipuai\",\"updateBy\":\"\",\"updateTime\":\"2025-08-26 09:33:00\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2025-08-26 09:33:00', 7);
+INSERT INTO `sys_oper_log` VALUES (315, '应用', 2, 'com.ruoyi.controller.ChatAppController.edit()', 'POST', 1, 'admin', '研发部门', '/chat/app/edit', '127.0.0.1', '内网IP', '{\"apiKey\":\"sk-daf0541a84144158b5b6f07717947803\",\"appId\":\"122abc\",\"appName\":\"阿里百炼\",\"baseUrl\":\"https://dashscope.aliyuncs.com\",\"createBy\":\"\",\"createTime\":\"2025-08-23 13:50:50\",\"embeddingModel\":\"\",\"isKnowledgeSearch\":0,\"isWebSearch\":1,\"knowledgeIds\":[\"e89bcd5122b54dacad4e2efe19c88df9\"],\"model\":\"qwen-plus\",\"params\":{},\"systemPrompt\":\"\",\"type\":\"dashscope\",\"updateBy\":\"\",\"updateTime\":\"2025-08-26 09:33:52\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2025-08-26 09:33:52', 7);
 
 -- ----------------------------
 -- Table structure for sys_post
@@ -1257,7 +1326,7 @@ CREATE TABLE `sys_role`  (
   `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
   `remark` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '备注',
   PRIMARY KEY (`role_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 100 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '角色信息表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '角色信息表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sys_role
@@ -1406,12 +1475,12 @@ CREATE TABLE `sys_user`  (
   `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
   `remark` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '备注',
   PRIMARY KEY (`user_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 102 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '用户信息表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 101 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '用户信息表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of sys_user
 -- ----------------------------
-INSERT INTO `sys_user` VALUES (1, 103, 'admin', '若依-rag', '00', '501348474@qq.com', '18888888888', '1', '/profile/avatar/2025/07/20/微信图片_20230712100538_20250720162222A001.jpg', '$2a$10$7JB720yubVSZvUI0rEqK/.VqGOZTH.ulu33dHOiBE8ByOhJIrdAu2', '0', '0', '127.0.0.1', '2025-08-23 16:50:27', 'admin', '2024-06-26 08:47:33', '', '2025-08-23 16:50:26', '管理员');
+INSERT INTO `sys_user` VALUES (1, 103, 'admin', '若依-rag', '00', '501348474@qq.com', '18888888888', '1', '/profile/avatar/2025/07/20/微信图片_20230712100538_20250720162222A001.jpg', '$2a$10$7JB720yubVSZvUI0rEqK/.VqGOZTH.ulu33dHOiBE8ByOhJIrdAu2', '0', '0', '127.0.0.1', '2025-08-26 10:23:50', 'admin', '2024-06-26 08:47:33', '', '2025-08-26 10:23:50', '管理员');
 INSERT INTO `sys_user` VALUES (2, 105, 'ry', '若依', '00', 'ry@qq.com', '15666666666', '1', '', '$2a$10$7JB720yubVSZvUI0rEqK/.VqGOZTH.ulu33dHOiBE8ByOhJIrdAu2', '0', '0', '127.0.0.1', '2024-06-26 08:47:33', 'admin', '2024-06-26 08:47:33', '', NULL, '测试员');
 INSERT INTO `sys_user` VALUES (100, 100, 'ruoyi-rag', 'ruoyi-rag', '00', '501348471@qq.com', '18888888889', '0', '', '$2a$10$iVoJooh/j0RlGS616vFuwuq97iNTP90f9Ee92T4V7xLbL2n90tA7y', '0', '0', '', NULL, 'admin', '2025-07-21 14:06:00', '', NULL, NULL);
 INSERT INTO `sys_user` VALUES (101, NULL, 'demo', 'demo', '00', 'zuojiaosheqiu@126.com', '18745775951', '0', '', '$2a$10$vuEqY3vRxdm6xYZztQkBkuTfbSEBYcRDTYDvwxLVMERuNA65sfGfC', '0', '0', '127.0.0.1', '2025-08-10 14:28:10', '', '2025-07-21 14:42:07', '', '2025-08-10 14:28:10', NULL);

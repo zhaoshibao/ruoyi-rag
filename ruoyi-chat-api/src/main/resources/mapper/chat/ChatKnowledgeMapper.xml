@@ -6,12 +6,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     
     <resultMap type="ChatKnowledge" id="ChatKnowledgeResult">
         <result property="knowledgeId"    column="knowledge_id"    />
+        <result property="knowledgeName"    column="knowledge_name"    />
+        <result property="desc"    column="desc"    />
         <result property="userId"    column="user_id"    />
-        <result property="projectId"    column="project_id"    />
-        <result property="fileName"    column="file_name"    />
-        <result property="content"    column="content"    />
-        <result property="isVector"    column="is_vector"    />
-        <result property="isKnowledgeGraph"    column="is_knowledge_graph"    />
         <result property="createBy"    column="create_by"    />
         <result property="createTime"    column="create_time"    />
         <result property="updateBy"    column="update_by"    />
@@ -20,34 +17,27 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectChatKnowledgeVo">
-        select knowledge_id, user_id, project_id, file_name, content,is_vector,is_knowledge_graph,create_by, create_time, update_by, update_time, remark from chat_knowledge
+        select knowledge_id, knowledge_name, desc, user_id, create_by, create_time, update_by, update_time, remark from chat_knowledge
     </sql>
 
     <select id="selectChatKnowledgeList" parameterType="ChatKnowledge" resultMap="ChatKnowledgeResult">
         <include refid="selectChatKnowledgeVo"/>
         <where>  
-            <if test="userId != null "> and user_id = #{userId}</if>
-            <if test="projectId != null "> and project_id = #{projectId}</if>
-            <if test="fileName != null  and fileName != ''"> and file_name like concat('%', #{fileName}, '%')</if>
-            <if test="content != null  and content != ''"> and content = #{content}</if>
         </where>
     </select>
     
-    <select id="selectChatKnowledgeByKnowledgeId" parameterType="Long" resultMap="ChatKnowledgeResult">
+    <select id="selectChatKnowledgeByKnowledgeId" parameterType="String" resultMap="ChatKnowledgeResult">
         <include refid="selectChatKnowledgeVo"/>
         where knowledge_id = #{knowledgeId}
     </select>
 
-    <insert id="insertChatKnowledge" parameterType="ChatKnowledge" useGeneratedKeys="true" keyProperty="knowledgeId">
+    <insert id="insertChatKnowledge" parameterType="ChatKnowledge">
         insert into chat_knowledge
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="knowledgeId != null">knowledge_id,</if>
+            <if test="knowledgeName != null">knowledge_name,</if>
+            <if test="desc != null">desc,</if>
             <if test="userId != null">user_id,</if>
-            <if test="projectId != null">project_id,</if>
-            <if test="fileName != null and fileName != ''">file_name,</if>
-            <if test="content != null">content,</if>
-            <if test="isVector != null">is_vector,</if>
-            <if test="isKnowledgeGraph != null">is_knowledge_graph,</if>
             <if test="createBy != null">create_by,</if>
             <if test="createTime != null">create_time,</if>
             <if test="updateBy != null">update_by,</if>
@@ -56,12 +46,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="knowledgeId != null">#{knowledgeId},</if>
+            <if test="knowledgeName != null">#{knowledgeName},</if>
+            <if test="desc != null">#{desc},</if>
             <if test="userId != null">#{userId},</if>
-            <if test="projectId != null">#{projectId},</if>
-            <if test="fileName != null and fileName != ''">#{fileName},</if>
-            <if test="content != null">#{content},</if>
-            <if test="isVector != null">#{isVector},</if>
-            <if test="isKnowledgeGraph != null">#{isKnowledgeGraph},</if>
             <if test="createBy != null">#{createBy},</if>
             <if test="createTime != null">#{createTime},</if>
             <if test="updateBy != null">#{updateBy},</if>
@@ -73,12 +60,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <update id="updateChatKnowledge" parameterType="ChatKnowledge">
         update chat_knowledge
         <trim prefix="SET" suffixOverrides=",">
+            <if test="knowledgeName != null">knowledge_name = #{knowledgeName},</if>
+            <if test="desc != null">desc = #{desc},</if>
             <if test="userId != null">user_id = #{userId},</if>
-            <if test="projectId != null">project_id = #{projectId},</if>
-            <if test="fileName != null and fileName != ''">file_name = #{fileName},</if>
-            <if test="content != null">content = #{content},</if>
-            <if test="isVector != null">is_vector = #{isVector},</if>
-            <if test="isKnowledgeGraph != null">is_knowledge_graph = #{isKnowledgeGraph},</if>
             <if test="createBy != null">create_by = #{createBy},</if>
             <if test="createTime != null">create_time = #{createTime},</if>
             <if test="updateBy != null">update_by = #{updateBy},</if>

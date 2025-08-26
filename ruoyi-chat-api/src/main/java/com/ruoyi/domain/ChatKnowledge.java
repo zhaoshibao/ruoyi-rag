@@ -1,55 +1,58 @@
 package com.ruoyi.domain;
 
-import com.ruoyi.common.core.domain.BaseEntity;
+import com.ruoyi.common.annotation.Excel;
 
 /**
- * 知识库管理对象 chat_knowledge
+ * 知识库对象 chat_knowledge
  * 
- * @author lixianfeng
- * @date 2024-06-27
+ * @author zhaoshibao
+ * @date 2025-08-24
  */
-public class ChatKnowledge extends BaseEntity {
-
-
+public class ChatKnowledge extends BaseEntity
+{
     private static final long serialVersionUID = 1L;
 
-    /** $column.columnComment */
-    private String  knowledgeId;
+    /** 知识库主键 */
+    private String knowledgeId;
 
+    /** 知识库名称 */
+    @Excel(name = "知识库名称")
+    private String knowledgeName;
 
+    /** 知识库描述 */
+    @Excel(name = "知识库描述")
+    private String desc;
 
     /** 用户id */
+    @Excel(name = "用户id")
     private Long userId;
 
-    /** 项目id */
-    private String projectId;
-
-
-    /** 项目名称 */
-    private String projectName;
-    /** 文件名 */
-    private String fileName;
-
-    /** 文件内容 */
-    private String content;
-
-
-
-    /** 是否向量化完成（0 否 1是） */
-    private Integer isVector;
-
-
-    /** 是否开启知识图谱（0 否 1是） */
-    private Integer isKnowledgeGraph;
-
-    public void setKnowledgeId(String knowledgeId)
+    public void setKnowledgeId(String knowledgeId) 
     {
         this.knowledgeId = knowledgeId;
     }
 
-    public String getKnowledgeId()
+    public String getKnowledgeId() 
     {
         return knowledgeId;
+    }
+    public void setKnowledgeName(String knowledgeName) 
+    {
+        this.knowledgeName = knowledgeName;
+    }
+
+    public String getKnowledgeName() 
+    {
+        return knowledgeName;
+    }
+    public void setDesc(String desc) 
+    {
+        this.desc = desc;
+    }
+
+    public String getDesc() 
+    {
+        return desc;
     }
     public void setUserId(Long userId) 
     {
@@ -60,72 +63,19 @@ public class ChatKnowledge extends BaseEntity {
     {
         return userId;
     }
-    public void setProjectId(String projectId)
-    {
-        this.projectId = projectId;
-    }
-
-    public String getProjectId()
-    {
-        return projectId;
-    }
-    public void setFileName(String fileName) 
-    {
-        this.fileName = fileName;
-    }
-
-    public String getFileName() 
-    {
-        return fileName;
-    }
-    public void setContent(String content) 
-    {
-        this.content = content;
-    }
-
-    public String getContent() 
-    {
-        return content;
-    }
-
-
-    public Integer getIsVector() {
-        return isVector;
-    }
-
-    public void setIsVector(Integer isVector) {
-        this.isVector = isVector;
-    }
-
-    public Integer getIsKnowledgeGraph() {
-        return isKnowledgeGraph;
-    }
-
-    public void setIsKnowledgeGraph(Integer isKnowledgeGraph) {
-        this.isKnowledgeGraph = isKnowledgeGraph;
-    }
-
-
-
-    public String getProjectName() {
-        return projectName;
-    }
-
-    public void setProjectName(String projectName) {
-        this.projectName = projectName;
-    }
 
     @Override
     public String toString() {
-        return "ChatKnowledge{" +
-                "knowledgeId='" + knowledgeId + '\'' +
-                ", userId=" + userId +
-                ", projectId='" + projectId + '\'' +
-                ", projectName='" + projectName + '\'' +
-                ", fileName='" + fileName + '\'' +
-                ", content='" + content + '\'' +
-                ", isVector=" + isVector +
-                ", isKnowledgeGraph=" + isKnowledgeGraph +
-                '}';
+        return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
+            .append("knowledgeId", getKnowledgeId())
+            .append("knowledgeName", getKnowledgeName())
+            .append("desc", getDesc())
+            .append("userId", getUserId())
+            .append("createBy", getCreateBy())
+            .append("createTime", getCreateTime())
+            .append("updateBy", getUpdateBy())
+            .append("updateTime", getUpdateTime())
+            .append("remark", getRemark())
+            .toString();
     }
 }

@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.mapper.ChatKnowledgeMapper">
+    
+    <resultMap type="ChatKnowledge" id="ChatKnowledgeResult">
+        <result property="knowledgeId"    column="knowledge_id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="projectId"    column="project_id"    />
+        <result property="fileName"    column="file_name"    />
+        <result property="content"    column="content"    />
+        <result property="isVector"    column="is_vector"    />
+        <result property="isKnowledgeGraph"    column="is_knowledge_graph"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectChatKnowledgeVo">
+        select knowledge_id, user_id, project_id, file_name, content,is_vector,is_knowledge_graph,create_by, create_time, update_by, update_time, remark from chat_knowledge
+    </sql>
+
+    <select id="selectChatKnowledgeList" parameterType="ChatKnowledge" resultMap="ChatKnowledgeResult">
+        <include refid="selectChatKnowledgeVo"/>
+        <where>  
+            <if test="userId != null "> and user_id = #{userId}</if>
+            <if test="projectId != null "> and project_id = #{projectId}</if>
+            <if test="fileName != null  and fileName != ''"> and file_name like concat('%', #{fileName}, '%')</if>
+            <if test="content != null  and content != ''"> and content = #{content}</if>
+        </where>
+    </select>
+    
+    <select id="selectChatKnowledgeByKnowledgeId" parameterType="Long" resultMap="ChatKnowledgeResult">
+        <include refid="selectChatKnowledgeVo"/>
+        where knowledge_id = #{knowledgeId}
+    </select>
+
+    <insert id="insertChatKnowledge" parameterType="ChatKnowledge" useGeneratedKeys="true" keyProperty="knowledgeId">
+        insert into chat_knowledge
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="knowledgeId != null">knowledge_id,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="projectId != null">project_id,</if>
+            <if test="fileName != null and fileName != ''">file_name,</if>
+            <if test="content != null">content,</if>
+            <if test="isVector != null">is_vector,</if>
+            <if test="isKnowledgeGraph != null">is_knowledge_graph,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="remark != null">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="knowledgeId != null">#{knowledgeId},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="projectId != null">#{projectId},</if>
+            <if test="fileName != null and fileName != ''">#{fileName},</if>
+            <if test="content != null">#{content},</if>
+            <if test="isVector != null">#{isVector},</if>
+            <if test="isKnowledgeGraph != null">#{isKnowledgeGraph},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="remark != null">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateChatKnowledge" parameterType="ChatKnowledge">
+        update chat_knowledge
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="projectId != null">project_id = #{projectId},</if>
+            <if test="fileName != null and fileName != ''">file_name = #{fileName},</if>
+            <if test="content != null">content = #{content},</if>
+            <if test="isVector != null">is_vector = #{isVector},</if>
+            <if test="isKnowledgeGraph != null">is_knowledge_graph = #{isKnowledgeGraph},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where knowledge_id = #{knowledgeId}
+    </update>
+
+    <delete id="deleteChatKnowledgeByKnowledgeId" parameterType="String">
+        delete from chat_knowledge where knowledge_id = #{knowledgeId}
+    </delete>
+
+    <delete id="deleteChatKnowledgeByKnowledgeIds" parameterType="String">
+        delete from chat_knowledge where knowledge_id in 
+        <foreach item="knowledgeId" collection="array" open="(" separator="," close=")">
+            #{knowledgeId}
+        </foreach>
+    </delete>
+</mapper>
