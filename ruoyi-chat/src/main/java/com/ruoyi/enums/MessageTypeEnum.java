@@ -1,36 +1,28 @@
 package com.ruoyi.enums;
 
-public enum AiTypeEnum {
+/**
+ * 消息类型枚举
+ */
+public enum MessageTypeEnum {
     /**
-     * openai
+     * 用户的提问
      */
-    OPENAI("openai", "openai"),
+    USER(0, "用户的提问"),
     /**
-     * ollama
+     * 用户的提问
      */
-    OLLAMA("ollama", "ollama"),
-    /**
-     * 智谱ai
-     */
-    ZHIPUAI("zhipuai", "zhipuai"),
-
-    /**
-     * 阿里百炼
-     */
-    DASHSCOPE("dashscope", "dashscope"),
-
-
+    AI(1, "AI大模型的回答内容"),
 
     ;
-    private String type;
+    private Integer type;
     private String desc;
 
-    AiTypeEnum(String type, String desc) {
+    MessageTypeEnum(Integer type, String desc) {
         this.type = type;
         this.desc = desc;
     }
 
-    public String getType() {
+    public Integer getType() {
         return type;
     }
 }

@@ -8,12 +8,15 @@ import com.ruoyi.domain.ChatApp;
 import com.ruoyi.domain.ChatKnowledge;
 import com.ruoyi.enums.AiTypeEnum;
 import com.ruoyi.enums.LanguageEnum;
+import com.ruoyi.enums.MessageTypeEnum;
 import com.ruoyi.enums.SystemConstant;
+import com.ruoyi.pojo.Chat;
 import com.ruoyi.searxng.SearXNGService;
 import com.ruoyi.service.IChatAppService;
 import com.ruoyi.service.IChatKnowledgeService;
 import com.ruoyi.utils.ChatModelUtil;
 import com.ruoyi.utils.MongoUtil;
+import com.ruoyi.vo.ChatVo;
 import com.ruoyi.vo.QueryVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
@@ -32,6 +35,7 @@ import org.springframework.ai.tool.ToolCallbackProvider;
 import org.springframework.ai.vectorstore.SearchRequest;
 import org.springframework.ai.vectorstore.filter.FilterExpressionBuilder;
 import org.springframework.ai.vectorstore.qdrant.QdrantVectorStore;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.util.CollectionUtils;
@@ -48,13 +52,6 @@ import java.util.List;
 @BeanType(AiTypeEnum.OLLAMA)
 @Slf4j
 public class OllamaOperator implements AiOperator {
-//
-//    @Autowired
-//    private OllamaChatModel ollamaChatModel;
-
-    // @Resource
-    // private RedisVectorStore ollamaRedisVectorStore;
-    // private QdrantVectorStore ollamaQdrantVectorStore;
 
     @Autowired
     private SimpleLoggerAdvisor simpleLoggerAdvisor;
@@ -69,8 +66,6 @@ public class OllamaOperator implements AiOperator {
     @Autowired
     private SearXNGService searXNGService;
 
-//    @Autowired
-//    private Neo4jService neo4jService;
 
     @Autowired
     private ChatMemory chatMemory;
@@ -100,30 +95,31 @@ public class OllamaOperator implements AiOperator {
 
     @Override
     public Flux<String> chatStream(ChatApp chatProject, QueryVo queryVo) throws Exception {
-        // 把问题记录到mongodb
         Long chatId = queryVo.getChatId();
         if (chatId != null) {
-            com.ruoyi.pojo.Message msg = new com.ruoyi.pojo.Message();
-            msg.setChatId(queryVo.getChatId());
-            msg.setType(0);
-            msg.setContent(queryVo.getMsg());
-            msg.setCreateTime(new Date());
-            msg.setId(IdUtil.getSnowflake().nextId());
-            this.mongoTemplate.insert(msg, MongoUtil.getMessageCollection(queryVo.getChatId()));
+            ChatVo chatVo = new ChatVo();
+            chatVo.setAppId(chatProject.getAppId());
+            chatVo.setUserId(queryVo.getUserId());
+            chatVo.setTitle("新会话" + String.valueOf(Math.random()).substring(2, 7));
+            Chat chat = new Chat();
+            BeanUtils.copyProperties(chatVo, chat);
+            chat.setCreateTime(new Date());
+            chat.setChatId(IdUtil.getSnowflake().nextId());
+            this.mongoTemplate.insert(chat, MongoUtil.getChatCollection(chatVo.getAppId()));
         }
+
+        com.ruoyi.pojo.Message msg = new com.ruoyi.pojo.Message();
+        msg.setChatId(chatId);
+        msg.setType(MessageTypeEnum.USER.getType());
+        msg.setContent(queryVo.getMsg());
+        msg.setCreateTime(new Date());
+        msg.setId(IdUtil.getSnowflake().nextId());
+        this.mongoTemplate.insert(msg, MongoUtil.getMessageCollection(chatId));
 
         String baseUrl = chatProject.getBaseUrl();
         String model = chatProject.getModel();
-        String embeddingModel = chatProject.getEmbeddingModel();
-        QdrantVectorStore ollamaQdrantVectorStore = qdrantVectorStoreComponet.getOllamaQdrantVectorStore(baseUrl, embeddingModel);
 
         List<Message> msgList = new ArrayList<>();
-        // 暂时注释掉知识图谱功能
-        // 添加 Neo4j 图数据库查询结果
-//        String graphContext = neo4jService.getAllRelationshipsContext(queryVo.getProjectId(), knoledgeIds);
-//        if (graphContext != null && !graphContext.isEmpty() && !graphContext.startsWith("未指定") && !graphContext.startsWith("指定的")) {
-//            msgList.add(new SystemMessage("以下是从图数据库中查询到的相关信息：\n" + graphContext));
-//        }
 
         //是否开启联网搜索
         Boolean useWebSearch = chatProject.getIsWebSearch() == 1;
@@ -131,11 +127,9 @@ public class OllamaOperator implements AiOperator {
             String searchResult = searXNGService.searchV2(queryVo.getMsg());
             msgList.add(new UserMessage(searchResult));
         }
-        // 中英文切换
-        msgList.add(new SystemMessage(LanguageEnum.getMsg(queryVo.getLanguage())));
-        if (StringUtils.hasLength(chatProject.getSystemPrompt())) {
-            msgList.add(new SystemMessage(chatProject.getSystemPrompt()));
-        }
+        // 系统提示词合并
+        String sysMessage = LanguageEnum.getMsg(queryVo.getLanguage()) + chatProject.getSystemPrompt();
+        msgList.add(new SystemMessage(sysMessage));
 
 
         // 加入当前用户的提问
@@ -170,10 +164,6 @@ public class OllamaOperator implements AiOperator {
                             .builder(dashScopeQdrantVectorStore)
                             .searchRequest(
                                     SearchRequest.builder()
-//                                            .filterExpression(
-//                                                    new FilterExpressionBuilder()
-//                                                            .eq("knowledgeId", knowledgeId) // 查询当前应用本地知识库
-//                                                            .build())
                                             .topK(SystemConstant.TOPK).build()
                             )
                             .build();

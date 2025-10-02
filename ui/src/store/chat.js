@@ -2,6 +2,7 @@ import { defineStore } from 'pinia';
 import { sendMessage, sendMessageV2, createChat, listMessages, listChats, saveMessage } from '@/api/chat/chat';
 import Prism from 'prismjs';
 import { v4 as uuidv4 } from 'uuid';
+import useUserStore from '@/store/modules/user';
 
 export const useChatStore = defineStore('chat', {
   state: () => ({
@@ -169,6 +170,7 @@ export const useChatStore = defineStore('chat', {
           appId: this.appId,
           language: 0,
           chatId: this.chatId,
+          userId: useUserStore().id.toString(), // 修复：使用正确的用户ID
           ...userMessage,
         };
         
@@ -176,10 +178,17 @@ export const useChatStore = defineStore('chat', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
+
           },
           body: JSON.stringify(messagePayload),
           signal: this.currentAbortController.signal
         });
+
+        //刷新会话列表
+         await this.fetchChatList(this.appId);
+         if (!this.chatId || this.chatList.length === 0) {
+            this.chatId = this.chatList[0].chatId;
+         }
 
         // 获取响应的第一个数据块来检查是否有错误
         const reader = response.body.getReader();

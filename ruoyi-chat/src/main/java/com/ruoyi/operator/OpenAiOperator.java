@@ -8,12 +8,15 @@ import com.ruoyi.domain.ChatApp;
 import com.ruoyi.domain.ChatKnowledge;
 import com.ruoyi.enums.AiTypeEnum;
 import com.ruoyi.enums.LanguageEnum;
+import com.ruoyi.enums.MessageTypeEnum;
 import com.ruoyi.enums.SystemConstant;
+import com.ruoyi.pojo.Chat;
 import com.ruoyi.searxng.SearXNGService;
 import com.ruoyi.service.IChatAppService;
 import com.ruoyi.service.IChatKnowledgeService;
 import com.ruoyi.utils.ChatModelUtil;
 import com.ruoyi.utils.MongoUtil;
+import com.ruoyi.vo.ChatVo;
 import com.ruoyi.vo.QueryVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
@@ -34,8 +37,8 @@ import org.springframework.ai.openai.OpenAiChatModel;
 import org.springframework.ai.openai.OpenAiChatOptions;
 import org.springframework.ai.tool.ToolCallbackProvider;
 import org.springframework.ai.vectorstore.SearchRequest;
-import org.springframework.ai.vectorstore.filter.FilterExpressionBuilder;
 import org.springframework.ai.vectorstore.qdrant.QdrantVectorStore;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -62,10 +65,6 @@ public class OpenAiOperator implements AiOperator {
     @Value("${spring.ai.openai.chat.options.temperature}")
     private double temperature;
 
-   // @Autowired
-    // private RedisVectorStore openaiRedisVectorStore;
-    //private QdrantVectorStore openAiQdrantVectorStore;
-
     @Autowired
     private QdrantVectorStoreComponet qdrantVectorStoreComponet;
 
@@ -74,11 +73,6 @@ public class OpenAiOperator implements AiOperator {
 
     @Autowired
     private SearXNGService searXNGService;
-
-//    @Autowired
-//    private Neo4jService neo4jService;
-
-
 
     @Autowired
     private  ChatMemory chatMemory;
@@ -169,11 +163,22 @@ public class OpenAiOperator implements AiOperator {
 
     @Override
     public Flux<String> chatStream(ChatApp chatProject, QueryVo queryVo) throws Exception {
-        // 把问题记录到mongodb
         Long chatId = queryVo.getChatId();
+        if (chatId == null) {
+            ChatVo chatVo = new ChatVo();
+            chatVo.setAppId(chatProject.getAppId());
+            chatVo.setUserId(queryVo.getUserId());
+            chatVo.setTitle("新会话" + String.valueOf(Math.random()).substring(2, 7));
+            Chat chat = new Chat();
+            BeanUtils.copyProperties(chatVo, chat);
+            chat.setCreateTime(new Date());
+            chatId = IdUtil.getSnowflake().nextId();
+            chat.setChatId(chatId);
+            this.mongoTemplate.insert(chat, MongoUtil.getChatCollection(chatVo.getAppId()));
+        }
         com.ruoyi.pojo.Message msg = new com.ruoyi.pojo.Message();
         msg.setChatId(chatId);
-        msg.setType(0);
+        msg.setType(MessageTypeEnum.USER.getType());
         msg.setContent(queryVo.getMsg());
         msg.setCreateTime(new Date());
         msg.setId(IdUtil.getSnowflake().nextId());
@@ -183,16 +188,8 @@ public class OpenAiOperator implements AiOperator {
         String baseUrl = chatProject.getBaseUrl();
         String apiKey = chatProject.getApiKey();
         String model = chatProject.getModel();
-        String embeddingModel = chatProject.getEmbeddingModel();
-        QdrantVectorStore openAiQdrantVectorStore = qdrantVectorStoreComponet.getOpenAiQdrantVectorStore(baseUrl, apiKey, embeddingModel);
 
         List<Message> msgList = new ArrayList<>();
-        // 暂时注释掉知识图谱功能
-        // 添加 Neo4j 图数据库查询结果
-//        String graphContext = neo4jService.getAllRelationshipsContext(queryVo.getProjectId(), knoledgeIds);
-//        if (graphContext != null && !graphContext.isEmpty() && !graphContext.startsWith("未指定") && !graphContext.startsWith("指定的")) {
-//            msgList.add(new SystemMessage("以下是从图数据库中查询到的相关信息：\n" + graphContext));
-//        }
         //是否开启联网搜索
         Boolean useWebSearch = chatProject.getIsWebSearch() == 1;
         if (useWebSearch) {
@@ -200,34 +197,33 @@ public class OpenAiOperator implements AiOperator {
             msgList.add(new UserMessage(searchResult));
 
         }
-        // 中英文切换
-        msgList.add(new SystemMessage(LanguageEnum.getMsg(queryVo.getLanguage())));
-        msgList.add(new SystemMessage(chatProject.getSystemPrompt()));
+        // 系统提示词合并
+        String sysMessage = LanguageEnum.getMsg(queryVo.getLanguage()) + chatProject.getSystemPrompt();
+        msgList.add(new SystemMessage(sysMessage));
 
         // 加入当前用户的提问
         msgList.add(new UserMessage(queryVo.getMsg()));
 
 
-      OpenAiChatModel openAiChatModel = ChatModelUtil.getOpenAiChatModel(baseUrl, apiKey, model,tools.getToolCallbacks());
+        OpenAiChatModel openAiChatModel = ChatModelUtil.getOpenAiChatModel(baseUrl, apiKey, model,tools.getToolCallbacks());
 
         // 提交到大模型获取最终结果
         ChatClient chatClient = ChatClient.builder(openAiChatModel)
                 .defaultToolCallbacks(tools)
-                .defaultAdvisors(
-                        MessageChatMemoryAdvisor.builder(chatMemory).build(),
-                        simpleLoggerAdvisor)
                 .build();
 
-        ChatClient.ChatClientRequestSpec chatClientRequestSpec = chatClient
-                .prompt(new Prompt(msgList))
-                .advisors(memoryAdvisor -> memoryAdvisor
-                        .param(ChatMemory.CONVERSATION_ID, chatId));
+        Long finalChatId = chatId;
+        // 为流式处理创建专用的Advisor列表
+        List<org.springframework.ai.chat.client.advisor.api.Advisor> streamAdvisorList = new ArrayList<>();
+        streamAdvisorList.add(MessageChatMemoryAdvisor.builder(chatMemory).conversationId(finalChatId.toString()).build());
+        streamAdvisorList.add(simpleLoggerAdvisor);
+
+
         //开启知识库搜索
         Boolean isKnowledgeSearch = chatProject.getIsKnowledgeSearch() == 1;
         if (isKnowledgeSearch) {
             List<String> knowledgeIds = chatAppService.selectKnowledgeIdListByAppId(queryVo.getAppId());
             if (!CollectionUtils.isEmpty(knowledgeIds)) {
-                List<Advisor> advisorList = new ArrayList<>();
                 for (String knowledgeId : knowledgeIds) {
                     ChatKnowledge chatKnowledge = chatKnowledgeService.selectChatKnowledgeByKnowledgeId(knowledgeId);
                     QdrantVectorStore dashScopeQdrantVectorStore = qdrantVectorStoreComponet.getVectorStore(chatKnowledge.getKnowledgeName());
@@ -235,37 +231,68 @@ public class OpenAiOperator implements AiOperator {
                             .builder(dashScopeQdrantVectorStore)
                             .searchRequest(
                                     SearchRequest.builder()
-//                                            .filterExpression(
-//                                                    new FilterExpressionBuilder()
-//                                                            .eq("knowledgeId", knowledgeId) // 查询当前应用本地知识库
-//                                                            .build())
                                             .topK(SystemConstant.TOPK).build()
                             )
                             .build();
-                    advisorList.add(questionAnswerAdvisor);
+                    streamAdvisorList.add(questionAnswerAdvisor);
                 }
-                chatClientRequestSpec.advisors(advisorList);
             }
 
         }
 
-        Flux<ChatResponse> responseFlux = chatClientRequestSpec.stream().chatResponse();
 
-        Flux<String> flux = responseFlux.map(response -> {
-                   String result =  response.getResult() != null
-                            && response.getResult().getOutput() != null
-                            && response.getResult().getOutput().getText() != null
-                            ? response.getResult().getOutput().getText() : "";
-                    return result;
-                 }
-        );
+        Flux<String> flux = chatClient.prompt(new Prompt(msgList)).advisors(streamAdvisorList).stream().content();
+
+//        Flux<String> flux = responseFlux.map(response -> {
+//                   String result =  response.getResult() != null
+//                            && response.getResult().getOutput() != null
+//                            && response.getResult().getOutput().getText() != null
+//                            ? response.getResult().getOutput().getText() : "";
+//                    return result;
+//                 }
+//        );
+        // 创建字符串构建器用于累积流式响应内容
+//        StringBuilder aiResponseBuilder = new StringBuilder();
+//        // 添加完整的订阅处理器，包括错误处理和完成通知
+//        flux.subscribe(
+//                chunk -> {
+//                    log.info("收到模型回复: {}", chunk);
+//                    // 累积流式响应内容
+//                    aiResponseBuilder.append(chunk);
+//                },
+//                error -> {
+//                    log.error("流处理错误", error);
+//                    // 发生错误时也保存已收到的内容
+//                    saveAiResponse(finalChatId, aiResponseBuilder.toString());
+//                },
+//                () -> {
+//                    log.info("流处理完成");
+//                    //流处理完成后保存完整响应
+//                    saveAiResponse(finalChatId, aiResponseBuilder.toString());
+//                }
+//        );
         return flux;
     }
 
 
+    /**
+     * 保存AI响应到MongoDB的工具方法
+     */
+    private void saveAiResponse(Long chatId, String content) {
+        if (content == null || content.trim().isEmpty()) {
+            log.warn("AI响应内容为空，不保存");
+            return;
+        }
 
-
-
+        com.ruoyi.pojo.Message aiMsg = new com.ruoyi.pojo.Message();
+        aiMsg.setId(IdUtil.getSnowflake().nextId());
+        aiMsg.setChatId(chatId);
+        aiMsg.setType(MessageTypeEnum.AI.getType());
+        aiMsg.setCreateTime(new Date());
+        aiMsg.setContent(content);
+        this.mongoTemplate.insert(aiMsg, MongoUtil.getMessageCollection(chatId));
+        log.info("AI响应已保存到MongoDB，chatId: {}", chatId);
+    }
 
 }
 
